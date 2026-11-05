@@ -5,11 +5,13 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P8
-- Last completed task: P8.1
-- Next task: P8.2
+- Last completed task: P8.2
+- Next task: P8.3
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
-- Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
+- Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
+- Scoring run (17,000 shops x 1 week): 23.03 s (target: < 60 s) - PASS
+- GET /shops/ranked latency (17,000 shops): p50 = 7.4 ms, p95 = 7.8 ms (target: < 300 ms) - PASS
 
 ## Decisions
 - D-001 Stack: FastAPI + SQLite + pandas (backend), Next.js + TypeScript + Tailwind + Recharts (frontend).
@@ -77,3 +79,4 @@ none
 - 2026-11-05 P7.3 Connected visit outcome form to POST /shops/{id}/feedback and verified confirmed visit rate updates on dashboard.
 - 2026-11-05 P7.4 Configured Playwright e2e happy path test (dashboard -> filter -> detail -> checklist -> outcome -> KPI update) and screenshots at 1280 and 768. make e2e passed. Phase 7 exit gate passed.
 - 2026-11-05 P8.1 Verified and tested loading, empty, and error states across all screens with unit tests.
+- 2026-11-05 P8.2 Benchmarked 17,000 shops dataset with scripts/perf.py: generation 5.85s (<120s), 1-week run 23.03s (<60s), p95 latency 7.8ms (<300ms). Real numbers logged.
