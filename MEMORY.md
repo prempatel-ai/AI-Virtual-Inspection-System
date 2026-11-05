@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P5
-- Last completed task: P5.5
-- Next task: P5.6
+- Current phase: P6
+- Last completed task: P5.6
+- Next task: P6.1
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -65,3 +65,4 @@ none
 - 2026-11-05 P5.3 Implemented groq_client.py with timeout 10s, 2 retries, temperature 0, and JSON mode.
 - 2026-11-05 P5.4 Implemented validate.py strictly checking schema, unknown fact_ids, and number hallucinations.
 - 2026-11-05 P5.5 Implemented explain.py with caching, Groq integration, validation, and template fallback. Integrated into run.py.
+- 2026-11-05 P5.6 Added tests for LLM validation (unknown fact_id, invented number, empty checklist, cache, fake client, template fallback). Phase 5 exit gate passed.
