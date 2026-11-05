@@ -46,7 +46,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P5.2 `templates.py` and `checklists.yaml` (fallback explanation)
 - [x] P5.3 `groq_client.py` (timeout, retry, JSON output)
 - [x] P5.4 `validate.py` (reject unknown fact_ids and numbers not in the payload)
-- [ ] P5.5 `explain.py` (top-K, cache, fallback to template)
+- [x] P5.5 `explain.py` (top-K, cache, fallback to template)
 - [ ] P5.6 Tests with a fake client, including an invented-number rejection
 **Exit:** app works with and without `GROQ_API_KEY`. Validation tests pass.
 

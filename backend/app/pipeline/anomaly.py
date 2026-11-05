@@ -62,12 +62,17 @@ def compute_anomalies_for_week(
         key: group
         for key, group in df_target.groupby(["taluka", "size_band"])
     }
-    # 2. By (district, size_band) for widening
+    # 2. By taluka (all sizes)
+    taluka_groups = {
+        key: group
+        for key, group in df_target.groupby("taluka")
+    }
+    # 3. By (district, size_band) for widening
     district_size_groups = {
         key: group
         for key, group in df_target.groupby(["district", "size_band"])
     }
-    # 3. By district for second widening
+    # 4. By district for second widening
     district_groups = {
         key: group
         for key, group in df_target.groupby("district")
@@ -89,12 +94,19 @@ def compute_anomalies_for_week(
 
         # 1. Peer baseline selection
         ts_group = taluka_size_groups.get((taluka, size_band))
-        # Exclude self
         peers = (
             ts_group[ts_group["shop_id"] != shop_id]
             if ts_group is not None
             else pd.DataFrame()
         )
+
+        if len(peers) < min_peers:
+            t_group = taluka_groups.get(taluka)
+            peers = (
+                t_group[t_group["shop_id"] != shop_id]
+                if t_group is not None
+                else pd.DataFrame()
+            )
 
         if len(peers) < min_peers:
             ds_group = district_size_groups.get((district, size_band))

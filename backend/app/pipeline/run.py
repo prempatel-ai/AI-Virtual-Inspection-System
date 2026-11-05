@@ -10,6 +10,8 @@ import pandas as pd
 
 from app.config import get_db_path, load_config
 from app.db import get_connection
+from app.llm.explain import get_or_generate_explanation
+from app.llm.facts import build_facts_payload
 from app.pipeline.anomaly import compute_anomalies_for_week
 from app.pipeline.checks import evaluate_checks
 from app.pipeline.evaluate import evaluate_run
@@ -185,7 +187,76 @@ def run_pipeline_for_week(
     )
     conn.commit()
 
-    # 8. Evaluation
+    # 8. Explain top K shops
+    top_k_count = min(top_k, len(scored_rows))
+    scored_sorted = sorted(scored_rows, key=lambda x: x["risk_score"], reverse=True)
+    top_shops = scored_sorted[:top_k_count]
+
+    explained_count = 0
+    for s_info in top_shops:
+        s_id = s_info["shop_id"]
+        s_row = target_features[target_features["shop_id"] == s_id].iloc[0]
+        shop_meta = {
+            "shop_id": s_id,
+            "name": str(s_row["name"]),
+            "district": str(s_row["district"]),
+            "taluka": str(s_row["taluka"]),
+            "cards_count": int(s_row["cards_count"]),
+            "vulnerability_index": float(s_row["vulnerability_index"]),
+        }
+        opening = float(s_row["stock_opening_kg"])
+        received = float(s_row["stock_received_kg"])
+        sold = float(s_row["stock_sold_kg"])
+        closing = float(s_row["stock_closing_kg"])
+        board_kg = float(s_row["board_distributed_kg"])
+        exp_closing = opening + received - sold
+        gap_kg = round(exp_closing - closing, 1)
+        base_stock = max(opening + received, 1.0)
+        gap_pct = round((abs(gap_kg) / base_stock) * 100.0, 2)
+        direction = "shortfall" if gap_kg >= 0 else "surplus"
+        stock_recon = {
+            "opening_kg": opening,
+            "received_kg": received,
+            "sold_kg": sold,
+            "closing_kg": closing,
+            "gap_kg": gap_kg,
+            "gap_pct": gap_pct,
+            "direction": direction,
+        }
+        diff_board = board_kg - sold
+        board_check = {
+            "board_kg": board_kg,
+            "sold_kg": sold,
+            "mismatch_pct": round((abs(diff_board) / max(sold, 1.0)) * 100.0, 2),
+        }
+        payload = build_facts_payload(
+            shop_meta=shop_meta,
+            week_start=target_week,
+            risk_score=s_info["risk_score"],
+            band=s_info["band"],
+            breakdown=s_info["breakdown"],
+            stock_recon=stock_recon,
+            board_check=board_check,
+            complaints=[],
+            recent_series={},
+        )
+        get_or_generate_explanation(
+            payload=payload,
+            stock_recon=stock_recon,
+            board_check=board_check,
+            breakdown=s_info["breakdown"],
+            conn=conn,
+        )
+        explained_count += 1
+
+    # Update runs record with explained count
+    cursor.execute(
+        "UPDATE runs SET explained = ? WHERE run_id = ?;",
+        (explained_count, run_id),
+    )
+    conn.commit()
+
+    # 9. Evaluation
     df_scores = pd.DataFrame(scored_rows)
     eval_result = evaluate_run(df_scores, conn)
     conn.close()
@@ -194,7 +265,7 @@ def run_pipeline_for_week(
         "run_id": run_id,
         "week": target_week,
         "shops_scored": len(scored_rows),
-        "explained": 0,
+        "explained": explained_count,
         "duration_ms": duration_ms,
         "evaluation": eval_result,
     }
