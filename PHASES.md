@@ -35,7 +35,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 ## P4 API and persistence
 - [x] P4.1 `GET /shops/ranked`, `GET /shops/{id}`
 - [x] P4.2 `GET /meta`, `GET /summary`
-- [ ] P4.3 `POST /run`
+- [x] P4.3 `POST /run`
 - [ ] P4.4 `POST /shops/{id}/feedback` and confirmed-rate in summary
 - [ ] P4.5 `make types` generates frontend types from OpenAPI
 - [ ] P4.6 API tests
