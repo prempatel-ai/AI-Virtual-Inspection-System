@@ -1,0 +1,34 @@
+# MEMORY.md
+
+Agent state. Read at the start of every iteration. Update at the end of every task.
+Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
+
+## Status
+- Current phase: P0 (not started)
+- Last completed task: none
+- Next task: P0.1
+
+## Decisions
+- D-001 Stack: FastAPI + SQLite + pandas (backend), Next.js + TypeScript + Tailwind + Recharts (frontend).
+- D-002 LLM service is Groq via the `groq` SDK. Model name comes from env `GROQ_MODEL`. The LLM only words computed facts; it never decides risk.
+- D-003 Detection is statistical (robust z-scores using median and MAD) plus hard arithmetic checks. No trained model in the MVP, so every flag is explainable.
+- D-004 Data is synthetic and seeded. Default 500 shops x 12 weeks. Must scale to 17,000 shops.
+- D-005 UI is light theme only.
+- D-006 If `GROQ_API_KEY` is missing or the LLM output fails validation, use the template explanation. The app must work fully without a key.
+- D-007 No authentication in the MVP.
+
+## Assumptions (from the problem statement gaps; confirm before real deployment)
+- A-001 "Authentication" is the Aadhaar-based fingerprint/OTP check of the ration card holder on the shop's ePoS device. Based on public sources; not verified against Gujarat's internal data.
+- A-002 The problem statement does not define "override". MVP treats it as an unauthenticated sale: a sale completed after fingerprint and OTP both failed. Field: `unauth_sales`.
+- A-003 The ~30% baseline auth failure rate comes from older Gujarat reporting. Used only to make synthetic data plausible.
+- A-004 Complaints arrive per shop with a category: denied ration, short weight, extra money, poor quality, shop closed. Real format unknown.
+- A-005 `vulnerability_index` (0 to 1) stands in for "financially vulnerable". The real measure is unknown.
+- A-006 The public display board figure is "kg distributed as displayed". How it reaches the system is unknown.
+- A-007 Weekly analysis window. Real refresh frequency unknown.
+- A-008 Weights and thresholds in `config.yaml` are starting values, not validated.
+
+## Blockers
+none
+
+## Log (append only, newest last)
+- 2026-11-05 Docs scaffolded. No code yet.
