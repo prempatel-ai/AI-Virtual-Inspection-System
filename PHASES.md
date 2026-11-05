@@ -88,3 +88,62 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 5. No item in `RULES.md` is violated.
 6. `MEMORY.md` lists every assumption and known gap.
 7. All work is committed and pushed.
+
+---
+
+## P10 Auth and users
+- [x] P10.0 Audit the current code against the docs; run `make check`; record deviations in MEMORY.md; do not refactor unrelated code
+- [x] P10.1 Merge this spec into PRODUCT, ARCHITECTURE, API, DATA_SPEC, TESTING, DESIGN, RULES, MEMORY; append these phases to PHASES.md (docs commit)
+- [ ] P10.2 Schema: `users`, `shops.inspector_id`, `audit_log` with triggers; config keys
+- [ ] P10.3 Password hashing, login, logout, `me`, cookie session, lockout, CSRF header, `audit_log` writes
+- [ ] P10.4 Shared permission table, auth dependency, scope filter; apply to all V1 endpoints
+- [ ] P10.5 `seed-users` and demo users file
+- [ ] P10.6 Auth and RBAC tests (matrix, scope, lockout, cookie flags)
+**Exit:** every endpoint requires auth except health and login; matrix and scope tests pass; V1 tests updated and green.
+
+## P11 Cases and actions
+- [ ] P11.1 Schema: `cases`, `case_actions` with append-only triggers; remove `feedback` with migration
+- [ ] P11.2 Case creation and update inside `POST /run` (section 3 rules)
+- [ ] P11.3 State machine and `allowed_actions`
+- [ ] P11.4 `GET /cases`, `GET /cases/{id}`, `POST /cases/{id}/actions` with payload validation
+- [ ] P11.5 Add `case` summary to ranked and detail responses; make `POST /run` admin only
+- [ ] P11.6 Tests (state machine, append-only, creation rules, migration)
+**Exit:** a flagged shop becomes a case; actions follow the state machine; history is immutable.
+
+## P12 Oversight APIs
+- [ ] P12.1 `metrics.py` (flag rate, confirmed rate, overdue, time to first action) with golden tests
+- [ ] P12.2 `GET /areas`, `GET /officers`, `GET /officers/{id}`, `GET /actions`, scope-aware `GET /summary`
+- [ ] P12.3 `GET/POST/PATCH /admin/users`, reset password, `GET /admin/audit`
+- [ ] P12.4 Update `docs/API.md`; regenerate frontend types
+**Exit:** all endpoints match the docs and pass the RBAC matrix.
+
+## P13 Frontend: auth and officer screens
+- [ ] P13.1 `/login`, session handling, 401 redirect, 403 page, `RoleNav` from `permissions`
+- [ ] P13.2 Blocks: `StatusBadge`, `CaseActionBar`, `OutcomeForm`, `ActionTimeline`, `AssigneeSelect`, `InlineConfirm`
+- [ ] P13.3 `/queue` and `/cases/[id]` with actions from `allowed_actions`
+- [ ] P13.4 Role landing and V1 flags page moved to `/flags`
+**Exit:** an inspector signs in, works a case end to end, and sees only their own data.
+
+## P14 Frontend: oversight and admin
+- [ ] P14.1 `/overview` and `/areas` with flag rates
+- [ ] P14.2 `/officers` and `/officers/[id]` with `PermissionList` and action timeline
+- [ ] P14.3 `/actions` feed
+- [ ] P14.4 `/admin/users` and `/admin/audit`
+**Exit:** supervisors see their scope; the admin sees the whole state, every officer's access and actions, and flag rates by area.
+
+## P15 Activity data, demo, hardening
+- [ ] P15.1 `seed-activity`
+- [ ] P15.2 Per-role Playwright e2e; update V1 e2e to sign in
+- [ ] P15.3 Security pass: cookie flags, headers, rate limit, no sensitive fields in responses, RBAC matrix complete
+- [ ] P15.4 Accessibility and screenshot review of all new screens against `docs/DESIGN.md`
+- [ ] P15.5 Update `docs/DEMO.md` with the V2 walkthrough (inspector, Mamlatdar, admin)
+- [ ] P15.6 Final Gate V2
+
+## Final Gate V2 (all true, on a clean clone)
+1. `make check` and `make e2e` pass, including per-role e2e.
+2. `make demo` seeds users and activity and the V2 walkthrough works.
+3. RBAC matrix test covers every endpoint and passes.
+4. No plaintext secrets or passwords anywhere; no `password_hash` in any response.
+5. Every officer action and every access event is stored and visible to the admin.
+6. V1 features still work. Synthetic banner on every screen.
+7. `MEMORY.md` lists every V2 assumption and known gap. All work committed and pushed.

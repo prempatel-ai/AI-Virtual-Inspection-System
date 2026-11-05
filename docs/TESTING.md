@@ -1,30 +1,74 @@
 # TESTING.md
 
-`make check` = ruff + type check + backend tests + frontend lint + typecheck + unit tests. Must be green before every commit. `make e2e` runs Playwright and must be green at every phase exit from P7.
+`make check` = ruff + mypy type check + backend tests + frontend lint + typecheck + unit tests + WCAG contrast check. Must be green before every commit.
+`make e2e` runs Playwright end-to-end tests across roles.
 
-## Backend (pytest, no network)
-- **Data:** determinism for a seed; planted counts; outage taluka effect; planted shops never in the outage taluka; ranges; stock chain.
-- **Anomaly:** robust z on known inputs (hand-computed); zero-MAD floor; peer widening to district; fewer than 4 weeks of history falls back to peer z.
-- **Checks:** stock gap and board mismatch on known inputs; direction (shortfall or surplus).
-- **Scoring:** golden cases with hand-computed scores; property test that breakdown points sum to the score for random inputs (including the cap); vulnerability uplift never negative; bands at boundaries.
-- **Outage trap:** shops in the outage taluka with no other issue score in the low band.
-- **Evaluation targets on the default dataset** (SHOPS=500, SEED=42), measured on synthetic data:
-  - precision@K >= 0.80, where K is the number of planted positives
-  - recall@2K >= 0.90
-  - outage false-alarm rate <= 0.05 (share of the top 2K that are unplanted shops in the outage taluka)
-  These are targets for the synthetic demo. Tune `config.yaml` to meet them; do not change the data generator to make them pass.
-- **LLM:** fake client only. Valid output accepted; unknown `fact_id` rejected; invented number rejected; empty checklist rejected; client error or timeout falls back to template; no `GROQ_API_KEY` falls back to template; cache hit avoids a second call.
-- **API:** every endpoint matches `docs/API.md`; filters; pagination; 404 and 422 cases; feedback changes `confirmed_rate`; no ground-truth fields in shop responses.
+---
 
-## Frontend
-- **Unit (vitest + Testing Library):** each block renders, handles empty and error input, and is keyboard operable. Formatting helpers (`en-IN` numbers, dates).
-- **Contrast script:** every foreground/background token pair meets WCAG AA (4.5:1 text, 3:1 large text and UI).
-- **E2E (Playwright), happy path:** open dashboard, see banner and KPIs, filter by district, open the top shop, see breakdown and checklist, record an outcome, return to the dashboard and see the confirmed rate change.
-- **Accessibility:** axe on dashboard and shop detail with zero serious or critical violations; tab through the main flow.
-- **Visual self-review:** screenshots at 1280 and 768 widths, checked against `docs/DESIGN.md`.
+## 1. Backend Tests (pytest, no network)
 
-## Performance (measure, report in MEMORY.md)
-Targets in `docs/ARCHITECTURE.md`. A script `scripts/perf.py` generates 17,000 shops, runs one week, and times the ranked endpoint.
+### RBAC Matrix Test
+- Generated programmatically from a single central permission table.
+- Tests every endpoint against every role (`inspector`, `mamlatdar`, `district_officer`, `vigilance`, `admin`, and unauthenticated requests).
+- Asserts strict 200, 401, 403, or 404 response codes. No endpoint can be forgotten.
 
-## Rules
-Never skip or weaken a test to pass. No real network calls. Tests create their own temporary SQLite files.
+### Scope Isolation
+- Inspector cannot view or act on another inspector's shop or case by ID (**404 Not Found**).
+- Mamlatdar cannot access shops, cases, or officers in another taluka (**404**).
+- District officer cannot access another district (**404**).
+- Scoped list endpoints (`/shops/ranked`, `/cases`, `/officers`, `/actions`, `/summary`, `/areas`) never leak records outside the user's jurisdiction.
+
+### Case State Machine and Actions
+- Every valid transition produces the expected target state.
+- Invalid transitions return **409 Conflict**.
+- Only the case's current assignee can execute `start_inspection` or `record_outcome`.
+- Escalation chain strictly follows: inspector -> mamlatdar -> district_officer -> vigilance.
+- Reassignment permissions match role boundaries.
+
+### Append-Only Immutability
+- SQLite triggers block `UPDATE` and `DELETE` on `case_actions` (raises SQLite abort).
+- SQLite triggers block `UPDATE` and `DELETE` on `audit_log`.
+
+### Authentication and Session Security
+- Argon2 password hashing and verification.
+- Generic error message on bad credentials (no user enumeration).
+- Account lockout for 15 minutes after 5 failed login attempts.
+- Session JWT validation in HttpOnly, SameSite=Lax cookie.
+- Re-reading user on every request: deactivating a user immediately invalidates active sessions.
+- Startup fails immediately if `JWT_SECRET` is unset.
+- Sensitive fields (`password_hash`) are never returned in any response.
+- State-changing requests without `X-Requested-With: fetch` are rejected.
+
+### Metrics Module Golden Tests
+- Golden tests in `backend/tests/test_metrics.py` verifying flag rates, confirmed rates, overdue counts, time-to-first-action medians, and officer aggregations.
+
+### Case Lifecycle & Migration
+- Reflagging an open case updates latest score without duplicate cases.
+- Inactive inspector falls back to the taluka Mamlatdar.
+- V1 feedback records correctly migrate to `record_outcome` case actions.
+
+---
+
+## 2. Frontend Tests (vitest & Playwright)
+
+### Unit & Component Tests
+- Every block in `components/ui/` tested for rendering, accessibility, and user interactions.
+- `RoleNav` renders only links permitted for user's roles.
+- `CaseActionBar` renders only actions present in `allowed_actions`.
+- Formatters (`en-IN` numbers, dates) and API client error handling.
+
+### E2E per Role (Playwright)
+- **Inspector:** Sign in -> `/queue` -> open assigned case -> `start_inspection` -> fill `OutcomeForm` -> verify status updated to `inspected`.
+- **Mamlatdar:** Sign in -> taluka overview -> view inspector queue -> reassign case -> close inspected case.
+- **District Officer:** Sign in -> district areas overview -> view taluka breakdown.
+- **Vigilance:** Sign in -> state-wide flags -> verify read-only status (no action buttons except notes).
+- **Admin:** Sign in -> view all flags, officer detail with permissions and actions, flag rates by district/taluka, create/deactivate user, view access log.
+- **Security Check:** Verify 401 redirect to `/login` when unauthenticated, and 403 / 404 for unauthorized paths.
+
+---
+
+## 3. Performance & Hardening
+- Measure 17,000 shops dataset generation (< 120s) and 1-week run (< 60s).
+- Ranked & scoped query p95 latency < 300ms.
+- WCAG AA contrast check script passes on all token combinations.
+- Axe accessibility checks with zero serious or critical violations.

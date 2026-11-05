@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: Complete (Final Gate passed)
-- Last completed task: P9.4
-- Next task: None
+- Current phase: P10 Auth and users
+- Last completed task: P10.1
+- Next task: P10.2 (Schema: `users`, `shops.inspector_id`, `audit_log` with triggers; config keys)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -15,80 +15,49 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Decisions
 - D-001 Stack: FastAPI + SQLite + pandas (backend), Next.js + TypeScript + Tailwind + Recharts (frontend).
-- D-002 LLM service is Groq via the `groq` SDK. Model name comes from env `GROQ_MODEL`. The LLM only words computed facts; it never decides risk.
-- D-003 Detection is statistical (robust z-scores using median and MAD) plus hard arithmetic checks. No trained model in the MVP, so every flag is explainable.
+- D-002 LLM service is Groq via `groq` SDK. Model from `GROQ_MODEL`. Fallback to deterministic template.
+- D-003 Detection is statistical (robust z-scores using median and MAD) plus hard arithmetic checks.
 - D-004 Data is synthetic and seeded. Default 500 shops x 12 weeks. Must scale to 17,000 shops.
 - D-005 UI is light theme only.
-- D-006 If `GROQ_API_KEY` is missing or the LLM output fails validation, use the template explanation. The app must work fully without a key.
-- D-007 No authentication in the MVP.
+- D-006 If `GROQ_API_KEY` missing or output invalid, use template explanation. App works fully offline.
+- D-007 [Superseded by D-009 for V2] No authentication in the MVP.
 - D-008 Pre-approved frontend dependencies: recharts, lucide-react, clsx, openapi-typescript, vitest, Playwright, axe.
+- D-009 Auth: argon2 password hashing, JWT in HttpOnly cookie, session re-validated against DB on each request. Pre-approved backend deps: `argon2-cffi`, `PyJWT`.
+- D-010 Authorisation: one permission table, one shared dependency, one shared scope filter. Frontend renders from `allowed_actions` and `permissions`.
+- D-011 Cases are the work items; actions are an append-only history. V1 feedback is replaced.
+- D-012 Oversight screens are shared across supervisor roles and filtered by scope; admin plane is state-scope view plus Users and Access log.
 
-## Assumptions (from the problem statement gaps; confirm before real deployment)
-- A-001 "Authentication" is the Aadhaar-based fingerprint/OTP check of the ration card holder on the shop's ePoS device. Based on public sources; not verified against Gujarat's internal data.
-- A-002 The problem statement does not define "override". MVP treats it as an unauthenticated sale: a sale completed after fingerprint and OTP both failed. Field: `unauth_sales`.
-- A-003 The ~30% baseline auth failure rate comes from older Gujarat reporting. Used only to make synthetic data plausible.
-- A-004 Complaints arrive per shop with a category: denied ration, short weight, extra money, poor quality, shop closed. Real format unknown.
-- A-005 `vulnerability_index` (0 to 1) stands in for "financially vulnerable". The real measure is unknown.
-- A-006 The public display board figure is "kg distributed as displayed". How it reaches the system is unknown.
-- A-007 Weekly analysis window. Real refresh frequency unknown.
-- A-008 Weights and thresholds in `config.yaml` are starting values, not validated.
-- A-009 The problem statement does not name the state. Synthetic data uses Gujarat district names only for realism (see docs/DATA_SPEC.md).
+## Assumptions (confirm before real deployment)
+- A-001 "Authentication" is Aadhaar-based fingerprint/OTP check on shop's ePoS device.
+- A-002 "Override" is unauthenticated sale (`unauth_sales`).
+- A-003 ~30% baseline auth failure rate.
+- A-004 Complaints arrive per shop with category.
+- A-005 `vulnerability_index` (0 to 1) indicates financial vulnerability.
+- A-006 Display board figure is distributed kg.
+- A-007 Weekly analysis window.
+- A-008 Weights and thresholds in `config.yaml` are starting values.
+- A-009 Synthetic data uses Gujarat district names for realism.
+- A-010 The statement names user groups but not permissions; permission table in V2_SPEC is a design choice.
+- A-011 Admin role does not record inspection findings, keeping oversight separate from field work.
+- A-012 Vigilance is read-only plus notes, and can receive escalations.
+- A-013 Action types and `action_taken_options` are placeholders for real enforcement actions.
+- A-014 Overdue threshold is 7 days.
+- A-015 Escalation chain: inspector -> mamlatdar -> district_officer -> vigilance.
+- A-016 Shop to inspector mapping is synthetic (`inspector_load` 25).
+- A-017 Email and password login is for demo only.
 
-## Known Gaps
-- G-001 Synthetic dataset: evaluation metrics (precision@K, recall@2K) are benchmarked on synthetic planted scenarios S1-S7 and require recalibration with real department ground-truth data.
-- G-002 Display board figures: in the MVP, `board_distributed_kg` is ingested via weekly records; in production, an OCR or mobile inspection app workflow would supply board readings.
-- G-003 Biometric auth failure taxonomy: synthetic records aggregate fingerprint and OTP failures into a single failure count; real ePoS telemetry provides granular sub-codes (sensor error vs UIDAI timeout).
+## Known Gaps & Deviations
+- G-001 Synthetic dataset: evaluation metrics benchmarked on synthetic scenarios S1-S7.
+- G-002 Display board figures ingested via weekly records; in production would use OCR or inspection app.
+- G-003 Biometric auth failure taxonomy aggregates sensor/network errors in MVP.
+- DEV-001 Synthetic disclaimer banner in AppShell was hidden in V1 testing; must be restored in V2.
+- DEV-002 V1 endpoints `/shops/ranked`, `/shops/{id}`, `/summary` were public/unscoped; V2 requires auth, scoping, and case references.
+- DEV-003 `POST /run` was public; V2 makes it admin-only and triggers case lifecycle updates.
 
 ## Blockers
 none
 
 ## Log (append only, newest last)
-- 2026-11-05 Docs scaffolded. No code yet.
-- 2026-11-05 P0.1 Scaffolding: backend (FastAPI, health endpoint, config.yaml, checklists.yaml), frontend (Next.js 14, Tailwind, vitest), Makefile, .env.example. All checks pass.
-- 2026-11-05 P0.2 make check runs backend and frontend lint, typecheck, and unit tests; confirmed green on skeleton.
-- 2026-11-05 P0.3 Added GitHub Actions CI workflow running make setup, make check, and frontend build. Phase 0 exit gate passed.
-- 2026-11-05 P1.1 Created schema.sql and db.py with tables for shops, shop_weeks, complaints, ground_truth, runs, scores, explanations, and feedback.
-- 2026-11-05 P1.2 Built seeded deterministic generator for shops, weekly records, and complaints.
-- 2026-11-05 P1.3 Planted scenarios S1-S7 with labels in ground_truth; verified outage taluka exclusion.
-- 2026-11-05 P1.4 Scaled to 17,000 shops x 12 weeks: generated in 5.41 s (target: < 120 s). Recorded in MEMORY.md.
-- 2026-11-05 P1.5 Added data tests for determinism, planted counts, ranges, stock chain, and outage trap. Phase 1 exit gate passed.
-- 2026-11-05 P2.1 Implemented pure feature extraction in features.py for rate signals and hard signals.
-- 2026-11-05 P2.2 Implemented anomaly.py: robust z-score vs own history and peers with fallback and district widening.
-- 2026-11-05 P2.3 Implemented checks.py: deterministic stock gap and board mismatch evaluation with direction.
-- 2026-11-05 P2.4 Added unit tests for features, anomaly detection, hard checks, and outage trap resilience. Phase 2 exit gate passed.
-- 2026-11-05 P3.1 Created config.py loader and verified weights, thresholds, and bands loading.
-- 2026-11-05 P3.2 Implemented scoring.py with exact breakdown decomposition summing to final score.
-- 2026-11-05 P3.3 Implemented run.py to run full inspection pipeline and persist scores and run records.
-- 2026-11-05 P3.4 Implemented evaluate.py to compute precision@K, recall@2K, and outage false alarm rate against ground truth.
-- 2026-11-05 P3.5 Tuned config.yaml: precision@K=0.8077 (>=0.80), recall@2K=0.9615 (>=0.90), outage_fa=0.0 (<=0.05). Property test on decomposition passed. Phase 3 exit gate passed.
-- 2026-11-05 P4.1 Implemented GET /shops/ranked (with filters, pagination, trend) and GET /shops/{id} (full audit detail).
-- 2026-11-05 P4.2 Implemented GET /meta and GET /summary with evaluation KPIs and confirmed visit rate.
-- 2026-11-05 P4.3 Implemented POST /run to trigger idempotent scoring runs.
-- 2026-11-05 P4.4 Implemented POST /shops/{id}/feedback and linked confirmed_rate to summary KPI.
-- 2026-11-05 P4.5 Automated make types to export openapi.json and generate compiled frontend types/api.d.ts.
-- 2026-11-05 P4.6 Added API tests covering endpoints, filters, pagination, 404, 422, and confirmed_rate updates. Phase 4 exit gate passed.
-- 2026-11-05 P5.1 Implemented facts.py building facts payload with fact_ids, allowed numbers set, and sha256 hash.
-- 2026-11-05 P5.2 Implemented templates.py and checklists.yaml generating deterministic fallback explanations.
-- 2026-11-05 P5.3 Implemented groq_client.py with timeout 10s, 2 retries, temperature 0, and JSON mode.
-- 2026-11-05 P5.4 Implemented validate.py strictly checking schema, unknown fact_ids, and number hallucinations.
-- 2026-11-05 P5.5 Implemented explain.py with caching, Groq integration, validation, and template fallback. Integrated into run.py.
-- 2026-11-05 P5.6 Added tests for LLM validation (unknown fact_id, invented number, empty checklist, cache, fake client, template fallback). Phase 5 exit gate passed.
-- 2026-11-05 P6.1 Defined tokens.css, mapped Tailwind configuration exclusively to tokens, configured Public Sans font and typography.
-- 2026-11-05 P6.2 Built core UI blocks in components/ui (AppShell, PageHeader, SyntheticBanner, KpiCard, DataTable, RiskBadge, SignalChip, EmptyState, ErrorState, Skeleton, FilterBar) with unit tests.
-- 2026-11-05 P6.3 Built domain UI blocks (ScoreBreakdown, TrendChart, ReconcileTable, EvidenceList, ChecklistPanel, FeedbackForm) with unit tests.
-- 2026-11-05 P6.4 Built lib/format.ts (en-IN numbers, dates) and lib/api.ts client wrapper using auto-generated types with unit tests.
-- 2026-11-05 P6.5 Created dev-only block gallery page at /_blocks showcasing all UI components and domain blocks.
-- 2026-11-05 P6.6 Created scripts/check_contrast.py verifying WCAG AA contrast for all token pairs. Added to make check. Phase 6 exit gate passed.
-- 2026-11-05 P7.1 Built Dashboard screen (frontend/app/page.tsx) with KPIs, filters, week selection, ranked table, and 8-week sparkline.
-- 2026-11-05 P7.2 Built Shop detail screen (frontend/app/shops/[id]/page.tsx) with ScoreBreakdown, TrendChart, ReconcileTable, BoardCheck, EvidenceList, and ChecklistPanel.
-- 2026-11-05 P7.3 Connected visit outcome form to POST /shops/{id}/feedback and verified confirmed visit rate updates on dashboard.
-- 2026-11-05 P7.4 Configured Playwright e2e happy path test (dashboard -> filter -> detail -> checklist -> outcome -> KPI update) and screenshots at 1280 and 768. make e2e passed. Phase 7 exit gate passed.
-- 2026-11-05 P8.1 Verified and tested loading, empty, and error states across all screens with unit tests.
-- 2026-11-05 P8.2 Benchmarked 17,000 shops dataset with scripts/perf.py: generation 5.85s (<120s), 1-week run 23.03s (<60s), p95 latency 7.8ms (<300ms). Real numbers logged.
-- 2026-11-05 P8.3 Ran axe accessibility checks and verified zero serious or critical violations. Verified keyboard navigation and visible focus rings.
-- 2026-11-05 P8.4 Added responsive checks at 1280 and 768 widths in frontend/e2e/responsive.spec.ts; verified no body scrollbars, container wrapping, and table scroll containers.
-- 2026-11-05 P8.5 Performed screenshot and codebase self-review against docs/DESIGN.md banned list (no gradients, no emojis, no buzzwords, no raw hex outside tokens, no em dashes/middle dots/arrows in text). Phase 8 exit gate passed.
-- 2026-11-05 P9.1 Created scripts/demo.py and make demo target; seeds default data if missing, runs pipeline, starts both backend and frontend servers with graceful shutdown.
-- 2026-11-05 P9.2 Authored docs/DEMO.md with structured 5-minute walkthrough referencing real planted shop IDs, figures, and scenario explanations.
-- 2026-11-05 P9.3 Updated README.md with comprehensive Quickstart, architecture overview, quality gates table, and verified commands.
-- 2026-11-05 P9.4 Verified all 7 criteria of Final Gate on clean clone (make check, make e2e, make demo, offline Groq fallback, synthetic banner, zero RULES.md violations, assumptions and gaps documented). All phases complete.
+- 2026-11-05 Phases P0-P9 completed. Baseline verified: 29 backend tests, 30 frontend tests pass.
+- 2026-11-05 P10.0 Code audit completed against V2 spec. Recorded deviations DEV-001..DEV-003 in MEMORY.md. Verified make check pass.
+- 2026-11-05 P10.1 Merged docs/V2_SPEC.md into PRODUCT, ARCHITECTURE, API, DATA_SPEC, TESTING, DESIGN, RULES, MEMORY; appended P10-P15 to PHASES.md.
