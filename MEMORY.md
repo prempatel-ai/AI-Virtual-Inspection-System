@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P7
-- Last completed task: P7.1
-- Next task: P7.2
+- Last completed task: P7.2
+- Next task: P7.3
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -73,3 +73,4 @@ none
 - 2026-11-05 P6.5 Created dev-only block gallery page at /_blocks showcasing all UI components and domain blocks.
 - 2026-11-05 P6.6 Created scripts/check_contrast.py verifying WCAG AA contrast for all token pairs. Added to make check. Phase 6 exit gate passed.
 - 2026-11-05 P7.1 Built Dashboard screen (frontend/app/page.tsx) with KPIs, filters, week selection, ranked table, and 8-week sparkline.
+- 2026-11-05 P7.2 Built Shop detail screen (frontend/app/shops/[id]/page.tsx) with ScoreBreakdown, TrendChart, ReconcileTable, BoardCheck, EvidenceList, and ChecklistPanel.

@@ -2,8 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import DashboardPage from '../app/page'
+import ShopDetailPage from '../app/shops/[id]/page'
 
-describe('Dashboard Page Screen', () => {
+vi.mock('next/navigation', () => ({
+  useParams: () => ({ id: 'FPS-00012' }),
+  useSearchParams: () => ({
+    get: (key: string) => (key === 'week' ? '2026-11-02' : null),
+  }),
+}))
+
+describe('Screens', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
   })
@@ -77,6 +85,76 @@ describe('Dashboard Page Screen', () => {
       expect(screen.getByText('84.5')).toBeDefined()
       expect(screen.getByText('Stock gap')).toBeDefined()
       expect(screen.getByText('80.0%')).toBeDefined()
+    })
+  })
+
+  it('renders shop detail page with reconciliation, explanation and checklist', async () => {
+    const mockDetail = {
+      shop: {
+        shop_id: 'FPS-00012',
+        name: 'Shop FPS-00012',
+        district: 'Ahmedabad',
+        taluka: 'Taluka 1',
+        cards_count: 450,
+        vulnerability_index: 0.85,
+      },
+      week: '2026-11-02',
+      risk_score: 84.5,
+      band: 'high',
+      rank: 1,
+      breakdown: [
+        { key: 'stock_gap_pct', label: 'Stock gap', points: 25.0, value: 10.5, unit: '%' },
+      ],
+      history: {
+        weeks: ['2026-11-02'],
+        series: {
+          stock_gap_pct: { shop: [10.5], peer_median: [2.1] },
+        },
+      },
+      stock_reconciliation: {
+        opening_kg: 1000.0,
+        received_kg: 500.0,
+        sold_kg: 400.0,
+        closing_kg: 950.0,
+        gap_kg: 150.0,
+        gap_pct: 10.5,
+      },
+      board_check: {
+        board_kg: 400.0,
+        sold_kg: 400.0,
+        mismatch_pct: 0.0,
+      },
+      complaints: [],
+      explanation: {
+        source: 'groq',
+        reason: 'Shop flagged due to elevated stock gap.',
+        evidence: [
+          { fact_id: 'val_stock_gap_pct', statement: 'Recorded 10.5% gap.' },
+        ],
+        checklist: [
+          { action: 'Audit godown physical stock', why: 'Gap detected', fact_id: 'val_stock_gap_pct' },
+        ],
+      },
+      feedback: [],
+    }
+
+    vi.spyOn(global, 'fetch').mockImplementation(async (url) => {
+      const u = String(url)
+      if (u.includes('/shops/FPS-00012')) {
+        return { ok: true, json: async () => mockDetail } as Response
+      }
+      return { ok: false, status: 404 } as Response
+    })
+
+    render(<ShopDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Shop FPS-00012 (FPS-00012)')).toBeDefined()
+      expect(screen.getByText('Score breakdown')).toBeDefined()
+      expect(screen.getByText('Stock reconciliation')).toBeDefined()
+      expect(screen.getByText('Why this shop was flagged')).toBeDefined()
+      expect(screen.getByText('What to check')).toBeDefined()
+      expect(screen.getByText('Record visit outcome')).toBeDefined()
     })
   })
 })
