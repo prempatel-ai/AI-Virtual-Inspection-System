@@ -134,9 +134,9 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 ## P15 Activity data, demo, hardening
 - [x] P15.1 `seed-activity`
 - [x] P15.2 Per-role Playwright e2e; update V1 e2e to sign in
-- [ ] P15.3 Security pass: cookie flags, headers, rate limit, no sensitive fields in responses, RBAC matrix complete
-- [ ] P15.4 Accessibility and screenshot review of all new screens against `docs/DESIGN.md`
-- [ ] P15.5 Update `docs/DEMO.md` with the V2 walkthrough (inspector, Mamlatdar, admin)
+- [x] P15.3 Security pass: cookie flags, headers, rate limit, no sensitive fields in responses, RBAC matrix complete
+- [x] P15.4 Accessibility and screenshot review of all new screens against `docs/DESIGN.md`
+- [x] P15.5 Update `docs/DEMO.md` with the V2 walkthrough (inspector, Mamlatdar, admin)
 - [ ] P15.6 Final Gate V2
 
 ## Final Gate V2 (all true, on a clean clone)

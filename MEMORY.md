@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P15 Activity data, demo, hardening
-- Last completed task: P15.2 (Per-role e2e tests implemented)
-- Next task: P15.3 (Security pass and RBAC completeness)
+- Last completed task: P15.5 (V2 demo walkthrough script updated)
+- Next task: P15.6 (Final Gate V2 verification)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -86,3 +86,6 @@ none
 - 2026-11-05 P14.4 Built /admin/users (provisioning, role/scope assignment, status toggle, password reset) and /admin/audit (append-only security log). Phase 14 exit gate passed.
 - 2026-11-05 P15.1 Built make seed-activity generator simulating 4 historical weeks of case progression, realistic officer outcomes, escalations, overdue aging, and target week scoring.
 - 2026-11-05 P15.2 Built per-role Playwright E2E suite (frontend/e2e/rbac.spec.ts) validating inspector, mamlatdar, district officer, vigilance, and admin; updated V1 e2e to sign in.
+- 2026-11-05 P15.3 Executed security hardening pass: added security headers (X-Content-Type-Options, X-Frame-Options, Referrer-Policy), validated cookie flags, lockout mechanisms, and verified absence of password_hash across all endpoints.
+- 2026-11-05 P15.4 Verified WCAG AA contrast compliance across all semantic tokens and validated component layout against docs/DESIGN.md.
+- 2026-11-05 P15.5 Updated docs/DEMO.md with comprehensive multi-user walkthrough covering Inspector, Mamlatdar, Vigilance, and Admin roles.
