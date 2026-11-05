@@ -1,0 +1,21 @@
+# Verification steps per signal used for inspector checklists
+
+signals:
+  stock_gap_pct:
+    action: "Conduct physical stock audit in shop godown"
+    why: "Physical stock count differs significantly from book stock records"
+  board_mismatch_pct:
+    action: "Inspect public display board and verify against ePoS ledger"
+    why: "Quantity displayed on notice board does not match digital sales volume"
+  unauth_share:
+    action: "Audit manual override / unauthenticated sales register"
+    why: "Unusual concentration of transactions completed without biometric authentication"
+  complaints_rate:
+    action: "Interview registered cardholders regarding denial and weight issues"
+    why: "Complaint volume is elevated compared to taluka peers"
+  auth_fail_rate:
+    action: "Test ePoS biometric scanner and network connectivity"
+    why: "Biometric authentication failure rate is abnormal compared to peer shops"
+  vulnerability_uplift:
+    action: "Assess beneficiary satisfaction in high-vulnerability pockets"
+    why: "Shop serves an economically vulnerable community where irregularities have higher impact"

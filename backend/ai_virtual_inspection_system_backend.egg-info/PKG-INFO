@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: ai-virtual-inspection-system-backend
+Version: 0.1.0
+Summary: PDS Self-Auditing and AI Virtual Inspection System
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.110.0
+Requires-Dist: uvicorn[standard]>=0.28.0
+Requires-Dist: pydantic>=2.6.0
+Requires-Dist: pandas>=2.2.0
+Requires-Dist: numpy>=1.26.0
+Requires-Dist: pyyaml>=6.0.1
+Requires-Dist: groq>=0.5.0
+Requires-Dist: httpx>=0.27.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: ruff>=0.3.0; extra == "dev"
+Requires-Dist: mypy>=1.9.0; extra == "dev"
+Requires-Dist: pandas-stubs>=2.2.0.240316; extra == "dev"
+Requires-Dist: types-PyYAML>=6.0.12.20240311; extra == "dev"
