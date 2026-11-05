@@ -161,6 +161,6 @@ describe('UI Blocks', () => {
     expect(screen.getByText('Record visit outcome')).toBeDefined()
     const button = screen.getByRole('button', { name: /Save outcome/i })
     await fireEvent.click(button)
-    expect(onSubmit).toHaveBeenCalledWith('pending', '')
+    expect(onSubmit).toHaveBeenCalledWith('confirmed', '')
   })
 })

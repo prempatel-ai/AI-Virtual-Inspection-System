@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-export type OutcomeType = "confirmed_irregularity" | "false_alarm" | "inconclusive" | "pending";
+export type OutcomeType = "confirmed" | "not_confirmed";
 
 interface FeedbackFormProps {
   shopId: string;
@@ -13,7 +13,7 @@ interface FeedbackFormProps {
 
 export function FeedbackForm({
   shopId,
-  initialOutcome = "pending",
+  initialOutcome = "confirmed",
   initialNotes = "",
   onSubmit,
 }: FeedbackFormProps) {
@@ -50,10 +50,8 @@ export function FeedbackForm({
             onChange={(e) => setOutcome(e.target.value as OutcomeType)}
             className="w-full bg-bg border border-border rounded-sm p-2 text-body text-text"
           >
-            <option value="pending">Pending inspection</option>
-            <option value="confirmed_irregularity">Confirmed irregularity</option>
-            <option value="false_alarm">False alarm (no issues found)</option>
-            <option value="inconclusive">Inconclusive / follow-up required</option>
+            <option value="confirmed">Confirmed irregularity</option>
+            <option value="not_confirmed">Not confirmed (false alarm)</option>
           </select>
         </div>
 

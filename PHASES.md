@@ -54,7 +54,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P6.1 `tokens.css`, Tailwind mapped to tokens, font loaded
 - [x] P6.2 Blocks: AppShell, PageHeader, SyntheticBanner, KpiCard, DataTable, RiskBadge, SignalChip, EmptyState, ErrorState, Skeleton, FilterBar
 - [x] P6.3 Blocks: ScoreBreakdown, TrendChart, ReconcileTable, EvidenceList, ChecklistPanel, FeedbackForm
-- [ ] P6.4 API client wrapper using generated types
+- [x] P6.4 API client wrapper using generated types
 - [ ] P6.5 Dev-only block gallery at `/_blocks`
 - [ ] P6.6 Contrast check script for all token pairs (WCAG AA)
 **Exit:** lint, types, component tests pass. Gallery renders every block. Contrast script passes.
