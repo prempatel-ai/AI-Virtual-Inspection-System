@@ -16,6 +16,7 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 - D-005 UI is light theme only.
 - D-006 If `GROQ_API_KEY` is missing or the LLM output fails validation, use the template explanation. The app must work fully without a key.
 - D-007 No authentication in the MVP.
+- D-008 Pre-approved frontend dependencies: recharts, lucide-react, clsx, openapi-typescript, vitest, Playwright, axe.
 
 ## Assumptions (from the problem statement gaps; confirm before real deployment)
 - A-001 "Authentication" is the Aadhaar-based fingerprint/OTP check of the ration card holder on the shop's ePoS device. Based on public sources; not verified against Gujarat's internal data.
@@ -26,6 +27,7 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 - A-006 The public display board figure is "kg distributed as displayed". How it reaches the system is unknown.
 - A-007 Weekly analysis window. Real refresh frequency unknown.
 - A-008 Weights and thresholds in `config.yaml` are starting values, not validated.
+- A-009 The problem statement does not name the state. Synthetic data uses Gujarat district names only for realism (see docs/DATA_SPEC.md).
 
 ## Blockers
 none
