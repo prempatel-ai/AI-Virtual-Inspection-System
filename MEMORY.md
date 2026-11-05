@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P10 Auth and users
-- Last completed task: P10.2
-- Next task: P10.3 (Password hashing, login, logout, me, cookie session, lockout, CSRF header, audit_log writes)
+- Last completed task: P10.3
+- Next task: P10.4 (Shared permission table, auth dependency, scope filter; apply to all V1 endpoints)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -62,3 +62,4 @@ none
 - 2026-11-05 P10.0 Code audit completed against V2 spec. Recorded deviations DEV-001..DEV-003 in MEMORY.md. Verified make check pass.
 - 2026-11-05 P10.1 Merged docs/V2_SPEC.md into PRODUCT, ARCHITECTURE, API, DATA_SPEC, TESTING, DESIGN, RULES, MEMORY; appended P10-P15 to PHASES.md.
 - 2026-11-05 P10.2 Added users, shops.inspector_id, and audit_log tables with append-only triggers, config keys for auth and cases, and tests.
+- 2026-11-05 P10.3 Implemented argon2 password hashing, JWT HttpOnly cookie sessions, CSRF validation, generic login error, 15-min lockout after 5 failures, login/logout/me routes with audit_log tracking, and unit tests.

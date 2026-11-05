@@ -18,6 +18,43 @@ class HealthResponse(BaseModel):
     status: str
 
 
+# --- Auth Schemas ---
+
+
+class UserSummary(BaseModel):
+    user_id: str
+    name: str
+    email: str
+    role: str
+    district: Optional[str] = None
+    taluka: Optional[str] = None
+
+
+class ScopeInfo(BaseModel):
+    level: str
+    district: Optional[str] = None
+    taluka: Optional[str] = None
+    inspector_id: Optional[str] = None
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class LoginResponse(BaseModel):
+    user: UserSummary
+    permissions: List[str]
+    scope: ScopeInfo
+
+
+class LogoutResponse(BaseModel):
+    status: str = "ok"
+
+
+# --- Meta & Summary Schemas ---
+
+
 class MetaResponse(BaseModel):
     synthetic: bool
     weeks: List[str]
@@ -53,6 +90,13 @@ class SignalSummary(BaseModel):
     points: float
 
 
+class CaseSummary(BaseModel):
+    case_id: str
+    status: str
+    assignee_id: Optional[str] = None
+    assignee_name: Optional[str] = None
+
+
 class RankedShopItem(BaseModel):
     rank: int
     shop_id: str
@@ -63,6 +107,7 @@ class RankedShopItem(BaseModel):
     band: str
     top_signals: List[SignalSummary]
     trend: List[float]
+    case: Optional[CaseSummary] = None
 
 
 class RankedShopsResponse(BaseModel):
@@ -78,6 +123,7 @@ class ShopMeta(BaseModel):
     taluka: str
     cards_count: int
     vulnerability_index: float
+    inspector_id: Optional[str] = None
 
 
 class BreakdownItem(BaseModel):
@@ -159,6 +205,7 @@ class ShopDetailResponse(BaseModel):
     complaints: List[ComplaintCategoryCount]
     explanation: ExplanationData
     feedback: List[FeedbackItem]
+    case: Optional[CaseSummary] = None
 
 
 class RunRequest(BaseModel):

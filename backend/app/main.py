@@ -1,18 +1,33 @@
 """FastAPI main application."""
 
+import os
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api.auth import router as auth_router
 from app.api.routes import router
 from app.schemas import HealthResponse
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup checks: JWT_SECRET must be present."""
+    jwt_secret = os.getenv("JWT_SECRET")
+    if not jwt_secret:
+        raise RuntimeError("JWT_SECRET environment variable is required")
+    yield
+
 
 app = FastAPI(
     title="PDS Self-Auditing & AI Virtual Inspection System API",
     version="0.1.0",
     docs_url="/docs",
     openapi_url="/openapi.json",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -56,4 +71,5 @@ def health() -> HealthResponse:
     return HealthResponse(status="ok")
 
 
+app.include_router(auth_router)
 app.include_router(router)

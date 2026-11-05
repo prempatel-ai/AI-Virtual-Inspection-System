@@ -95,7 +95,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P10.0 Audit the current code against the docs; run `make check`; record deviations in MEMORY.md; do not refactor unrelated code
 - [x] P10.1 Merge this spec into PRODUCT, ARCHITECTURE, API, DATA_SPEC, TESTING, DESIGN, RULES, MEMORY; append these phases to PHASES.md (docs commit)
 - [x] P10.2 Schema: `users`, `shops.inspector_id`, `audit_log` with triggers; config keys
-- [ ] P10.3 Password hashing, login, logout, `me`, cookie session, lockout, CSRF header, `audit_log` writes
+- [x] P10.3 Password hashing, login, logout, `me`, cookie session, lockout, CSRF header, `audit_log` writes
 - [ ] P10.4 Shared permission table, auth dependency, scope filter; apply to all V1 endpoints
 - [ ] P10.5 `seed-users` and demo users file
 - [ ] P10.6 Auth and RBAC tests (matrix, scope, lockout, cookie flags)
