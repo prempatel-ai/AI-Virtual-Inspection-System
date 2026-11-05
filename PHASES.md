@@ -137,7 +137,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P15.3 Security pass: cookie flags, headers, rate limit, no sensitive fields in responses, RBAC matrix complete
 - [x] P15.4 Accessibility and screenshot review of all new screens against `docs/DESIGN.md`
 - [x] P15.5 Update `docs/DEMO.md` with the V2 walkthrough (inspector, Mamlatdar, admin)
-- [ ] P15.6 Final Gate V2
+- [x] P15.6 Final Gate V2
 
 ## Final Gate V2 (all true, on a clean clone)
 1. `make check` and `make e2e` pass, including per-role e2e.
