@@ -166,16 +166,43 @@ stateDiagram-v2
 ```
 
 ### Transition Authority Rules:
-- **`start_inspection` & `record_outcome`**: Exclusively executable by the case's current assignee.
-- **`reassign` & `close`**: Authorized for Taluka Mamlatdars, District Officers, and Administrators.
-- **`escalate`**: Follows administrative ladder: Inspector $\rightarrow$ Mamlatdar $\rightarrow$ District Officer $\rightarrow$ State Vigilance.
-- **`add_note`**: Permitted across all open states by authorized personnel (including Vigilance).
+- **start_inspection & record_outcome**: Exclusively executable by the case's current assignee.
+- **reassign & close**: Authorized for Taluka Mamlatdars, District Officers, and Administrators.
+- **escalate**: Follows administrative hierarchy: Inspector -> Mamlatdar -> District Officer -> State Vigilance.
+- **add_note**: Permitted across all open states by authorized personnel (including Vigilance).
 
 ---
 
-## Administrative Roles & Security Scoping
+## Multi-Tier Administrative Roles & Jurisdiction Scoping
 
-The system enforces strict role-based access control (RBAC) across 5 administrative tiers:
+The platform mirrors the statutory governance hierarchy of the Gujarat Food & Civil Supplies Department across 8 Districts and 69 Authentic Talukas:
+
+```mermaid
+flowchart TB
+    subgraph StateTier ["State Jurisdiction (All Gujarat)"]
+        direction LR
+        ADMIN["System Administrator<br/>• User Provisioning & Access Control<br/>• Security Audit Trail Review<br/>• Weekly Pipeline Execution"]
+        VIGILANCE["State Vigilance Directorate<br/>• Statewide Anomaly & Rate Review<br/>• Escalated Fraud Inquiries<br/>• Independent Oversight Notes"]
+    end
+
+    subgraph DistrictTier ["District Jurisdiction (8 Districts)"]
+        DO["District Supply Officer (DSO)<br/>• District Flag Rates & Quotas<br/>• Cross-Taluka Case Monitoring<br/>• Case Escalations & Supervisory Closure"]
+    end
+
+    subgraph TalukaTier ["Taluka Jurisdiction (69 Authentic Talukas)"]
+        MAMLATDAR["Taluka Mamlatdar<br/>• Taluka Fair Price Shop Governance<br/>• Case Reassignment & Inspector Workload<br/>• Verification Review & Case Closure"]
+    end
+
+    subgraph FieldTier ["Field Enforcement (~17,000 Fair Price Shops)"]
+        INSPECTOR["Field Inspection Officer<br/>• Dedicated Assigned Priority Queue<br/>• Physical Stock & Weighing Scale Audits<br/>• Enforcement Findings Submission"]
+    end
+
+    StateTier --> DistrictTier
+    DistrictTier --> TalukaTier
+    TalukaTier --> FieldTier
+
+    FieldTier -. "Severe Case Escalations" .-> VIGILANCE
+```
 
 | Role | Geographic Scope | Queue Access | Case Actions Permitted | Administrative Privileges |
 |---|---|---|---|---|
