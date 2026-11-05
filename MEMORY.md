@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P3
-- Last completed task: P3.3
-- Next task: P3.4
+- Last completed task: P3.4
+- Next task: P3.5
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -52,3 +52,4 @@ none
 - 2026-11-05 P3.1 Created config.py loader and verified weights, thresholds, and bands loading.
 - 2026-11-05 P3.2 Implemented scoring.py with exact breakdown decomposition summing to final score.
 - 2026-11-05 P3.3 Implemented run.py to run full inspection pipeline and persist scores and run records.
+- 2026-11-05 P3.4 Implemented evaluate.py to compute precision@K, recall@2K, and outage false alarm rate against ground truth.
