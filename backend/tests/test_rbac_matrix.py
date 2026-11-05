@@ -57,19 +57,32 @@ def rbac_test_env(tmp_path_factory) -> Generator[Dict[str, str], None, None]:
 
     pwd_hash = hash_password("password123")
 
-    # Pick first shop for Ahmedabad Taluka 1
+    # Pick first shop for Ahmedabad
     cursor.execute(
         """
-        SELECT shop_id FROM shops
-        WHERE district = 'Ahmedabad' AND taluka = 'Ahmedabad Taluka 1'
+        SELECT shop_id, district, taluka FROM shops
+        WHERE district = 'Ahmedabad'
+        ORDER BY shop_id
         LIMIT 1;
         """
     )
-    own_shop_id = cursor.fetchone()["shop_id"]
+    own_row = cursor.fetchone()
+    own_shop_id = own_row["shop_id"]
+    own_taluka = own_row["taluka"]
 
     # Pick shop outside Ahmedabad (e.g. Surat)
-    cursor.execute("SELECT shop_id FROM shops WHERE district != 'Ahmedabad' LIMIT 1;")
-    foreign_shop_id = cursor.fetchone()["shop_id"]
+    cursor.execute(
+        """
+        SELECT shop_id, district, taluka FROM shops
+        WHERE district != 'Ahmedabad'
+        ORDER BY shop_id
+        LIMIT 1;
+        """
+    )
+    foreign_row = cursor.fetchone()
+    foreign_shop_id = foreign_row["shop_id"]
+    foreign_district = foreign_row["district"]
+    foreign_taluka = foreign_row["taluka"]
 
     # Insert users for each role
     cursor.execute(
@@ -78,9 +91,9 @@ def rbac_test_env(tmp_path_factory) -> Generator[Dict[str, str], None, None]:
             user_id, name, email, password_hash, role, district, taluka, is_active, created_at
         ) VALUES
         ('u-insp', 'Insp User', 'insp@demo.invalid', ?, 'inspector',
-         'Ahmedabad', 'Ahmedabad Taluka 1', 1, '2026-11-05T00:00:00Z'),
+         'Ahmedabad', ?, 1, '2026-11-05T00:00:00Z'),
         ('u-mam', 'Mam User', 'mam@demo.invalid', ?, 'mamlatdar',
-         'Ahmedabad', 'Ahmedabad Taluka 1', 1, '2026-11-05T00:00:00Z'),
+         'Ahmedabad', ?, 1, '2026-11-05T00:00:00Z'),
         ('u-do', 'DO User', 'do@demo.invalid', ?, 'district_officer',
          'Ahmedabad', NULL, 1, '2026-11-05T00:00:00Z'),
         ('u-vig', 'Vig User', 'vig@demo.invalid', ?, 'vigilance',
@@ -88,9 +101,20 @@ def rbac_test_env(tmp_path_factory) -> Generator[Dict[str, str], None, None]:
         ('u-adm', 'Adm User', 'adm@demo.invalid', ?, 'admin',
          NULL, NULL, 1, '2026-11-05T00:00:00Z'),
         ('u-foreign', 'Foreign Insp', 'foreign@demo.invalid', ?, 'inspector',
-         'Surat', 'Surat Taluka 1', 1, '2026-11-05T00:00:00Z');
+         ?, ?, 1, '2026-11-05T00:00:00Z');
         """,
-        (pwd_hash, pwd_hash, pwd_hash, pwd_hash, pwd_hash, pwd_hash),
+        (
+            pwd_hash,
+            own_taluka,
+            pwd_hash,
+            own_taluka,
+            pwd_hash,
+            pwd_hash,
+            pwd_hash,
+            pwd_hash,
+            foreign_district,
+            foreign_taluka,
+        ),
     )
 
     # Assign own_shop_id to inspector

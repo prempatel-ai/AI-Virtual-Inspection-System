@@ -12,6 +12,7 @@ import numpy as np
 from app.config import get_db_path
 from app.data.scenarios import (
     COMPLAINT_CATEGORIES,
+    DISTRICT_TALUKAS,
     DISTRICTS,
     SCENARIOS,
 )
@@ -36,17 +37,30 @@ def generate_pds_data(
     ]
 
     # 2. Setup Talukas and Districts
-    # Target ~10 shops per taluka
-    shops_per_taluka = 10
-    num_talukas = max(len(DISTRICTS), round(num_shops / shops_per_taluka))
-    talukas: List[Tuple[str, str]] = []
-    for t_idx in range(num_talukas):
-        dist = DISTRICTS[t_idx % len(DISTRICTS)]
-        taluka_num = (t_idx // len(DISTRICTS)) + 1
-        talukas.append((dist, f"{dist} Taluka {taluka_num}"))
+    all_talukas: List[Tuple[str, str]] = []
+    for dist in DISTRICTS:
+        for tal in DISTRICT_TALUKAS.get(dist, [dist]):
+            all_talukas.append((dist, tal))
 
-    # Pick outage taluka (Scenario S7)
-    outage_taluka_idx = rng.choice(num_talukas)
+    # If num_shops is less than the count of all talukas, scale down talukas
+    # so that each taluka receives multiple shops (needed for peer stats and outage detection)
+    if num_shops < len(all_talukas):
+        target_count = max(len(DISTRICTS), num_shops // 3)
+        talukas = all_talukas[:target_count]
+    else:
+        talukas = all_talukas
+
+    num_talukas = len(talukas)
+
+    # Pick outage taluka (Scenario S7) - prefer Kadi in Mehsana for demo scenario consistency
+    kadi_idx = next(
+        (i for i, (d, t) in enumerate(talukas) if d == "Mehsana" and t == "Kadi"),
+        None,
+    )
+    if kadi_idx is not None:
+        outage_taluka_idx = kadi_idx
+    else:
+        outage_taluka_idx = int(rng.choice(num_talukas))
     outage_dist, outage_taluka = talukas[outage_taluka_idx]
 
     # 3. Create Shops

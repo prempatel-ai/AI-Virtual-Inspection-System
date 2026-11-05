@@ -1,7 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import { RoleNav } from "./RoleNav";
-import { SyntheticBanner } from "./SyntheticBanner";
 
 interface AppShellProps {
   children: React.ReactNode;

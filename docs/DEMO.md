@@ -26,8 +26,8 @@ The system is seeded with representative administrative personnel, supervisors, 
 
 | Role | Email Account | Geographic Scope | Primary Authority |
 |---|---|---|---|
-| **Inspector** | `ananya.patel.13@demo.invalid` | Ahmedabad • Taluka 1 | Works assigned cases, conducts virtual/field checks, records findings |
-| **Mamlatdar** | `saanvi.patel.12@demo.invalid` | Ahmedabad • Taluka 1 | Supervises taluka cases, reassigns inspectors, reviews & closes cases |
+| **Inspector** | `ananya.patel.13@demo.invalid` | Ahmedabad • Ahmedabad City | Works assigned cases, conducts virtual/field checks, records findings |
+| **Mamlatdar** | `saanvi.patel.12@demo.invalid` | Ahmedabad • Ahmedabad City | Supervises taluka cases, reassigns inspectors, reviews & closes cases |
 | **District Officer** | `vihaan.patel.4@demo.invalid` | Ahmedabad District | District-wide oversight, cross-taluka metrics, escalations |
 | **Vigilance** | `vivaan.patel.2@demo.invalid` | State-wide (Gujarat) | State audit oversight, read-only inspection review, notes |
 | **Admin** | `aarav.patel.1@demo.invalid` | State-wide (Gujarat) | User provisioning, credential management, access log audit |
@@ -120,7 +120,7 @@ The system is seeded with representative administrative personnel, supervisors, 
      - Name: `Vikram Solanki`
      - Email: `v.solanki@pds.gujarat.gov.in`
      - Role: `Inspector`
-     - District: `Ahmedabad`, Taluka: `Ahmedabad Taluka 2`
+     - District: `Ahmedabad`, Taluka: `Sanand`
      - Click **Provision Account**.
      - Observe the temporary password notice generated for secure handover.
    - Test **Reset Password** on any user using the inline confirmation button.

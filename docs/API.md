@@ -25,10 +25,10 @@ Public. Authenticates with email and password. Sets an `HttpOnly`, `SameSite=Lax
     "email": "arun.patel.1@demo.invalid",
     "role": "inspector",
     "district": "Ahmedabad",
-    "taluka": "Ahmedabad Taluka 1"
+    "taluka": "Ahmedabad City"
   },
   "permissions": ["flags:view", "cases:view", "cases:act", "cases:note", "cases:escalate", "officers:view", "actions:view"],
-  "scope": {"role": "inspector", "district": "Ahmedabad", "taluka": "Ahmedabad Taluka 1"}
+  "scope": {"role": "inspector", "district": "Ahmedabad", "taluka": "Ahmedabad City"}
 }
 ```
 - Error: 401 generic message `"Invalid email or password"`. After 5 consecutive failures, 429 lockout for 15 minutes.
@@ -58,7 +58,7 @@ Permission: any authenticated user.
   "weeks": ["2026-08-17"],
   "latest_week": "2026-11-02",
   "districts": ["Ahmedabad"],
-  "talukas": {"Ahmedabad": ["Ahmedabad Taluka 1"]},
+  "talukas": {"Ahmedabad": ["Ahmedabad City"]},
   "shops_count": 500,
   "has_run": true
 }
@@ -110,7 +110,7 @@ Permission: `flags:view`. Scoped to user's jurisdiction.
       "shop_id": "FPS-00012",
       "name": "Shop FPS-00012",
       "district": "Ahmedabad",
-      "taluka": "Ahmedabad Taluka 1",
+      "taluka": "Ahmedabad City",
       "risk_score": 78.4,
       "band": "high",
       "top_signals": [{"key": "stock_gap_pct", "label": "Stock gap", "points": 30.0}],
@@ -146,7 +146,7 @@ Permission: `cases:view`. Scoped list of cases. Default sort: `risk_score_latest
       "shop_id": "FPS-00012",
       "shop_name": "Shop FPS-00012",
       "district": "Ahmedabad",
-      "taluka": "Ahmedabad Taluka 1",
+      "taluka": "Ahmedabad City",
       "status": "assigned",
       "risk_score_latest": 78.4,
       "band_latest": "high",
@@ -172,7 +172,7 @@ Permission: `cases:view`. Returns 404 if out of scope.
     "shop_id": "FPS-00012",
     "shop_name": "Shop FPS-00012",
     "district": "Ahmedabad",
-    "taluka": "Ahmedabad Taluka 1",
+    "taluka": "Ahmedabad City",
     "status": "assigned",
     "risk_score_latest": 78.4,
     "band_latest": "high",
@@ -233,7 +233,7 @@ Permission: `officers:view`. Returns scoped officers list with aggregate perform
       "name": "Arun Patel",
       "role": "inspector",
       "district": "Ahmedabad",
-      "taluka": "Ahmedabad Taluka 1",
+      "taluka": "Ahmedabad City",
       "is_active": true,
       "stats": {
         "assigned_cases": 8,

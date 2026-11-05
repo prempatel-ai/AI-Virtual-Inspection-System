@@ -135,7 +135,7 @@ def print_banner() -> None:
   - S4 Complaint Surge:       FPS-00001 (Mehsana) - Denied rations / short weight
   - S5 Multi-Signal Severe:   FPS-00167 (Mehsana) - Stock deficit + overrides + complaints
   - S6 Vulnerable Priority:   FPS-00131 (Mehsana) - High vulnerability index uplift
-  - S7 Outage Taluka Trap:    Kadi Taluka         - Filtered from false alarms
+  - S7 Outage Taluka Trap:    Kadi (Mehsana)      - Filtered from false alarms
 
   Press Ctrl+C to terminate both servers.
 ================================================================================
