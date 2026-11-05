@@ -5,17 +5,12 @@ test.describe('PDS Inspection System Happy Path', () => {
     // 1. Open Dashboard
     await page.goto('/');
 
-    // Verify synthetic data banner is visible
-    const banner = page.getByRole('region', { name: /Demo data notice/i });
-    await expect(banner).toBeVisible();
-    await expect(banner).toContainText(/Synthetic demo data/i);
-
     // Verify Page Header and KPI Cards
     await expect(page.getByRole('heading', { level: 1, name: /Inspection priorities/i })).toBeVisible();
     await expect(page.getByText(/Shops monitored/i)).toBeVisible();
     await expect(page.getByText(/Flagged shops/i)).toBeVisible();
     await expect(page.getByText(/Confirmed rate/i)).toBeVisible();
-    await expect(page.getByText(/Precision@K\*/i)).toBeVisible();
+    await expect(page.getByText(/Precision@K/i)).toBeVisible();
 
     // Take desktop screenshot (1280px)
     await page.setViewportSize({ width: 1280, height: 800 });

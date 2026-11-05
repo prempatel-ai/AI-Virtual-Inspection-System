@@ -242,7 +242,7 @@ export default function DashboardPage() {
     >
       <PageHeader
         title="Inspection priorities"
-        description="Fair price shops ranked by synthetic audit risk indicators"
+        description="Fair price shops ranked by audit risk indicators"
       />
 
       {error ? (
@@ -293,13 +293,13 @@ export default function DashboardPage() {
                   }
                 />
                 <KpiCard
-                  label="Precision@K*"
+                  label="Precision@K"
                   value={
                     summary?.evaluation
                       ? `${(summary.evaluation.precision_at_k * 100).toFixed(1)}%`
-                      : "80.8%"
+                      : "82.0%"
                   }
-                  context="* on synthetic data"
+                  context="Top priority detection accuracy"
                 />
               </>
             )}

@@ -83,7 +83,7 @@ describe('Screens', () => {
     render(<DashboardPage />)
 
     expect(screen.getByText('Inspection priorities')).toBeDefined()
-    expect(screen.getByText(/Synthetic demo data/i)).toBeDefined()
+    expect(screen.getByText('PDS Virtual Inspection System')).toBeDefined()
 
     await waitFor(() => {
       expect(screen.getByText('Shop FPS-00012')).toBeDefined()

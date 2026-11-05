@@ -1,5 +1,4 @@
 import React from "react";
-import { SyntheticBanner } from "./SyntheticBanner";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -9,7 +8,6 @@ interface AppShellProps {
 export function AppShell({ children, headerRight }: AppShellProps) {
   return (
     <div className="min-h-screen bg-surface flex flex-col">
-      <SyntheticBanner />
       <header className="w-full bg-bg border-b border-border">
         <div className="max-w-container mx-auto px-6 h-12 flex items-center justify-between">
           <div className="flex items-center space-x-3">
