@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P5
-- Last completed task: P4.6
-- Next task: P5.1
+- Last completed task: P5.1
+- Next task: P5.2
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -60,3 +60,4 @@ none
 - 2026-11-05 P4.4 Implemented POST /shops/{id}/feedback and linked confirmed_rate to summary KPI.
 - 2026-11-05 P4.5 Automated make types to export openapi.json and generate compiled frontend types/api.d.ts.
 - 2026-11-05 P4.6 Added API tests covering endpoints, filters, pagination, 404, 422, and confirmed_rate updates. Phase 4 exit gate passed.
+- 2026-11-05 P5.1 Implemented facts.py building facts payload with fact_ids, allowed numbers set, and sha256 hash.

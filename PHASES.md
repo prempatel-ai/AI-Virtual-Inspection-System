@@ -42,7 +42,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** all endpoints match docs/API.md. Tests pass. Generated types compile.
 
 ## P5 LLM explanation
-- [ ] P5.1 `facts.py` builds the facts payload with `fact_id`s
+- [x] P5.1 `facts.py` builds the facts payload with `fact_id`s
 - [ ] P5.2 `templates.py` and `checklists.yaml` (fallback explanation)
 - [ ] P5.3 `groq_client.py` (timeout, retry, JSON output)
 - [ ] P5.4 `validate.py` (reject unknown fact_ids and numbers not in the payload)
