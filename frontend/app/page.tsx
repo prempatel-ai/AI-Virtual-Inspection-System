@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   AppShell,
   PageHeader,
@@ -57,6 +58,7 @@ function Sparkline({ data }: { data: number[] }) {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [meta, setMeta] = useState<MetaResponse | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<string>("");
   const [summary, setSummary] = useState<SummaryResponse | null>(null);
@@ -165,7 +167,7 @@ export default function DashboardPage() {
       header: "Shop",
       render: (item) => (
         <div>
-          <span className="font-medium text-text">{item.name}</span>
+          <span className="font-medium text-accent hover:underline">{item.name}</span>
           <span className="text-meta text-text-muted block">{item.shop_id}</span>
         </div>
       ),
@@ -360,6 +362,7 @@ export default function DashboardPage() {
                 data={rankedShops}
                 keyField="shop_id"
                 getRowHref={(item) => `/shops/${item.shop_id}?week=${selectedWeek}`}
+                onRowClick={(item) => router.push(`/shops/${item.shop_id}?week=${selectedWeek}`)}
               />
             </div>
           )}

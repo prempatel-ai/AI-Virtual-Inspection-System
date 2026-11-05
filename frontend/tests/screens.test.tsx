@@ -9,6 +9,11 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => ({
     get: (key: string) => (key === 'week' ? '2026-11-02' : null),
   }),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
 }))
 
 describe('Screens', () => {

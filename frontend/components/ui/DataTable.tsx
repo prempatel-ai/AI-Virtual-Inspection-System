@@ -50,16 +50,23 @@ export function DataTable<T>({
             const key = typeof keyField === "function" ? keyField(item) : String(item[keyField]);
             const href = getRowHref ? getRowHref(item) : undefined;
 
+            const handleNavigate = () => {
+              if (onRowClick) {
+                onRowClick(item);
+              } else if (href && typeof window !== "undefined") {
+                window.location.href = href;
+              }
+            };
+
             return (
               <tr
                 key={key}
                 tabIndex={0}
-                onClick={() => onRowClick && onRowClick(item)}
+                onClick={handleNavigate}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && href) {
-                    window.location.href = href;
-                  } else if (e.key === "Enter" && onRowClick) {
-                    onRowClick(item);
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleNavigate();
                   }
                 }}
                 className={`border-b border-border last:border-b-0 h-[44px] hover:bg-surface transition-colors ${
@@ -77,8 +84,17 @@ export function DataTable<T>({
                         : "text-left"
                     }`}
                   >
-                    {href && col === columns[0] ? (
-                      <a href={href} className="text-accent font-medium hover:underline block">
+                    {href && (col.key === "shop" || col.key === "rank" || col === columns[0] || col === columns[1]) ? (
+                      <a
+                        href={href}
+                        onClick={(e) => {
+                          if (onRowClick) {
+                            e.preventDefault();
+                            onRowClick(item);
+                          }
+                        }}
+                        className="text-accent font-medium hover:underline block"
+                      >
                         {col.render(item, index)}
                       </a>
                     ) : (
