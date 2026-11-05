@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P5
-- Last completed task: P5.3
-- Next task: P5.4
+- Last completed task: P5.4
+- Next task: P5.5
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -63,3 +63,4 @@ none
 - 2026-11-05 P5.1 Implemented facts.py building facts payload with fact_ids, allowed numbers set, and sha256 hash.
 - 2026-11-05 P5.2 Implemented templates.py and checklists.yaml generating deterministic fallback explanations.
 - 2026-11-05 P5.3 Implemented groq_client.py with timeout 10s, 2 retries, temperature 0, and JSON mode.
+- 2026-11-05 P5.4 Implemented validate.py strictly checking schema, unknown fact_ids, and number hallucinations.
