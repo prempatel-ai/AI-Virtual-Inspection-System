@@ -125,10 +125,10 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** an inspector signs in, works a case end to end, and sees only their own data.
 
 ## P14 Frontend: oversight and admin
-- [ ] P14.1 `/overview` and `/areas` with flag rates
-- [ ] P14.2 `/officers` and `/officers/[id]` with `PermissionList` and action timeline
-- [ ] P14.3 `/actions` feed
-- [ ] P14.4 `/admin/users` and  `/admin/audit`
+- [x] P14.1 `/overview` and `/areas` with flag rates
+- [x] P14.2 `/officers` and `/officers/[id]` with `PermissionList` and action timeline
+- [x] P14.3 `/actions` feed
+- [x] P14.4 `/admin/users` and  `/admin/audit`
 **Exit:** supervisors see their scope; the admin sees the whole state, every officer's access and actions, and flag rates by area.
 
 ## P15 Activity data, demo, hardening

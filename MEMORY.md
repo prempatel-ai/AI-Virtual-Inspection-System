@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P14 Frontend: oversight and admin
-- Last completed task: P13.4 (Phase 13 Exit Gate Passed)
-- Next task: P14.1 (/overview and /areas screens)
+- Current phase: P15 Activity data, demo, hardening
+- Last completed task: P14.4 (Phase 14 Exit Gate Passed)
+- Next task: P15.1 (seed-activity generator)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -80,3 +80,7 @@ none
 - 2026-11-05 P13.2 Created V2 reusable UI blocks: StatusBadge, CaseActionBar, OutcomeForm, ActionTimeline, AssigneeSelect, InlineConfirm, PermissionList. All tests and lint pass.
 - 2026-11-05 P13.3 Built /queue and /cases/[id] screens driven strictly by allowed_actions, inline confirm, action timeline, and shop evidence.
 - 2026-11-05 P13.4 Verified role landing, /flags migration, and complete inspector workflow. make check passes 100%. Phase 13 exit gate passed.
+- 2026-11-05 P14.1 Built executive /overview (jurisdiction child area cards, status distribution) and /areas (level selector, flag rates, open/overdue cases, confirmed rates).
+- 2026-11-05 P14.2 Built /officers roster and /officers/[id] profile (PermissionList, assigned cases, immutable recent action timeline, area flag rate).
+- 2026-11-05 P14.3 Built /actions audit feed with action-type filtering and search.
+- 2026-11-05 P14.4 Built /admin/users (provisioning, role/scope assignment, status toggle, password reset) and /admin/audit (append-only security log). Phase 14 exit gate passed.
