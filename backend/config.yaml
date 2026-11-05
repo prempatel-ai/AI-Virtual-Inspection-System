@@ -14,24 +14,24 @@ anomaly:
 hard_signals:
   stock_gap_pct:
     low: 2.0
-    high: 10.0
+    high: 6.0
   board_mismatch_pct:
     low: 5.0
-    high: 20.0
+    high: 12.0
 
 weights:
-  stock_gap_pct: 0.30
-  board_mismatch_pct: 0.20
+  stock_gap_pct: 0.25
+  board_mismatch_pct: 0.25
   unauth_share: 0.20
   complaints_rate: 0.15
-  auth_fail_rate: 0.15
+  auth_fail_rate: 0.10
 
 bands:
   high: 60.0
   medium: 30.0
 
 vulnerability:
-  uplift_factor: 0.25
+  uplift_factor: 0.90
 
 explanation:
   top_k: 20
