@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P2
-- Last completed task: P2.2
-- Next task: P2.3
+- Last completed task: P2.3
+- Next task: P2.4
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -47,3 +47,4 @@ none
 - 2026-11-05 P1.5 Added data tests for determinism, planted counts, ranges, stock chain, and outage trap. Phase 1 exit gate passed.
 - 2026-11-05 P2.1 Implemented pure feature extraction in features.py for rate signals and hard signals.
 - 2026-11-05 P2.2 Implemented anomaly.py: robust z-score vs own history and peers with fallback and district widening.
+- 2026-11-05 P2.3 Implemented checks.py: deterministic stock gap and board mismatch evaluation with direction.
