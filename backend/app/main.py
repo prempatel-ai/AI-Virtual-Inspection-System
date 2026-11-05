@@ -8,8 +8,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api.admin import router as admin_router
 from app.api.auth import router as auth_router
 from app.api.cases import router as cases_router
+from app.api.oversight import router as oversight_router
 from app.api.routes import router
 from app.schemas import HealthResponse
 
@@ -74,4 +76,6 @@ def health() -> HealthResponse:
 
 app.include_router(auth_router)
 app.include_router(cases_router)
+app.include_router(oversight_router)
+app.include_router(admin_router)
 app.include_router(router)

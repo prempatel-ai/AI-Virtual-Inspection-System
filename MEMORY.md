@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P12 Oversight APIs
-- Last completed task: P12.1
-- Next task: P12.2 (GET /areas, GET /officers, GET /officers/{id}, GET /actions, scope-aware GET /summary)
+- Current phase: P13 Frontend: auth and officer screens
+- Last completed task: P12.4 (Phase 12 Exit Gate Passed)
+- Next task: P13.1 (/login, session handling, 401 redirect, 403 page, RoleNav from permissions)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -73,3 +73,6 @@ none
 - 2026-11-05 P11.5 Linked case summaries to GET /shops/ranked and GET /shops/{id}; verified POST /run is admin-only.
 - 2026-11-05 P11.6 Added integration tests for cases API lifecycle, state transitions, scope isolation, and expanded RBAC matrix (126 passing tests). Phase 11 exit gate passed.
 - 2026-11-05 P12.1 Built central metrics engine in backend/app/metrics.py (area metrics, officer stats, confirmed rate, overdue, median time to first action) with golden tests.
+- 2026-11-05 P12.2 Implemented oversight endpoints GET /areas, GET /officers, GET /officers/{id}, GET /actions, and scope-aware open/overdue cases in GET /summary.
+- 2026-11-05 P12.3 Implemented admin user management (GET/POST/PATCH /admin/users), password reset, and access log (GET /admin/audit) with tests and audit logging.
+- 2026-11-05 P12.4 Regenerated frontend OpenAPI spec and TypeScript types via make types; all 168 tests pass. Phase 12 exit gate passed.

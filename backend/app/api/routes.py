@@ -8,8 +8,10 @@ from fastapi import APIRouter, Depends, Query
 
 from app.auth.dependencies import get_current_user, require_permission, verify_csrf
 from app.auth.scope import ScopeFilter, get_scope_filter
+from app.config import load_config
 from app.db import get_connection
 from app.llm.templates import generate_template_explanation
+from app.metrics import is_overdue_check
 from app.pipeline.run import run_pipeline_for_week
 from app.schemas import (
     BoardCheck,
@@ -203,12 +205,36 @@ def get_summary(
             k=int(k),
         )
 
+        # Overdue and open cases
+        cfg = load_config()
+        overdue_days = cfg.get("cases", {}).get("overdue_days", 7)
+        scope_case_sql, scope_case_params = scope_filter.sql_case_filter("c", "s")
+        open_cases_rows = conn.execute(
+            f"""
+            SELECT c.status, c.last_action_at, c.created_at
+            FROM cases c
+            JOIN shops s ON c.shop_id = s.shop_id
+            WHERE {scope_case_sql} AND c.status != 'closed' AND c.closed_at IS NULL;
+            """,
+            scope_case_params,
+        ).fetchall()
+        open_cases_cnt = len(open_cases_rows)
+        overdue_cases_cnt = sum(
+            1
+            for r in open_cases_rows
+            if is_overdue_check(
+                r["status"], r["last_action_at"] or r["created_at"], overdue_days
+            )
+        )
+
         return SummaryResponse(
             week=target_week,
             shops_monitored=monitored,
             flagged=flagged,
             high=high_count,
             medium=med_count,
+            open_cases=open_cases_cnt,
+            overdue_cases=overdue_cases_cnt,
             evaluation=eval_summary,
             visits_recorded=v_total,
             confirmed_rate=conf_rate,

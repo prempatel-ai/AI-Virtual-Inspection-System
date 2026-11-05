@@ -35,6 +35,12 @@ ENDPOINT_SPECS: List[Tuple[str, str, str, Optional[str], bool, Optional[Dict[str
     ("shop_detail_in_scope", "GET", "/shops/{own_shop_id}", "flags:view", False, None),
     ("cases_list", "GET", "/cases", "cases:view", False, None),
     ("case_detail_in_scope", "GET", "/cases/{own_case_id}", "cases:view", False, None),
+    ("areas", "GET", "/areas", "areas:view", False, None),
+    ("officers", "GET", "/officers", "officers:view", False, None),
+    ("officer_detail", "GET", "/officers/{own_officer_id}", "officers:view", False, None),
+    ("actions", "GET", "/actions", "actions:view", False, None),
+    ("admin_users", "GET", "/admin/users", "users:manage", False, None),
+    ("admin_audit", "GET", "/admin/audit", "audit:view", False, None),
     ("run_pipeline", "POST", "/run", "run:execute", True, {"top_k": 5}),
 ]
 
@@ -80,9 +86,11 @@ def rbac_test_env(tmp_path_factory) -> Generator[Dict[str, str], None, None]:
         ('u-vig', 'Vig User', 'vig@demo.invalid', ?, 'vigilance',
          NULL, NULL, 1, '2026-11-05T00:00:00Z'),
         ('u-adm', 'Adm User', 'adm@demo.invalid', ?, 'admin',
-         NULL, NULL, 1, '2026-11-05T00:00:00Z');
+         NULL, NULL, 1, '2026-11-05T00:00:00Z'),
+        ('u-foreign', 'Foreign Insp', 'foreign@demo.invalid', ?, 'inspector',
+         'Surat', 'Surat Taluka 1', 1, '2026-11-05T00:00:00Z');
         """,
-        (pwd_hash, pwd_hash, pwd_hash, pwd_hash, pwd_hash),
+        (pwd_hash, pwd_hash, pwd_hash, pwd_hash, pwd_hash, pwd_hash),
     )
 
     # Assign own_shop_id to inspector
@@ -109,6 +117,8 @@ def rbac_test_env(tmp_path_factory) -> Generator[Dict[str, str], None, None]:
         "foreign_shop_id": foreign_shop_id,
         "own_case_id": "case-own-001",
         "foreign_case_id": "case-foreign-001",
+        "own_officer_id": "u-insp",
+        "foreign_officer_id": "u-foreign",
     }
     yield ids
     if "DB_PATH" in os.environ:
@@ -228,5 +238,16 @@ def test_scope_isolation_matrix(rbac_test_env: Dict[str, str]):
     # Vigilance can access foreign case -> 200
     assert vig_client.get(f"/cases/{foreign_case}").status_code == 200
 
+    foreign_officer = rbac_test_env["foreign_officer_id"]
+    # Inspector cannot access foreign officer -> 404
+    assert insp_client.get(f"/officers/{foreign_officer}").status_code == 404
+    # Mamlatdar cannot access foreign officer in Surat -> 404
+    assert mam_client.get(f"/officers/{foreign_officer}").status_code == 404
+    # District officer in Ahmedabad cannot access foreign officer in Surat -> 404
+    assert do_client.get(f"/officers/{foreign_officer}").status_code == 404
+    # Vigilance and admin can access foreign officer -> 200
+    assert vig_client.get(f"/officers/{foreign_officer}").status_code == 200
+
     adm_client = get_client_for_role("admin")
     assert adm_client.get(f"/shops/{foreign_shop}").status_code == 200
+    assert adm_client.get(f"/officers/{foreign_officer}").status_code == 200

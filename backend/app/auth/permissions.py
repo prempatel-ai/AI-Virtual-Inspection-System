@@ -2,6 +2,8 @@
 
 from typing import Any, Dict, List
 
+VALID_ROLES = {"inspector", "mamlatdar", "district_officer", "vigilance", "admin"}
+
 ROLE_PERMISSIONS: Dict[str, List[str]] = {
     "inspector": [
         "flags:view",

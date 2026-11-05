@@ -79,6 +79,8 @@ class SummaryResponse(BaseModel):
     flagged: int
     high: int
     medium: int
+    open_cases: int = 0
+    overdue_cases: int = 0
     evaluation: EvaluationSummary
     visits_recorded: int
     confirmed_rate: Optional[float] = None
@@ -312,3 +314,136 @@ class CaseActionRequest(BaseModel):
     outcome: Optional[Literal["confirmed", "not_confirmed"]] = None
     action_taken: Optional[str] = None
     checklist_results: Optional[List[ChecklistResultItem]] = None
+
+
+class AreaMetricItem(BaseModel):
+    name: str
+    level: Literal["district", "taluka"]
+    shops_count: int
+    flagged_count: int
+    flag_rate: float
+    high_band_count: int
+    open_cases: int
+    overdue_cases: int
+    confirmed_rate: Optional[float] = None
+
+
+class AreaMetricsResponse(BaseModel):
+    items: List[AreaMetricItem]
+
+
+class OfficerStats(BaseModel):
+    assigned_cases: int
+    open_cases: int
+    overdue_cases: int
+    inspected_cases: int
+    closed_cases: int
+    confirmed_rate: Optional[float] = None
+    median_time_to_first_action_hours: Optional[float] = None
+    last_action_at: Optional[str] = None
+
+
+class OfficerListItem(BaseModel):
+    user_id: str
+    name: str
+    role: str
+    district: Optional[str] = None
+    taluka: Optional[str] = None
+    is_active: bool
+    stats: OfficerStats
+
+
+class OfficerListResponse(BaseModel):
+    items: List[OfficerListItem]
+
+
+class OfficerDetailResponse(BaseModel):
+    user_id: str
+    name: str
+    email: str
+    role: str
+    district: Optional[str] = None
+    taluka: Optional[str] = None
+    is_active: bool
+    created_at: str
+    permissions: List[str]
+    scope: Dict[str, Any]
+    stats: OfficerStats
+    assigned_cases: List[CaseListItem]
+    recent_actions: List[CaseActionItem]
+    area_flag_rate: Optional[float] = None
+
+
+class ActionFeedItem(BaseModel):
+    id: int
+    case_id: str
+    shop_id: str
+    shop_name: str
+    actor_id: Optional[str] = None
+    actor_name: Optional[str] = None
+    actor_role: str
+    type: str
+    payload: Dict[str, Any]
+    risk_score_at_action: Optional[float] = None
+    created_at: str
+
+
+class ActionFeedResponse(BaseModel):
+    total: int
+    items: List[ActionFeedItem]
+
+
+class AdminUserItem(BaseModel):
+    user_id: str
+    name: str
+    email: str
+    role: str
+    district: Optional[str] = None
+    taluka: Optional[str] = None
+    is_active: bool
+    last_login_at: Optional[str] = None
+    created_at: str
+
+
+class AdminUserListResponse(BaseModel):
+    items: List[AdminUserItem]
+
+
+class CreateUserRequest(BaseModel):
+    name: str
+    email: str
+    role: str
+    district: Optional[str] = None
+    taluka: Optional[str] = None
+
+
+class CreateUserResponse(BaseModel):
+    user: AdminUserItem
+    temporary_password: str
+
+
+class UpdateUserRequest(BaseModel):
+    role: Optional[str] = None
+    district: Optional[str] = None
+    taluka: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class ResetPasswordResponse(BaseModel):
+    user_id: str
+    temporary_password: str
+
+
+class AuditLogItem(BaseModel):
+    id: int
+    event: str
+    actor_id: Optional[str] = None
+    target_user_id: Optional[str] = None
+    ip: Optional[str] = None
+    detail: Dict[str, Any]
+    created_at: str
+
+
+class AuditLogResponse(BaseModel):
+    total: int
+    items: List[AuditLogItem]

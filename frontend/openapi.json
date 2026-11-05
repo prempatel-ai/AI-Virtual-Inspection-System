@@ -24,6 +24,962 @@
         }
       }
     },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "description": "Authenticates an officer with email and password, setting an HttpOnly session cookie.",
+        "operationId": "login_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "description": "Logs out current user, records audit event, and clears session cookie.",
+        "operationId": "logout_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Get Me",
+        "description": "Returns the authenticated user's profile, role permissions, and scope.",
+        "operationId": "get_me_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "List Cases",
+        "description": "Returns scoped list of cases sorted by latest risk score descending.",
+        "operationId": "list_cases_cases_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "assignee_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Assignee Id"
+            }
+          },
+          {
+            "name": "district",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "District"
+            }
+          },
+          {
+            "name": "taluka",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Taluka"
+            }
+          },
+          {
+            "name": "band",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Band"
+            }
+          },
+          {
+            "name": "overdue",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Overdue"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{case_id}": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Get Case Detail",
+        "description": "Returns single case detail, action timeline, and allowed_actions for current user.",
+        "operationId": "get_case_detail_cases__case_id__get",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{case_id}/actions": {
+      "post": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Post Case Action",
+        "description": "Executes state machine action on a case in scope with validation and append-only audit.",
+        "operationId": "post_case_action_cases__case_id__actions_post",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseActionItem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/areas": {
+      "get": {
+        "tags": [
+          "oversight"
+        ],
+        "summary": "Get Areas",
+        "description": "Returns area-level metrics filtered by caller's scope.",
+        "operationId": "get_areas_areas_get",
+        "parameters": [
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "district",
+                "taluka"
+              ],
+              "type": "string",
+              "default": "district",
+              "title": "Level"
+            }
+          },
+          {
+            "name": "parent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Parent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaMetricsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/officers": {
+      "get": {
+        "tags": [
+          "oversight"
+        ],
+        "summary": "Get Officers",
+        "description": "Returns list of officers in caller's scope with aggregate performance stats.",
+        "operationId": "get_officers_officers_get",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Role"
+            }
+          },
+          {
+            "name": "district",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "District"
+            }
+          },
+          {
+            "name": "taluka",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Taluka"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Active"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficerListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/officers/{officer_id}": {
+      "get": {
+        "tags": [
+          "oversight"
+        ],
+        "summary": "Get Officer Detail",
+        "description": "Returns detailed profile, permissions, assigned cases, actions, and area flag rate.",
+        "operationId": "get_officer_detail_officers__officer_id__get",
+        "parameters": [
+          {
+            "name": "officer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Officer Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficerDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actions": {
+      "get": {
+        "tags": [
+          "oversight"
+        ],
+        "summary": "Get Action Feed",
+        "description": "Returns scoped audit feed of case actions.",
+        "operationId": "get_action_feed_actions_get",
+        "parameters": [
+          {
+            "name": "officer_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Officer Id"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "name": "case_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionFeedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List Admin Users",
+        "description": "Lists all users (admin only). Never returns password_hash.",
+        "operationId": "list_admin_users_admin_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Create Admin User",
+        "description": "Creates a new user and returns a temporary password once (admin only).",
+        "operationId": "create_admin_user_admin_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{user_id}": {
+      "patch": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Update Admin User",
+        "description": "Updates role, scope, or active status of a user (admin only).",
+        "operationId": "update_admin_user_admin_users__user_id__patch",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserItem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{user_id}/reset-password": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Reset Admin User Password",
+        "description": "Resets user password and returns temporary password once (admin only).",
+        "operationId": "reset_admin_user_password_admin_users__user_id__reset_password_post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetPasswordResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/audit": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Get Admin Audit Log",
+        "description": "Lists access log entries from append-only audit_log (admin only).",
+        "operationId": "get_admin_audit_log_admin_audit_get",
+        "parameters": [
+          {
+            "name": "event",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Event"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/meta": {
       "get": {
         "summary": "Get Meta",
@@ -46,7 +1002,7 @@
     "/summary": {
       "get": {
         "summary": "Get Summary",
-        "description": "Returns summary KPIs, evaluation metrics, and visit outcomes for a week.",
+        "description": "Returns summary KPIs, evaluation metrics, and visit outcomes scoped to user.",
         "operationId": "get_summary_summary_get",
         "parameters": [
           {
@@ -93,7 +1049,7 @@
     "/shops/ranked": {
       "get": {
         "summary": "Get Ranked Shops",
-        "description": "Returns ranked list of shops sorted by risk score descending.",
+        "description": "Returns ranked list of shops sorted by risk score descending within user's scope.",
         "operationId": "get_ranked_shops_shops_ranked_get",
         "parameters": [
           {
@@ -211,7 +1167,7 @@
     "/shops/{shop_id}": {
       "get": {
         "summary": "Get Shop Detail",
-        "description": "Returns detailed audit file for a single shop.",
+        "description": "Returns detailed audit file for a single shop within user scope (404 if out of scope).",
         "operationId": "get_shop_detail_shops__shop_id__get",
         "parameters": [
           {
@@ -267,7 +1223,7 @@
     "/run": {
       "post": {
         "summary": "Post Run",
-        "description": "Triggers an audit run for a specific week or the latest week.",
+        "description": "Triggers an audit run for a specific week (admin only).",
         "operationId": "post_run_run_post",
         "requestBody": {
           "content": {
@@ -313,7 +1269,7 @@
     "/shops/{shop_id}/feedback": {
       "post": {
         "summary": "Post Feedback",
-        "description": "Stores officer visit outcome feedback for a shop.",
+        "description": "Stores officer visit outcome feedback for a shop within user scope.",
         "operationId": "post_feedback_shops__shop_id__feedback_post",
         "parameters": [
           {
@@ -363,6 +1319,358 @@
   },
   "components": {
     "schemas": {
+      "ActionFeedItem": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "shop_id": {
+            "type": "string",
+            "title": "Shop Id"
+          },
+          "shop_name": {
+            "type": "string",
+            "title": "Shop Name"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "actor_role": {
+            "type": "string",
+            "title": "Actor Role"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          },
+          "risk_score_at_action": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Score At Action"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "case_id",
+          "shop_id",
+          "shop_name",
+          "actor_role",
+          "type",
+          "payload",
+          "created_at"
+        ],
+        "title": "ActionFeedItem"
+      },
+      "ActionFeedResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ActionFeedItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "ActionFeedResponse"
+      },
+      "AdminUserItem": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "taluka": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taluka"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "last_login_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "name",
+          "email",
+          "role",
+          "is_active",
+          "created_at"
+        ],
+        "title": "AdminUserItem"
+      },
+      "AdminUserListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminUserItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "AdminUserListResponse"
+      },
+      "AreaMetricItem": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "district",
+              "taluka"
+            ],
+            "title": "Level"
+          },
+          "shops_count": {
+            "type": "integer",
+            "title": "Shops Count"
+          },
+          "flagged_count": {
+            "type": "integer",
+            "title": "Flagged Count"
+          },
+          "flag_rate": {
+            "type": "number",
+            "title": "Flag Rate"
+          },
+          "high_band_count": {
+            "type": "integer",
+            "title": "High Band Count"
+          },
+          "open_cases": {
+            "type": "integer",
+            "title": "Open Cases"
+          },
+          "overdue_cases": {
+            "type": "integer",
+            "title": "Overdue Cases"
+          },
+          "confirmed_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed Rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "level",
+          "shops_count",
+          "flagged_count",
+          "flag_rate",
+          "high_band_count",
+          "open_cases",
+          "overdue_cases"
+        ],
+        "title": "AreaMetricItem"
+      },
+      "AreaMetricsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AreaMetricItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "AreaMetricsResponse"
+      },
+      "AuditLogItem": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "event": {
+            "type": "string",
+            "title": "Event"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "target_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target User Id"
+          },
+          "ip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip"
+          },
+          "detail": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Detail"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "event",
+          "detail",
+          "created_at"
+        ],
+        "title": "AuditLogItem"
+      },
+      "AuditLogResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AuditLogItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "AuditLogResponse"
+      },
       "BoardCheck": {
         "properties": {
           "board_kg": {
@@ -452,6 +1760,454 @@
         ],
         "title": "BreakdownItem"
       },
+      "CaseActionItem": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "actor_role": {
+            "type": "string",
+            "title": "Actor Role"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          },
+          "risk_score_at_action": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Score At Action"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "case_id",
+          "actor_role",
+          "type",
+          "payload",
+          "created_at"
+        ],
+        "title": "CaseActionItem"
+      },
+      "CaseActionRequest": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "to_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To User Id"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "confirmed",
+                  "not_confirmed"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "action_taken": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action Taken"
+          },
+          "checklist_results": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ChecklistResultItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checklist Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "CaseActionRequest"
+      },
+      "CaseDetail": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "shop_id": {
+            "type": "string",
+            "title": "Shop Id"
+          },
+          "shop_name": {
+            "type": "string",
+            "title": "Shop Name"
+          },
+          "district": {
+            "type": "string",
+            "title": "District"
+          },
+          "taluka": {
+            "type": "string",
+            "title": "Taluka"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "risk_score_latest": {
+            "type": "number",
+            "title": "Risk Score Latest"
+          },
+          "band_latest": {
+            "type": "string",
+            "title": "Band Latest"
+          },
+          "opened_week": {
+            "type": "string",
+            "title": "Opened Week"
+          },
+          "last_flagged_week": {
+            "type": "string",
+            "title": "Last Flagged Week"
+          },
+          "assignee_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Id"
+          },
+          "assignee_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Name"
+          },
+          "is_overdue": {
+            "type": "boolean",
+            "title": "Is Overdue"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "last_action_at": {
+            "type": "string",
+            "title": "Last Action At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "shop_id",
+          "shop_name",
+          "district",
+          "taluka",
+          "status",
+          "risk_score_latest",
+          "band_latest",
+          "opened_week",
+          "last_flagged_week",
+          "is_overdue",
+          "last_action_at",
+          "created_at"
+        ],
+        "title": "CaseDetail"
+      },
+      "CaseDetailResponse": {
+        "properties": {
+          "case": {
+            "$ref": "#/components/schemas/CaseDetail"
+          },
+          "allowed_actions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allowed Actions"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/CaseActionItem"
+            },
+            "type": "array",
+            "title": "Actions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case",
+          "allowed_actions",
+          "actions"
+        ],
+        "title": "CaseDetailResponse"
+      },
+      "CaseListItem": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "shop_id": {
+            "type": "string",
+            "title": "Shop Id"
+          },
+          "shop_name": {
+            "type": "string",
+            "title": "Shop Name"
+          },
+          "district": {
+            "type": "string",
+            "title": "District"
+          },
+          "taluka": {
+            "type": "string",
+            "title": "Taluka"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "risk_score_latest": {
+            "type": "number",
+            "title": "Risk Score Latest"
+          },
+          "band_latest": {
+            "type": "string",
+            "title": "Band Latest"
+          },
+          "opened_week": {
+            "type": "string",
+            "title": "Opened Week"
+          },
+          "last_flagged_week": {
+            "type": "string",
+            "title": "Last Flagged Week"
+          },
+          "assignee_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Id"
+          },
+          "assignee_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Name"
+          },
+          "is_overdue": {
+            "type": "boolean",
+            "title": "Is Overdue"
+          },
+          "last_action_at": {
+            "type": "string",
+            "title": "Last Action At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "shop_id",
+          "shop_name",
+          "district",
+          "taluka",
+          "status",
+          "risk_score_latest",
+          "band_latest",
+          "opened_week",
+          "last_flagged_week",
+          "is_overdue",
+          "last_action_at",
+          "created_at"
+        ],
+        "title": "CaseListItem"
+      },
+      "CaseListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CaseListItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "CaseListResponse"
+      },
+      "CaseSummary": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "assignee_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Id"
+          },
+          "assignee_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "status"
+        ],
+        "title": "CaseSummary"
+      },
       "ChecklistItem": {
         "properties": {
           "action": {
@@ -475,6 +2231,40 @@
         ],
         "title": "ChecklistItem"
       },
+      "ChecklistResultItem": {
+        "properties": {
+          "item_action": {
+            "type": "string",
+            "title": "Item Action"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "issue",
+              "not_checked"
+            ],
+            "title": "Result"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_action",
+          "result"
+        ],
+        "title": "ChecklistResultItem"
+      },
       "ComplaintCategoryCount": {
         "properties": {
           "category": {
@@ -492,6 +2282,68 @@
           "count"
         ],
         "title": "ComplaintCategoryCount"
+      },
+      "CreateUserRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "taluka": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taluka"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "role"
+        ],
+        "title": "CreateUserRequest"
+      },
+      "CreateUserResponse": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/AdminUserItem"
+          },
+          "temporary_password": {
+            "type": "string",
+            "title": "Temporary Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "temporary_password"
+        ],
+        "title": "CreateUserResponse"
       },
       "EvaluationSummary": {
         "properties": {
@@ -736,6 +2588,59 @@
         ],
         "title": "HistoryData"
       },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "LoginResponse": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserSummary"
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Permissions"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/ScopeInfo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "permissions",
+          "scope"
+        ],
+        "title": "LoginResponse"
+      },
+      "LogoutResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ok"
+          }
+        },
+        "type": "object",
+        "title": "LogoutResponse"
+      },
       "MetaResponse": {
         "properties": {
           "synthetic": {
@@ -791,6 +2696,247 @@
         ],
         "title": "MetaResponse"
       },
+      "OfficerDetailResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "taluka": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taluka"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Permissions"
+          },
+          "scope": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Scope"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/OfficerStats"
+          },
+          "assigned_cases": {
+            "items": {
+              "$ref": "#/components/schemas/CaseListItem"
+            },
+            "type": "array",
+            "title": "Assigned Cases"
+          },
+          "recent_actions": {
+            "items": {
+              "$ref": "#/components/schemas/CaseActionItem"
+            },
+            "type": "array",
+            "title": "Recent Actions"
+          },
+          "area_flag_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Flag Rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "name",
+          "email",
+          "role",
+          "is_active",
+          "created_at",
+          "permissions",
+          "scope",
+          "stats",
+          "assigned_cases",
+          "recent_actions"
+        ],
+        "title": "OfficerDetailResponse"
+      },
+      "OfficerListItem": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "taluka": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taluka"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/OfficerStats"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "name",
+          "role",
+          "is_active",
+          "stats"
+        ],
+        "title": "OfficerListItem"
+      },
+      "OfficerListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OfficerListItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "OfficerListResponse"
+      },
+      "OfficerStats": {
+        "properties": {
+          "assigned_cases": {
+            "type": "integer",
+            "title": "Assigned Cases"
+          },
+          "open_cases": {
+            "type": "integer",
+            "title": "Open Cases"
+          },
+          "overdue_cases": {
+            "type": "integer",
+            "title": "Overdue Cases"
+          },
+          "inspected_cases": {
+            "type": "integer",
+            "title": "Inspected Cases"
+          },
+          "closed_cases": {
+            "type": "integer",
+            "title": "Closed Cases"
+          },
+          "confirmed_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed Rate"
+          },
+          "median_time_to_first_action_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median Time To First Action Hours"
+          },
+          "last_action_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Action At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "assigned_cases",
+          "open_cases",
+          "overdue_cases",
+          "inspected_cases",
+          "closed_cases"
+        ],
+        "title": "OfficerStats"
+      },
       "RankedShopItem": {
         "properties": {
           "rank": {
@@ -834,6 +2980,16 @@
             },
             "type": "array",
             "title": "Trend"
+          },
+          "case": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CaseSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -875,6 +3031,24 @@
           "items"
         ],
         "title": "RankedShopsResponse"
+      },
+      "ResetPasswordResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "temporary_password": {
+            "type": "string",
+            "title": "Temporary Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "temporary_password"
+        ],
+        "title": "ResetPasswordResponse"
       },
       "RunRequest": {
         "properties": {
@@ -923,6 +3097,16 @@
             "type": "integer",
             "title": "Explained"
           },
+          "cases_created": {
+            "type": "integer",
+            "title": "Cases Created",
+            "default": 0
+          },
+          "cases_updated": {
+            "type": "integer",
+            "title": "Cases Updated",
+            "default": 0
+          },
           "duration_ms": {
             "type": "integer",
             "title": "Duration Ms"
@@ -937,6 +3121,52 @@
           "duration_ms"
         ],
         "title": "RunResponse"
+      },
+      "ScopeInfo": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "taluka": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taluka"
+          },
+          "inspector_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "level"
+        ],
+        "title": "ScopeInfo"
       },
       "SeriesData": {
         "properties": {
@@ -1015,6 +3245,16 @@
             },
             "type": "array",
             "title": "Feedback"
+          },
+          "case": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CaseSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -1059,6 +3299,17 @@
           "vulnerability_index": {
             "type": "number",
             "title": "Vulnerability Index"
+          },
+          "inspector_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Id"
           }
         },
         "type": "object",
@@ -1160,6 +3411,16 @@
             "type": "integer",
             "title": "Medium"
           },
+          "open_cases": {
+            "type": "integer",
+            "title": "Open Cases",
+            "default": 0
+          },
+          "overdue_cases": {
+            "type": "integer",
+            "title": "Overdue Cases",
+            "default": 0
+          },
           "evaluation": {
             "$ref": "#/components/schemas/EvaluationSummary"
           },
@@ -1190,6 +3451,106 @@
           "visits_recorded"
         ],
         "title": "SummaryResponse"
+      },
+      "UpdateUserRequest": {
+        "properties": {
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "taluka": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taluka"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "title": "UpdateUserRequest"
+      },
+      "UserSummary": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "taluka": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taluka"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "name",
+          "email",
+          "role"
+        ],
+        "title": "UserSummary"
       },
       "ValidationError": {
         "properties": {

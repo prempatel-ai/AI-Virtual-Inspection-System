@@ -24,6 +24,290 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Login
+         * @description Authenticates an officer with email and password, setting an HttpOnly session cookie.
+         */
+        post: operations["login_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Logout
+         * @description Logs out current user, records audit event, and clears session cookie.
+         */
+        post: operations["logout_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Me
+         * @description Returns the authenticated user's profile, role permissions, and scope.
+         */
+        get: operations["get_me_auth_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Cases
+         * @description Returns scoped list of cases sorted by latest risk score descending.
+         */
+        get: operations["list_cases_cases_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cases/{case_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Case Detail
+         * @description Returns single case detail, action timeline, and allowed_actions for current user.
+         */
+        get: operations["get_case_detail_cases__case_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cases/{case_id}/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Case Action
+         * @description Executes state machine action on a case in scope with validation and append-only audit.
+         */
+        post: operations["post_case_action_cases__case_id__actions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/areas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Areas
+         * @description Returns area-level metrics filtered by caller's scope.
+         */
+        get: operations["get_areas_areas_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/officers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Officers
+         * @description Returns list of officers in caller's scope with aggregate performance stats.
+         */
+        get: operations["get_officers_officers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/officers/{officer_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Officer Detail
+         * @description Returns detailed profile, permissions, assigned cases, actions, and area flag rate.
+         */
+        get: operations["get_officer_detail_officers__officer_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Action Feed
+         * @description Returns scoped audit feed of case actions.
+         */
+        get: operations["get_action_feed_actions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Admin Users
+         * @description Lists all users (admin only). Never returns password_hash.
+         */
+        get: operations["list_admin_users_admin_users_get"];
+        put?: never;
+        /**
+         * Create Admin User
+         * @description Creates a new user and returns a temporary password once (admin only).
+         */
+        post: operations["create_admin_user_admin_users_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Admin User
+         * @description Updates role, scope, or active status of a user (admin only).
+         */
+        patch: operations["update_admin_user_admin_users__user_id__patch"];
+        trace?: never;
+    };
+    "/admin/users/{user_id}/reset-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset Admin User Password
+         * @description Resets user password and returns temporary password once (admin only).
+         */
+        post: operations["reset_admin_user_password_admin_users__user_id__reset_password_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Audit Log
+         * @description Lists access log entries from append-only audit_log (admin only).
+         */
+        get: operations["get_admin_audit_log_admin_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/meta": {
         parameters: {
             query?: never;
@@ -53,7 +337,7 @@ export interface paths {
         };
         /**
          * Get Summary
-         * @description Returns summary KPIs, evaluation metrics, and visit outcomes for a week.
+         * @description Returns summary KPIs, evaluation metrics, and visit outcomes scoped to user.
          */
         get: operations["get_summary_summary_get"];
         put?: never;
@@ -73,7 +357,7 @@ export interface paths {
         };
         /**
          * Get Ranked Shops
-         * @description Returns ranked list of shops sorted by risk score descending.
+         * @description Returns ranked list of shops sorted by risk score descending within user's scope.
          */
         get: operations["get_ranked_shops_shops_ranked_get"];
         put?: never;
@@ -93,7 +377,7 @@ export interface paths {
         };
         /**
          * Get Shop Detail
-         * @description Returns detailed audit file for a single shop.
+         * @description Returns detailed audit file for a single shop within user scope (404 if out of scope).
          */
         get: operations["get_shop_detail_shops__shop_id__get"];
         put?: never;
@@ -115,7 +399,7 @@ export interface paths {
         put?: never;
         /**
          * Post Run
-         * @description Triggers an audit run for a specific week or the latest week.
+         * @description Triggers an audit run for a specific week (admin only).
          */
         post: operations["post_run_run_post"];
         delete?: never;
@@ -135,7 +419,7 @@ export interface paths {
         put?: never;
         /**
          * Post Feedback
-         * @description Stores officer visit outcome feedback for a shop.
+         * @description Stores officer visit outcome feedback for a shop within user scope.
          */
         post: operations["post_feedback_shops__shop_id__feedback_post"];
         delete?: never;
@@ -148,6 +432,121 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ActionFeedItem */
+        ActionFeedItem: {
+            /** Id */
+            id: number;
+            /** Case Id */
+            case_id: string;
+            /** Shop Id */
+            shop_id: string;
+            /** Shop Name */
+            shop_name: string;
+            /** Actor Id */
+            actor_id?: string | null;
+            /** Actor Name */
+            actor_name?: string | null;
+            /** Actor Role */
+            actor_role: string;
+            /** Type */
+            type: string;
+            /** Payload */
+            payload: {
+                [key: string]: unknown;
+            };
+            /** Risk Score At Action */
+            risk_score_at_action?: number | null;
+            /** Created At */
+            created_at: string;
+        };
+        /** ActionFeedResponse */
+        ActionFeedResponse: {
+            /** Total */
+            total: number;
+            /** Items */
+            items: components["schemas"]["ActionFeedItem"][];
+        };
+        /** AdminUserItem */
+        AdminUserItem: {
+            /** User Id */
+            user_id: string;
+            /** Name */
+            name: string;
+            /** Email */
+            email: string;
+            /** Role */
+            role: string;
+            /** District */
+            district?: string | null;
+            /** Taluka */
+            taluka?: string | null;
+            /** Is Active */
+            is_active: boolean;
+            /** Last Login At */
+            last_login_at?: string | null;
+            /** Created At */
+            created_at: string;
+        };
+        /** AdminUserListResponse */
+        AdminUserListResponse: {
+            /** Items */
+            items: components["schemas"]["AdminUserItem"][];
+        };
+        /** AreaMetricItem */
+        AreaMetricItem: {
+            /** Name */
+            name: string;
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "district" | "taluka";
+            /** Shops Count */
+            shops_count: number;
+            /** Flagged Count */
+            flagged_count: number;
+            /** Flag Rate */
+            flag_rate: number;
+            /** High Band Count */
+            high_band_count: number;
+            /** Open Cases */
+            open_cases: number;
+            /** Overdue Cases */
+            overdue_cases: number;
+            /** Confirmed Rate */
+            confirmed_rate?: number | null;
+        };
+        /** AreaMetricsResponse */
+        AreaMetricsResponse: {
+            /** Items */
+            items: components["schemas"]["AreaMetricItem"][];
+        };
+        /** AuditLogItem */
+        AuditLogItem: {
+            /** Id */
+            id: number;
+            /** Event */
+            event: string;
+            /** Actor Id */
+            actor_id?: string | null;
+            /** Target User Id */
+            target_user_id?: string | null;
+            /** Ip */
+            ip?: string | null;
+            /** Detail */
+            detail: {
+                [key: string]: unknown;
+            };
+            /** Created At */
+            created_at: string;
+        };
+        /** AuditLogResponse */
+        AuditLogResponse: {
+            /** Total */
+            total: number;
+            /** Items */
+            items: components["schemas"]["AuditLogItem"][];
+        };
         /** BoardCheck */
         BoardCheck: {
             /** Board Kg */
@@ -176,6 +575,140 @@ export interface components {
             /** Z */
             z?: number | null;
         };
+        /** CaseActionItem */
+        CaseActionItem: {
+            /** Id */
+            id: number;
+            /** Case Id */
+            case_id: string;
+            /** Actor Id */
+            actor_id?: string | null;
+            /** Actor Name */
+            actor_name?: string | null;
+            /** Actor Role */
+            actor_role: string;
+            /** Type */
+            type: string;
+            /** Payload */
+            payload: {
+                [key: string]: unknown;
+            };
+            /** Risk Score At Action */
+            risk_score_at_action?: number | null;
+            /** Created At */
+            created_at: string;
+        };
+        /** CaseActionRequest */
+        CaseActionRequest: {
+            /** Type */
+            type: string;
+            /** Note */
+            note?: string | null;
+            /** Reason */
+            reason?: string | null;
+            /** To User Id */
+            to_user_id?: string | null;
+            /** Outcome */
+            outcome?: ("confirmed" | "not_confirmed") | null;
+            /** Action Taken */
+            action_taken?: string | null;
+            /** Checklist Results */
+            checklist_results?: components["schemas"]["ChecklistResultItem"][] | null;
+        };
+        /** CaseDetail */
+        CaseDetail: {
+            /** Case Id */
+            case_id: string;
+            /** Shop Id */
+            shop_id: string;
+            /** Shop Name */
+            shop_name: string;
+            /** District */
+            district: string;
+            /** Taluka */
+            taluka: string;
+            /** Status */
+            status: string;
+            /** Risk Score Latest */
+            risk_score_latest: number;
+            /** Band Latest */
+            band_latest: string;
+            /** Opened Week */
+            opened_week: string;
+            /** Last Flagged Week */
+            last_flagged_week: string;
+            /** Assignee Id */
+            assignee_id?: string | null;
+            /** Assignee Name */
+            assignee_name?: string | null;
+            /** Is Overdue */
+            is_overdue: boolean;
+            /** Closed At */
+            closed_at?: string | null;
+            /** Last Action At */
+            last_action_at: string;
+            /** Created At */
+            created_at: string;
+        };
+        /** CaseDetailResponse */
+        CaseDetailResponse: {
+            case: components["schemas"]["CaseDetail"];
+            /** Allowed Actions */
+            allowed_actions: string[];
+            /** Actions */
+            actions: components["schemas"]["CaseActionItem"][];
+        };
+        /** CaseListItem */
+        CaseListItem: {
+            /** Case Id */
+            case_id: string;
+            /** Shop Id */
+            shop_id: string;
+            /** Shop Name */
+            shop_name: string;
+            /** District */
+            district: string;
+            /** Taluka */
+            taluka: string;
+            /** Status */
+            status: string;
+            /** Risk Score Latest */
+            risk_score_latest: number;
+            /** Band Latest */
+            band_latest: string;
+            /** Opened Week */
+            opened_week: string;
+            /** Last Flagged Week */
+            last_flagged_week: string;
+            /** Assignee Id */
+            assignee_id?: string | null;
+            /** Assignee Name */
+            assignee_name?: string | null;
+            /** Is Overdue */
+            is_overdue: boolean;
+            /** Last Action At */
+            last_action_at: string;
+            /** Created At */
+            created_at: string;
+        };
+        /** CaseListResponse */
+        CaseListResponse: {
+            /** Total */
+            total: number;
+            /** Items */
+            items: components["schemas"]["CaseListItem"][];
+        };
+        /** CaseSummary */
+        CaseSummary: {
+            /** Case Id */
+            case_id: string;
+            /** Status */
+            status: string;
+            /** Assignee Id */
+            assignee_id?: string | null;
+            /** Assignee Name */
+            assignee_name?: string | null;
+        };
         /** ChecklistItem */
         ChecklistItem: {
             /** Action */
@@ -185,12 +718,43 @@ export interface components {
             /** Fact Id */
             fact_id: string;
         };
+        /** ChecklistResultItem */
+        ChecklistResultItem: {
+            /** Item Action */
+            item_action: string;
+            /**
+             * Result
+             * @enum {string}
+             */
+            result: "ok" | "issue" | "not_checked";
+            /** Note */
+            note?: string | null;
+        };
         /** ComplaintCategoryCount */
         ComplaintCategoryCount: {
             /** Category */
             category: string;
             /** Count */
             count: number;
+        };
+        /** CreateUserRequest */
+        CreateUserRequest: {
+            /** Name */
+            name: string;
+            /** Email */
+            email: string;
+            /** Role */
+            role: string;
+            /** District */
+            district?: string | null;
+            /** Taluka */
+            taluka?: string | null;
+        };
+        /** CreateUserResponse */
+        CreateUserResponse: {
+            user: components["schemas"]["AdminUserItem"];
+            /** Temporary Password */
+            temporary_password: string;
         };
         /** EvaluationSummary */
         EvaluationSummary: {
@@ -278,6 +842,28 @@ export interface components {
                 [key: string]: components["schemas"]["SeriesData"];
             };
         };
+        /** LoginRequest */
+        LoginRequest: {
+            /** Email */
+            email: string;
+            /** Password */
+            password: string;
+        };
+        /** LoginResponse */
+        LoginResponse: {
+            user: components["schemas"]["UserSummary"];
+            /** Permissions */
+            permissions: string[];
+            scope: components["schemas"]["ScopeInfo"];
+        };
+        /** LogoutResponse */
+        LogoutResponse: {
+            /**
+             * Status
+             * @default ok
+             */
+            status: string;
+        };
         /** MetaResponse */
         MetaResponse: {
             /** Synthetic */
@@ -296,6 +882,78 @@ export interface components {
             shops_count: number;
             /** Has Run */
             has_run: boolean;
+        };
+        /** OfficerDetailResponse */
+        OfficerDetailResponse: {
+            /** User Id */
+            user_id: string;
+            /** Name */
+            name: string;
+            /** Email */
+            email: string;
+            /** Role */
+            role: string;
+            /** District */
+            district?: string | null;
+            /** Taluka */
+            taluka?: string | null;
+            /** Is Active */
+            is_active: boolean;
+            /** Created At */
+            created_at: string;
+            /** Permissions */
+            permissions: string[];
+            /** Scope */
+            scope: {
+                [key: string]: unknown;
+            };
+            stats: components["schemas"]["OfficerStats"];
+            /** Assigned Cases */
+            assigned_cases: components["schemas"]["CaseListItem"][];
+            /** Recent Actions */
+            recent_actions: components["schemas"]["CaseActionItem"][];
+            /** Area Flag Rate */
+            area_flag_rate?: number | null;
+        };
+        /** OfficerListItem */
+        OfficerListItem: {
+            /** User Id */
+            user_id: string;
+            /** Name */
+            name: string;
+            /** Role */
+            role: string;
+            /** District */
+            district?: string | null;
+            /** Taluka */
+            taluka?: string | null;
+            /** Is Active */
+            is_active: boolean;
+            stats: components["schemas"]["OfficerStats"];
+        };
+        /** OfficerListResponse */
+        OfficerListResponse: {
+            /** Items */
+            items: components["schemas"]["OfficerListItem"][];
+        };
+        /** OfficerStats */
+        OfficerStats: {
+            /** Assigned Cases */
+            assigned_cases: number;
+            /** Open Cases */
+            open_cases: number;
+            /** Overdue Cases */
+            overdue_cases: number;
+            /** Inspected Cases */
+            inspected_cases: number;
+            /** Closed Cases */
+            closed_cases: number;
+            /** Confirmed Rate */
+            confirmed_rate?: number | null;
+            /** Median Time To First Action Hours */
+            median_time_to_first_action_hours?: number | null;
+            /** Last Action At */
+            last_action_at?: string | null;
         };
         /** RankedShopItem */
         RankedShopItem: {
@@ -317,6 +975,7 @@ export interface components {
             top_signals: components["schemas"]["SignalSummary"][];
             /** Trend */
             trend: number[];
+            case?: components["schemas"]["CaseSummary"] | null;
         };
         /** RankedShopsResponse */
         RankedShopsResponse: {
@@ -326,6 +985,13 @@ export interface components {
             total: number;
             /** Items */
             items: components["schemas"]["RankedShopItem"][];
+        };
+        /** ResetPasswordResponse */
+        ResetPasswordResponse: {
+            /** User Id */
+            user_id: string;
+            /** Temporary Password */
+            temporary_password: string;
         };
         /** RunRequest */
         RunRequest: {
@@ -347,8 +1013,29 @@ export interface components {
             shops_scored: number;
             /** Explained */
             explained: number;
+            /**
+             * Cases Created
+             * @default 0
+             */
+            cases_created: number;
+            /**
+             * Cases Updated
+             * @default 0
+             */
+            cases_updated: number;
             /** Duration Ms */
             duration_ms: number;
+        };
+        /** ScopeInfo */
+        ScopeInfo: {
+            /** Level */
+            level: string;
+            /** District */
+            district?: string | null;
+            /** Taluka */
+            taluka?: string | null;
+            /** Inspector Id */
+            inspector_id?: string | null;
         };
         /** SeriesData */
         SeriesData: {
@@ -378,6 +1065,7 @@ export interface components {
             explanation: components["schemas"]["ExplanationData"];
             /** Feedback */
             feedback: components["schemas"]["FeedbackItem"][];
+            case?: components["schemas"]["CaseSummary"] | null;
         };
         /** ShopMeta */
         ShopMeta: {
@@ -393,6 +1081,8 @@ export interface components {
             cards_count: number;
             /** Vulnerability Index */
             vulnerability_index: number;
+            /** Inspector Id */
+            inspector_id?: string | null;
         };
         /** SignalSummary */
         SignalSummary: {
@@ -432,11 +1122,47 @@ export interface components {
             high: number;
             /** Medium */
             medium: number;
+            /**
+             * Open Cases
+             * @default 0
+             */
+            open_cases: number;
+            /**
+             * Overdue Cases
+             * @default 0
+             */
+            overdue_cases: number;
             evaluation: components["schemas"]["EvaluationSummary"];
             /** Visits Recorded */
             visits_recorded: number;
             /** Confirmed Rate */
             confirmed_rate?: number | null;
+        };
+        /** UpdateUserRequest */
+        UpdateUserRequest: {
+            /** Role */
+            role?: string | null;
+            /** District */
+            district?: string | null;
+            /** Taluka */
+            taluka?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
+        };
+        /** UserSummary */
+        UserSummary: {
+            /** User Id */
+            user_id: string;
+            /** Name */
+            name: string;
+            /** Email */
+            email: string;
+            /** Role */
+            role: string;
+            /** District */
+            district?: string | null;
+            /** Taluka */
+            taluka?: string | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -476,6 +1202,472 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    login_auth_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logout_auth_logout_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogoutResponse"];
+                };
+            };
+        };
+    };
+    get_me_auth_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+        };
+    };
+    list_cases_cases_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                assignee_id?: string | null;
+                district?: string | null;
+                taluka?: string | null;
+                band?: string | null;
+                overdue?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CaseListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_case_detail_cases__case_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CaseDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    post_case_action_cases__case_id__actions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CaseActionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CaseActionItem"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_areas_areas_get: {
+        parameters: {
+            query?: {
+                level?: "district" | "taluka";
+                parent?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaMetricsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_officers_officers_get: {
+        parameters: {
+            query?: {
+                role?: string | null;
+                district?: string | null;
+                taluka?: string | null;
+                active?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfficerListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_officer_detail_officers__officer_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                officer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfficerDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_action_feed_actions_get: {
+        parameters: {
+            query?: {
+                officer_id?: string | null;
+                type?: string | null;
+                case_id?: string | null;
+                from?: string | null;
+                to?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionFeedResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_admin_users_admin_users_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserListResponse"];
+                };
+            };
+        };
+    };
+    create_admin_user_admin_users_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateUserResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_admin_user_admin_users__user_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserItem"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reset_admin_user_password_admin_users__user_id__reset_password_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResetPasswordResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_audit_log_admin_audit_get: {
+        parameters: {
+            query?: {
+                event?: string | null;
+                user_id?: string | null;
+                from?: string | null;
+                to?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditLogResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
