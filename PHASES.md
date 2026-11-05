@@ -19,7 +19,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 
 ## P2 Detection
 - [x] P2.1 `features.py` (rates and gaps per shop-week)
-- [ ] P2.2 `anomaly.py` (robust z-score vs own history and vs peers)
+- [x] P2.2 `anomaly.py` (robust z-score vs own history and vs peers)
 - [ ] P2.3 `checks.py` (stock gap, board mismatch)
 - [ ] P2.4 Tests including the outage trap
 **Exit:** unit tests pass. Shops in the outage taluka do not show high rate-signal scores.
