@@ -7,6 +7,7 @@ and starts both backend (FastAPI) and frontend (Next.js) servers with a single c
 from __future__ import annotations
 
 import argparse
+import os
 import signal
 import sqlite3
 import subprocess
@@ -19,6 +20,29 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 BACKEND_DIR = PROJECT_ROOT / "backend"
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
 DATA_DIR = PROJECT_ROOT / "data"
+
+# Load local .env if present, with fallback defaults for demo
+for _env_candidate in [PROJECT_ROOT / ".env", BACKEND_DIR / ".env"]:
+    if _env_candidate.exists():
+        for _line in _env_candidate.read_text(encoding="utf-8").splitlines():
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _v = _line.split("=", 1)
+                os.environ.setdefault(_k.strip(), _v.strip())
+        break
+os.environ.setdefault("JWT_SECRET", "demo-secret-key-32-chars-minimum-v2-token")
+os.environ.setdefault("DEMO_PASSWORD", "demoPassword123")
+
+# Automatically re-execute in .venv if launched via global/miniconda Python
+_venv_python = (
+    PROJECT_ROOT / ".venv" / "Scripts" / "python.exe"
+    if sys.platform.startswith("win")
+    else PROJECT_ROOT / ".venv" / "bin" / "python"
+)
+if _venv_python.exists() and Path(sys.executable).resolve() != _venv_python.resolve():
+    if os.environ.get("_DEMO_REEXEC") != "1":
+        os.environ["_DEMO_REEXEC"] = "1"
+        sys.exit(subprocess.call([str(_venv_python), *sys.argv]))
 
 sys.path.insert(0, str(BACKEND_DIR))
 
@@ -73,7 +97,7 @@ def ensure_data_and_run(force: bool = False, shops: int = 500, weeks: int = 12, 
 
 def get_server_commands() -> tuple[list[str], list[str]]:
     """Determine the backend and frontend launch commands based on platform."""
-    python_exe = sys.executable
+    python_exe = str(_venv_python) if _venv_python.exists() else sys.executable
     backend_cmd = [
         python_exe,
         "-m",
@@ -131,10 +155,10 @@ def run_demo(setup_only: bool = False, timeout: int | None = None) -> None:
     print_banner()
 
     print("[DEMO] Starting FastAPI backend on http://127.0.0.1:8000 ...")
-    backend_proc = subprocess.Popen(backend_cmd, cwd=str(PROJECT_ROOT))
+    backend_proc = subprocess.Popen(backend_cmd, cwd=str(PROJECT_ROOT), env=os.environ.copy())
 
     print("[DEMO] Starting Next.js frontend on http://localhost:3000 ...")
-    frontend_proc = subprocess.Popen(frontend_cmd, cwd=str(FRONTEND_DIR))
+    frontend_proc = subprocess.Popen(frontend_cmd, cwd=str(FRONTEND_DIR), env=os.environ.copy())
 
     def cleanup(signum=None, frame=None):
         print("\n[DEMO] Shutting down demo servers...")
