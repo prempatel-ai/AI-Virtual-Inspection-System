@@ -9,14 +9,13 @@ Measures:
 
 import time
 from pathlib import Path
-import numpy as np
-from fastapi.testclient import TestClient
 
-from app.config import get_db_path
+import numpy as np
 from app.data.generator import generate_pds_data
 from app.db import init_db
 from app.main import app as fastapi_app
 from app.pipeline.run import run_pipeline_for_week
+from fastapi.testclient import TestClient
 
 
 def benchmark_perf() -> dict[str, float]:
@@ -80,7 +79,7 @@ def benchmark_perf() -> dict[str, float]:
     if bench_db.exists():
         try:
             bench_db.unlink()
-        except Exception:
+        except OSError:
             pass
 
     print("=" * 60)

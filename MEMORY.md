@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P9
-- Last completed task: P8.5
-- Next task: P9.1
+- Last completed task: P9.1
+- Next task: P9.2
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -83,3 +83,4 @@ none
 - 2026-11-05 P8.3 Ran axe accessibility checks and verified zero serious or critical violations. Verified keyboard navigation and visible focus rings.
 - 2026-11-05 P8.4 Added responsive checks at 1280 and 768 widths in frontend/e2e/responsive.spec.ts; verified no body scrollbars, container wrapping, and table scroll containers.
 - 2026-11-05 P8.5 Performed screenshot and codebase self-review against docs/DESIGN.md banned list (no gradients, no emojis, no buzzwords, no raw hex outside tokens, no em dashes/middle dots/arrows in text). Phase 8 exit gate passed.
+- 2026-11-05 P9.1 Created scripts/demo.py and make demo target; seeds default data if missing, runs pipeline, starts both backend and frontend servers with graceful shutdown.

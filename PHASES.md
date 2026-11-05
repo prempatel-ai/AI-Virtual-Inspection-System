@@ -75,7 +75,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** all checks pass. Performance targets met or logged as known gaps in MEMORY.md.
 
 ## P9 Demo readiness
-- [ ] P9.1 `make demo`: data, run, serve in one command
+- [x] P9.1 `make demo`: data, run, serve in one command
 - [ ] P9.2 `docs/DEMO.md`: 5-minute walkthrough using the planted shops
 - [ ] P9.3 README quickstart verified from a clean clone
 - [ ] P9.4 Final Gate
