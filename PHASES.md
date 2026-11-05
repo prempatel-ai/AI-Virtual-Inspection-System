@@ -78,7 +78,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P9.1 `make demo`: data, run, serve in one command
 - [x] P9.2 `docs/DEMO.md`: 5-minute walkthrough using the planted shops
 - [x] P9.3 README quickstart verified from a clean clone
-- [ ] P9.4 Final Gate
+- [x] P9.4 Final Gate
 
 ## Final Gate (all must be true)
 1. `make check` and `make e2e` pass on a clean clone.

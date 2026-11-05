@@ -64,6 +64,7 @@ types:
 	cd frontend && $(NPM) run types
 
 e2e:
+	$(PYTHON) scripts/demo.py --setup-only
 	cd frontend && $(NPM) run e2e
 
 demo:

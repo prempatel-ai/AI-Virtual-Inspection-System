@@ -49,7 +49,7 @@ def ensure_data_and_run(force: bool = False, shops: int = 500, weeks: int = 12, 
     if needs_data:
         print("[DEMO] Generating synthetic PDS dataset (shops=500, weeks=12, seed=42)...")
         init_db(db_path)
-        generate_pds_data(shops_count=shops, weeks_count=weeks, seed=seed, db_path=db_path)
+        generate_pds_data(num_shops=shops, num_weeks=weeks, seed=seed, db_path=db_path)
 
         print("[DEMO] Running scoring pipeline for latest week...")
         run_pipeline_for_week(db_path=db_path)

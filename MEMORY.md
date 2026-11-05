@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P9
-- Last completed task: P9.3
-- Next task: P9.4 (Final Gate)
+- Current phase: Complete (Final Gate passed)
+- Last completed task: P9.4
+- Next task: None
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -33,6 +33,11 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 - A-007 Weekly analysis window. Real refresh frequency unknown.
 - A-008 Weights and thresholds in `config.yaml` are starting values, not validated.
 - A-009 The problem statement does not name the state. Synthetic data uses Gujarat district names only for realism (see docs/DATA_SPEC.md).
+
+## Known Gaps
+- G-001 Synthetic dataset: evaluation metrics (precision@K, recall@2K) are benchmarked on synthetic planted scenarios S1-S7 and require recalibration with real department ground-truth data.
+- G-002 Display board figures: in the MVP, `board_distributed_kg` is ingested via weekly records; in production, an OCR or mobile inspection app workflow would supply board readings.
+- G-003 Biometric auth failure taxonomy: synthetic records aggregate fingerprint and OTP failures into a single failure count; real ePoS telemetry provides granular sub-codes (sensor error vs UIDAI timeout).
 
 ## Blockers
 none
@@ -86,3 +91,4 @@ none
 - 2026-11-05 P9.1 Created scripts/demo.py and make demo target; seeds default data if missing, runs pipeline, starts both backend and frontend servers with graceful shutdown.
 - 2026-11-05 P9.2 Authored docs/DEMO.md with structured 5-minute walkthrough referencing real planted shop IDs, figures, and scenario explanations.
 - 2026-11-05 P9.3 Updated README.md with comprehensive Quickstart, architecture overview, quality gates table, and verified commands.
+- 2026-11-05 P9.4 Verified all 7 criteria of Final Gate on clean clone (make check, make e2e, make demo, offline Groq fallback, synthetic banner, zero RULES.md violations, assumptions and gaps documented). All phases complete.

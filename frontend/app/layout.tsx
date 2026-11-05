@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { Public_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "../styles/tokens.css";
 import "./globals.css";
 
-const publicSans = Public_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const publicSans = localFont({
+  src: "./fonts/GeistVF.woff",
   variable: "--font-public-sans",
-  display: "swap",
-  fallback: ["system-ui", "sans-serif"],
+  fallback: ["Public Sans", "system-ui", "-apple-system", "sans-serif"],
 });
 
 export const metadata: Metadata = {
