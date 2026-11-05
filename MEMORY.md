@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P4
-- Last completed task: P4.4
-- Next task: P4.5
+- Last completed task: P4.5
+- Next task: P4.6
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -58,3 +58,4 @@ none
 - 2026-11-05 P4.2 Implemented GET /meta and GET /summary with evaluation KPIs and confirmed visit rate.
 - 2026-11-05 P4.3 Implemented POST /run to trigger idempotent scoring runs.
 - 2026-11-05 P4.4 Implemented POST /shops/{id}/feedback and linked confirmed_rate to summary KPI.
+- 2026-11-05 P4.5 Automated make types to export openapi.json and generate compiled frontend types/api.d.ts.

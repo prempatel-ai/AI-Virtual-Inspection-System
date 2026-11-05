@@ -1,0 +1,1236 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PDS Self-Auditing & AI Virtual Inspection System API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "description": "Health check endpoint.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meta": {
+      "get": {
+        "summary": "Get Meta",
+        "description": "Returns metadata about the PDS system dataset and available weeks.",
+        "operationId": "get_meta_meta_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/summary": {
+      "get": {
+        "summary": "Get Summary",
+        "description": "Returns summary KPIs, evaluation metrics, and visit outcomes for a week.",
+        "operationId": "get_summary_summary_get",
+        "parameters": [
+          {
+            "name": "week",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Week"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shops/ranked": {
+      "get": {
+        "summary": "Get Ranked Shops",
+        "description": "Returns ranked list of shops sorted by risk score descending.",
+        "operationId": "get_ranked_shops_shops_ranked_get",
+        "parameters": [
+          {
+            "name": "week",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Week"
+            }
+          },
+          {
+            "name": "district",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "District"
+            }
+          },
+          {
+            "name": "taluka",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Taluka"
+            }
+          },
+          {
+            "name": "band",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Band"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RankedShopsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shops/{shop_id}": {
+      "get": {
+        "summary": "Get Shop Detail",
+        "description": "Returns detailed audit file for a single shop.",
+        "operationId": "get_shop_detail_shops__shop_id__get",
+        "parameters": [
+          {
+            "name": "shop_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Shop Id"
+            }
+          },
+          {
+            "name": "week",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Week"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/run": {
+      "post": {
+        "summary": "Post Run",
+        "description": "Triggers an audit run for a specific week or the latest week.",
+        "operationId": "post_run_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RunRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shops/{shop_id}/feedback": {
+      "post": {
+        "summary": "Post Feedback",
+        "description": "Stores officer visit outcome feedback for a shop.",
+        "operationId": "post_feedback_shops__shop_id__feedback_post",
+        "parameters": [
+          {
+            "name": "shop_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Shop Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BoardCheck": {
+        "properties": {
+          "board_kg": {
+            "type": "number",
+            "title": "Board Kg"
+          },
+          "sold_kg": {
+            "type": "number",
+            "title": "Sold Kg"
+          },
+          "mismatch_pct": {
+            "type": "number",
+            "title": "Mismatch Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "board_kg",
+          "sold_kg",
+          "mismatch_pct"
+        ],
+        "title": "BoardCheck"
+      },
+      "BreakdownItem": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "points": {
+            "type": "number",
+            "title": "Points"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "own_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Own Median"
+          },
+          "peer_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peer Median"
+          },
+          "z": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Z"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "points",
+          "value",
+          "unit"
+        ],
+        "title": "BreakdownItem"
+      },
+      "ChecklistItem": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why"
+          },
+          "fact_id": {
+            "type": "string",
+            "title": "Fact Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "why",
+          "fact_id"
+        ],
+        "title": "ChecklistItem"
+      },
+      "ComplaintCategoryCount": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "count"
+        ],
+        "title": "ComplaintCategoryCount"
+      },
+      "EvaluationSummary": {
+        "properties": {
+          "on_synthetic_data": {
+            "type": "boolean",
+            "title": "On Synthetic Data"
+          },
+          "precision_at_k": {
+            "type": "number",
+            "title": "Precision At K"
+          },
+          "recall_at_2k": {
+            "type": "number",
+            "title": "Recall At 2K"
+          },
+          "outage_false_alarm_rate": {
+            "type": "number",
+            "title": "Outage False Alarm Rate"
+          },
+          "k": {
+            "type": "integer",
+            "title": "K"
+          }
+        },
+        "type": "object",
+        "required": [
+          "on_synthetic_data",
+          "precision_at_k",
+          "recall_at_2k",
+          "outage_false_alarm_rate",
+          "k"
+        ],
+        "title": "EvaluationSummary"
+      },
+      "EvidenceItem": {
+        "properties": {
+          "fact_id": {
+            "type": "string",
+            "title": "Fact Id"
+          },
+          "statement": {
+            "type": "string",
+            "title": "Statement"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fact_id",
+          "statement"
+        ],
+        "title": "EvidenceItem"
+      },
+      "ExplanationData": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItem"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "checklist": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            },
+            "type": "array",
+            "title": "Checklist"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "reason",
+          "evidence",
+          "checklist"
+        ],
+        "title": "ExplanationData"
+      },
+      "FeedbackItem": {
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "title": "Outcome"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "outcome",
+          "created_at"
+        ],
+        "title": "FeedbackItem"
+      },
+      "FeedbackRequest": {
+        "properties": {
+          "week": {
+            "type": "string",
+            "title": "Week"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "not_confirmed"
+            ],
+            "title": "Outcome"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "week",
+          "outcome"
+        ],
+        "title": "FeedbackRequest"
+      },
+      "FeedbackResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "shop_id": {
+            "type": "string",
+            "title": "Shop Id"
+          },
+          "week_start": {
+            "type": "string",
+            "title": "Week Start"
+          },
+          "outcome": {
+            "type": "string",
+            "title": "Outcome"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "shop_id",
+          "week_start",
+          "outcome",
+          "note",
+          "created_at"
+        ],
+        "title": "FeedbackResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse"
+      },
+      "HistoryData": {
+        "properties": {
+          "weeks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Weeks"
+          },
+          "series": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SeriesData"
+            },
+            "type": "object",
+            "title": "Series"
+          }
+        },
+        "type": "object",
+        "required": [
+          "weeks",
+          "series"
+        ],
+        "title": "HistoryData"
+      },
+      "MetaResponse": {
+        "properties": {
+          "synthetic": {
+            "type": "boolean",
+            "title": "Synthetic"
+          },
+          "weeks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Weeks"
+          },
+          "latest_week": {
+            "type": "string",
+            "title": "Latest Week"
+          },
+          "districts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Districts"
+          },
+          "talukas": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Talukas"
+          },
+          "shops_count": {
+            "type": "integer",
+            "title": "Shops Count"
+          },
+          "has_run": {
+            "type": "boolean",
+            "title": "Has Run"
+          }
+        },
+        "type": "object",
+        "required": [
+          "synthetic",
+          "weeks",
+          "latest_week",
+          "districts",
+          "talukas",
+          "shops_count",
+          "has_run"
+        ],
+        "title": "MetaResponse"
+      },
+      "RankedShopItem": {
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "shop_id": {
+            "type": "string",
+            "title": "Shop Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "district": {
+            "type": "string",
+            "title": "District"
+          },
+          "taluka": {
+            "type": "string",
+            "title": "Taluka"
+          },
+          "risk_score": {
+            "type": "number",
+            "title": "Risk Score"
+          },
+          "band": {
+            "type": "string",
+            "title": "Band"
+          },
+          "top_signals": {
+            "items": {
+              "$ref": "#/components/schemas/SignalSummary"
+            },
+            "type": "array",
+            "title": "Top Signals"
+          },
+          "trend": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Trend"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rank",
+          "shop_id",
+          "name",
+          "district",
+          "taluka",
+          "risk_score",
+          "band",
+          "top_signals",
+          "trend"
+        ],
+        "title": "RankedShopItem"
+      },
+      "RankedShopsResponse": {
+        "properties": {
+          "week": {
+            "type": "string",
+            "title": "Week"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RankedShopItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "week",
+          "total",
+          "items"
+        ],
+        "title": "RankedShopsResponse"
+      },
+      "RunRequest": {
+        "properties": {
+          "week": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Week"
+          },
+          "top_k": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top K",
+            "default": 20
+          }
+        },
+        "type": "object",
+        "title": "RunRequest"
+      },
+      "RunResponse": {
+        "properties": {
+          "run_id": {
+            "type": "integer",
+            "title": "Run Id"
+          },
+          "week": {
+            "type": "string",
+            "title": "Week"
+          },
+          "shops_scored": {
+            "type": "integer",
+            "title": "Shops Scored"
+          },
+          "explained": {
+            "type": "integer",
+            "title": "Explained"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "title": "Duration Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "week",
+          "shops_scored",
+          "explained",
+          "duration_ms"
+        ],
+        "title": "RunResponse"
+      },
+      "SeriesData": {
+        "properties": {
+          "shop": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Shop"
+          },
+          "peer_median": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Peer Median"
+          }
+        },
+        "type": "object",
+        "required": [
+          "shop",
+          "peer_median"
+        ],
+        "title": "SeriesData"
+      },
+      "ShopDetailResponse": {
+        "properties": {
+          "shop": {
+            "$ref": "#/components/schemas/ShopMeta"
+          },
+          "week": {
+            "type": "string",
+            "title": "Week"
+          },
+          "risk_score": {
+            "type": "number",
+            "title": "Risk Score"
+          },
+          "band": {
+            "type": "string",
+            "title": "Band"
+          },
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "breakdown": {
+            "items": {
+              "$ref": "#/components/schemas/BreakdownItem"
+            },
+            "type": "array",
+            "title": "Breakdown"
+          },
+          "history": {
+            "$ref": "#/components/schemas/HistoryData"
+          },
+          "stock_reconciliation": {
+            "$ref": "#/components/schemas/StockReconciliation"
+          },
+          "board_check": {
+            "$ref": "#/components/schemas/BoardCheck"
+          },
+          "complaints": {
+            "items": {
+              "$ref": "#/components/schemas/ComplaintCategoryCount"
+            },
+            "type": "array",
+            "title": "Complaints"
+          },
+          "explanation": {
+            "$ref": "#/components/schemas/ExplanationData"
+          },
+          "feedback": {
+            "items": {
+              "$ref": "#/components/schemas/FeedbackItem"
+            },
+            "type": "array",
+            "title": "Feedback"
+          }
+        },
+        "type": "object",
+        "required": [
+          "shop",
+          "week",
+          "risk_score",
+          "band",
+          "rank",
+          "breakdown",
+          "history",
+          "stock_reconciliation",
+          "board_check",
+          "complaints",
+          "explanation",
+          "feedback"
+        ],
+        "title": "ShopDetailResponse"
+      },
+      "ShopMeta": {
+        "properties": {
+          "shop_id": {
+            "type": "string",
+            "title": "Shop Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "district": {
+            "type": "string",
+            "title": "District"
+          },
+          "taluka": {
+            "type": "string",
+            "title": "Taluka"
+          },
+          "cards_count": {
+            "type": "integer",
+            "title": "Cards Count"
+          },
+          "vulnerability_index": {
+            "type": "number",
+            "title": "Vulnerability Index"
+          }
+        },
+        "type": "object",
+        "required": [
+          "shop_id",
+          "name",
+          "district",
+          "taluka",
+          "cards_count",
+          "vulnerability_index"
+        ],
+        "title": "ShopMeta"
+      },
+      "SignalSummary": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "points": {
+            "type": "number",
+            "title": "Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "points"
+        ],
+        "title": "SignalSummary"
+      },
+      "StockReconciliation": {
+        "properties": {
+          "opening_kg": {
+            "type": "number",
+            "title": "Opening Kg"
+          },
+          "received_kg": {
+            "type": "number",
+            "title": "Received Kg"
+          },
+          "sold_kg": {
+            "type": "number",
+            "title": "Sold Kg"
+          },
+          "closing_kg": {
+            "type": "number",
+            "title": "Closing Kg"
+          },
+          "gap_kg": {
+            "type": "number",
+            "title": "Gap Kg"
+          },
+          "gap_pct": {
+            "type": "number",
+            "title": "Gap Pct"
+          },
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          }
+        },
+        "type": "object",
+        "required": [
+          "opening_kg",
+          "received_kg",
+          "sold_kg",
+          "closing_kg",
+          "gap_kg",
+          "gap_pct",
+          "direction"
+        ],
+        "title": "StockReconciliation"
+      },
+      "SummaryResponse": {
+        "properties": {
+          "week": {
+            "type": "string",
+            "title": "Week"
+          },
+          "shops_monitored": {
+            "type": "integer",
+            "title": "Shops Monitored"
+          },
+          "flagged": {
+            "type": "integer",
+            "title": "Flagged"
+          },
+          "high": {
+            "type": "integer",
+            "title": "High"
+          },
+          "medium": {
+            "type": "integer",
+            "title": "Medium"
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/EvaluationSummary"
+          },
+          "visits_recorded": {
+            "type": "integer",
+            "title": "Visits Recorded"
+          },
+          "confirmed_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed Rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "week",
+          "shops_monitored",
+          "flagged",
+          "high",
+          "medium",
+          "evaluation",
+          "visits_recorded"
+        ],
+        "title": "SummaryResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

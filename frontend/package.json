@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "e2e": "playwright test",
-    "types": "openapi-typescript http://localhost:8000/openapi.json -o types/api.d.ts"
+    "types": "openapi-typescript openapi.json -o types/api.d.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

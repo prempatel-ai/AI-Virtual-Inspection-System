@@ -57,6 +57,7 @@ test: test-backend test-frontend
 check: lint typecheck test
 
 types:
+	$(PYTHON) -c "import json; from app.main import app; open('frontend/openapi.json', 'w', encoding='utf-8').write(json.dumps(app.openapi(), indent=2))"
 	cd frontend && $(NPM) run types
 
 e2e:

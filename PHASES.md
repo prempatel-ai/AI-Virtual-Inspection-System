@@ -37,7 +37,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P4.2 `GET /meta`, `GET /summary`
 - [x] P4.3 `POST /run`
 - [x] P4.4 `POST /shops/{id}/feedback` and confirmed-rate in summary
-- [ ] P4.5 `make types` generates frontend types from OpenAPI
+- [x] P4.5 `make types` generates frontend types from OpenAPI
 - [ ] P4.6 API tests
 **Exit:** all endpoints match docs/API.md. Tests pass. Generated types compile.
 
