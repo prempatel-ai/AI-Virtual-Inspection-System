@@ -1,35 +1,35 @@
-# 🌾 Gujarat PDS Virtual Inspection System (V2)
+# Gujarat PDS Virtual Inspection System (V2)
 
-[![CI / System Verification](https://img.shields.io/badge/Checks-169%20Pytest%20%7C%2039%20Vitest-success?style=flat-square&logo=github)](https://github.com/prempatel-ai/AI-Virtual-Inspection-System)
+[![Build & Verification](https://img.shields.io/badge/Verification-169%20Backend%20%7C%2039%20Frontend-1B5E4B?style=flat-square)](https://github.com/prempatel-ai/AI-Virtual-Inspection-System)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2%20(App%20Router)-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Database](https://img.shields.io/badge/SQLite-WAL%20%2B%20Triggers-003B57?style=flat-square&logo=sqlite)](https://sqlite.org/)
-[![Accessibility](https://img.shields.io/badge/WCAG-2.1%20AA%20Compliant-1B5E4B?style=flat-square)](scripts/check_contrast.py)
-[![Security](https://img.shields.io/badge/Auth-Argon2%20%2B%20JWT%20Cookie-8A2BE2?style=flat-square)]()
+[![SQLite](https://img.shields.io/badge/SQLite-Triggers%20Append--Only-003B57?style=flat-square&logo=sqlite)](https://sqlite.org/)
+[![WCAG AA](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-1B5E4B?style=flat-square)](scripts/check_contrast.py)
+[![Security](https://img.shields.io/badge/Security-Argon2%20%2B%20JWT%20Cookie-8A2BE2?style=flat-square)]()
 
-An enterprise virtual inspection and self-auditing intelligence platform designed for the **Department of Food, Civil Supplies & Consumer Affairs, Government of Gujarat**. 
+An enterprise virtual inspection and self-auditing intelligence platform engineered for the **Department of Food, Civil Supplies & Consumer Affairs, Government of Gujarat**.
 
-The system continuously audits weekly transaction logs, biometric authentication attempts, physical stock reconciliations, and public display board filings across **17,000+ Fair Price Shops (FPS)** in Gujarat. By blending **robust statistical anomaly detection** with **hard physical conservation laws**, it isolates diversion and fraud while shielding honest shop owners from false positives during infrastructure blackouts.
+The system audits weekly transactions, biometric authorizations, stock conservation reconciliations, and public display boards across **17,000+ Fair Price Shops (FPS)** in Gujarat. By combining deterministic dual-baseline anomaly detection with hard mass-conservation checks, it isolates fraudulent grain diversion while shielding honest shop dealers from false alarms during telecom infrastructure outages.
 
 ---
 
-## 🏛️ System Architecture Overview
+## System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph DataIngestion ["1. Data Ingestion & Physical Reconciliation"]
-        RAW["Weekly FPS Logs<br/>(ePoS, Biometrics, Stock, Boards)"] --> FEAT["Feature Extraction<br/>(Fail Rates, Unauth Share, Stock Gaps)"]
+    subgraph S1 ["1. Data Ingestion & Physical Reconciliation"]
+        RAW["Weekly FPS Logs<br/>(ePoS, Biometrics, Stock, Boards)"] --> FEAT["Feature Extraction<br/>(Failure Rates, Unauth Share, Stock Gaps)"]
     end
 
-    subgraph DetectionEngine ["2. Deterministic Dual-Baseline Scoring Engine"]
-        FEAT --> STAT["Robust Statistical Anomaly<br/>(Own 8-Week MAD vs Taluka Peer Median)"]
-        FEAT --> CONSERV["Conservation Arithmetic<br/>(Opening + Received - Sold vs Closing)"]
-        FEAT --> BOARD["Display Board Discrepancy<br/>(Declared vs ePoS Sold)"]
-        STAT & CONSERV & BOARD --> FUSION["Weight Matrix + Vulnerability Uplift<br/>(Score 0-100, High/Med/Low Bands)"]
+    subgraph S2 ["2. Deterministic Dual-Baseline Scoring Engine"]
+        FEAT --> STAT["Dual-Baseline MAD Anomaly<br/>(Own 8-Week MAD vs Taluka Peer Median)"]
+        FEAT --> CONSERV["Stock Conservation Arithmetic<br/>(Opening + Received - Sold vs Closing)"]
+        FEAT --> BOARD["Display Board Discrepancy<br/>(Declared kg vs ePoS Sold kg)"]
+        STAT & CONSERV & BOARD --> FUSION["Weight Matrix + Vulnerability Uplift<br/>(Score 0-100, High / Med / Low Bands)"]
     end
 
-    subgraph LLMVerification ["3. Traceable Explanations (Groq / Template)"]
+    subgraph S3 ["3. Traceable Explanations (Groq / Template)"]
         FUSION --> TOPK["Top-K Flagged Priority Queue"]
         TOPK --> FACT["Fact Extraction & ID Hash Verification"]
         FACT --> GROQ["Groq Llama-3 Scrutiny Summary"]
@@ -38,213 +38,270 @@ flowchart TD
         VALIDATE -- "Fail / Offline" --> TEMPLATE["Deterministic Government Template"]
     end
 
-    subgraph CaseManagement ["4. Secure Virtual Inspection & Case Operations"]
+    subgraph S4 ["4. Secure Case Management & Enforcement"]
         EXPLOG --> AUTOCASE["Auto-Provision Cases (/run pipeline)"]
         AUTOCASE --> RBAC["Argon2 + JWT Session Guard<br/>(Role & Jurisdiction Cloaking)"]
         RBAC --> WORK["Officer Case Action Lifecycle<br/>(Assign -> Inspect -> Outcome -> Close)"]
-        WORK --> IMMUTABLE[("Immutable Append-Only Log<br/>(SQLite Trigger Blocked Updates)")]
+        WORK --> IMMUTABLE[("Immutable Append-Only Audit Log<br/>(SQLite Trigger Blocked Updates)")]
     end
 ```
 
 ---
 
-## ⚡ Key Architectural Pillars
+## Application Walkthrough & Core Screens
 
-### 1. Dual-Baseline Anomaly Detection & Outage Trap Defense
-Traditional audit systems fail because they flag entire regions whenever cellular or ePoS towers go offline. Our engine separates individual malfeasance from systemic telecom faults using a dual-baseline Median Absolute Deviation (MAD) framework:
-- **Own History Baseline ($z_{\text{own}}$):** Evaluates whether the current week deviates from the shop's trailing 8-week operating baseline:
-  $$z_{\text{own}} = \frac{x - \text{median}(x_{t-8..t})}{\max(1.4826 \times \text{MAD}(x_{t-8..t}),\, \sigma_{\min})}$$
-- **Taluka Peer Baseline ($z_{\text{peer}}$):** Benchmarks against contemporaneous peers in the exact same taluka and shop-size tertile:
-  $$z_{\text{peer}} = \frac{x - \text{median}(\text{peers}_t)}{\max(1.4826 \times \text{MAD}(\text{peers}_t),\, \sigma_{\min})}$$
-- **Outage Trap Immunity:**
-  $$\text{Signal Strength } s = \text{clip}\left(\frac{\min(z_{\text{own}}, z_{\text{peer}})}{z_{\text{cap}}},\, 0,\, 1\right)$$
-  During a widespread tower outage in talukas like **Kadi (Mehsana)**, all local shops experience biometric failures simultaneously. This elevates the taluka peer median, pulling $z_{\text{peer}}$ toward zero and **suppressing false alarms completely**.
+### 1. Executive Oversight & Statewide Metrics
+![Executive Overview Dashboard](docs/images/overview.png)
 
-### 2. Hard Arithmetic Physical Conservation Checks
-In addition to statistical rate anomalies, the engine enforces strict mass-conservation equations:
-- **Stock Conservation Deficit:**
-  $$\Delta_{\text{stock}} = \frac{\left| \text{Opening} + \text{Received} - \text{Sold} - \text{Closing} \right|}{\text{Opening} + \text{Received}} \times 100$$
-- **Public Display Board Discrepancy:**
-  $$\Delta_{\text{board}} = \frac{\left| \text{Board Distributed} - \text{ePoS Sold} \right|}{\text{ePoS Sold}} \times 100$$
-- **Vulnerability Uplift:** Vulnerable tribal or low-income clusters ($\text{VI} \ge 0.80$) automatically receive risk weighting priority to protect sensitive beneficiary quotas.
-
-### 3. Tamper-Proof Append-Only Audit Trail
-Regulatory inspection systems require unassailable evidence. Every action taken on a case—from inspection commencement to outcome findings and penalties—is recorded with cryptographic finality:
-- Underpinned by **SQLite database triggers** that explicitly block any `UPDATE` or `DELETE` operations on `case_actions` and `audit_log`.
-- Even database administrators cannot alter historically filed inspection findings or penalty orders without breaking trigger constraints.
+- **Key Performance Indicators**: Statewide monitoring across shops monitored, active flagged cases, overdue investigations (>7 days), and confirmed on-site irregularity rates.
+- **District Risk Matrix**: Real-time comparative ranking of all 8 Gujarat administrative districts by flag rate, high-risk case load, open cases, and field confirmation percentages.
 
 ---
 
-## 🛡️ Case Management State Machine
+### 2. Inspector Case Queue & Priority Worklist
+![Inspector Case Queue](docs/images/queue.png)
 
-Every flagged shop automatically initializes a tracked investigation case governed by a strict server-side state machine (**409 Conflict** on illegal transitions):
+- **Dedicated Case Queue**: Automatically filtered to shops assigned to the logged-in officer within their active taluka jurisdiction.
+- **Multi-Column Sorting & Instant Search**: Sort dynamically by Risk Score, Days Open, Status, or Taluka. Filter down to individual shop names or IDs.
+- **Adjustable Page Sizing**: Switch effortlessly between 10, 25, 50, or 100 cases per page with built-in CSV roster export.
+
+---
+
+### 3. Case Investigation & Field Action Controls
+![Case Detail & Action Controls](docs/images/case_detail.png)
+
+- **Exact Score Breakdown**: Displays the exact point contribution for each signal (Biometric overrides, stock deficit, board mismatch, citizen complaints, and vulnerability uplift).
+- **Physical Verification Checklist**: Standardized inspection fields including physical stock audit counts, weighing scale calibration seal checks, and beneficiary ration slip audits.
+- **Server-Governed Action Bar**: Action buttons are rendered strictly from server-authorized capabilities (`start_inspection`, `record_outcome`, `escalate`, `reassign`, `close`).
+- **Tamper-Proof Audit Timeline**: Reverse-chronological history showing every inspector action, notes, and outcome, protected by SQLite database triggers.
+
+---
+
+### 4. Administrative Area Risk Matrix
+![Administrative Area Matrix](docs/images/areas.png)
+
+- **Multi-Level Administrative Drill-Down**: Switch between District view and Taluka view to compare performance metrics across levels of administration.
+- **69 Authentic Gujarat Talukas**: Full coverage of all official Gujarat talukas (Sanand, Daskroi, Kadi, Gondal, Jetpur, etc.) without placeholder naming.
+
+---
+
+### 5. Officer Workload & Security Roster
+![Officer Workload & Security Roster](docs/images/officers.png)
+
+- **Workload & Response Tracking**: Monitors assigned case counts, overdue rates (>7 days), and median response turnaround times per officer.
+- **Security Scope Inspection**: Detailed view of each officer's operational credentials, assigned administrative scope, and role permissions.
+
+---
+
+## Detection Engine & Outage Trap Defense
+
+Traditional auditing systems produce heavy false alarms whenever regional telecommunications go down. This platform isolates fraud using a dual-baseline Median Absolute Deviation (MAD) model coupled with physical conservation arithmetic.
+
+### 1. Dual-Baseline Anomaly Calculation
+
+```
+Own History Baseline (z_own):
+  z_own = (x - median(own_history)) / max(1.4826 * MAD(own_history), min_scale)
+
+Taluka Peer Baseline (z_peer):
+  z_peer = (x - median(peer_group)) / max(1.4826 * MAD(peer_group), min_scale)
+
+Combined Signal Strength:
+  signal = clip(min(z_own, z_peer) / 4.0, 0.0, 1.0)
+```
+
+- **Own History (z_own)**: Compares current weekly behavior against the shop's trailing 8-week operating baseline.
+- **Taluka Peer Group (z_peer)**: Benchmarks the shop against contemporaneous peers operating in the exact same taluka and shop-size tertile.
+- **Minimum Intersection**: Taking the minimum of both z-scores ensures that a shop is flagged only when it deviates from **both** its own normal behavior and its local peers.
+
+### 2. Outage Trap Defense (Zero False Alarms)
+
+```
+Scenario: Regional cellular tower failure in Kadi Taluka (Mehsana)
+
+Normal Week:
+  - Local shops report ~2-4% biometric auth failures.
+  - Peer median auth failure = ~3.0%.
+
+Outage Week:
+  - Tower failure causes auth failures across all shops in Kadi to spike to ~35-45%.
+  - Taluka peer median shifts upward to ~38.0%.
+  - Result: (x - median(peers)) remains near 0 -> z_peer <= 0.5.
+  - Signal strength collapses to zero -> No false cases opened.
+```
+
+### 3. Physical Conservation & Hard Signal Equations
+
+| Signal Key | Signal Type | Mathematical Definition | Failure Condition |
+|---|---|---|---|
+| `stock_gap_pct` | Hard Arithmetic | `abs(Opening + Received - Sold - Closing) / (Opening + Received) * 100` | Unaccounted stock deficit > 5% |
+| `board_mismatch_pct` | Hard Arithmetic | `abs(Board Distributed - ePoS Sold) / ePoS Sold * 100` | Public board differs from ePoS by > 10% |
+| `auth_fail_rate` | Rate Anomaly | `auth_failures / auth_attempts` | Elevated vs own history AND taluka peers |
+| `unauth_share` | Rate Anomaly | `unauth_sales / transactions` | Elevated unauthenticated sales vs peers |
+| `complaints_rate` | Citizen Signal | `complaints_count / transactions * 100` | Spike in short weight or denied rations |
+
+---
+
+## Case Lifecycle & State Machine
+
+Every flagged shop automatically opens or updates a case governed by a strict server-side state machine. Illegal transitions return **HTTP 409 Conflict**.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> new: Shop flagged (Score >= 30, no inspector)
+    [*] --> new: Shop flagged (Score >= 30, unassigned)
     [*] --> assigned: Shop flagged (Auto-assigned to Taluka Inspector)
     
-    new --> assigned: Mamlatdar reassigns
-    assigned --> in_progress: Assignee starts field inspection
-    assigned --> escalated: Needs higher authority intervention
+    new --> assigned: Mamlatdar assigns inspector
+    assigned --> in_progress: Assignee begins inspection
+    assigned --> escalated: Escalated to higher authority
     
-    in_progress --> inspected: Inspection outcome & findings recorded
-    in_progress --> escalated: High irregularity requiring DO / Vigilance
+    in_progress --> inspected: Inspection findings recorded
+    in_progress --> escalated: High irregularity referred upward
     
     escalated --> in_progress: Assigned officer resumes action
-    escalated --> closed: Supervisor resolves & closes with outcome
+    escalated --> closed: Supervisor resolves & closes
     
-    inspected --> closed: Mamlatdar / DO / Admin closes case
-    closed --> assigned: Re-flagged in subsequent audit cycles
+    inspected --> closed: Case formally closed by supervisor
+    closed --> assigned: Shop re-flagged in subsequent run
 ```
+
+### Transition Authority Rules:
+- **`start_inspection` & `record_outcome`**: Exclusively executable by the case's current assignee.
+- **`reassign` & `close`**: Authorized for Taluka Mamlatdars, District Officers, and Administrators.
+- **`escalate`**: Follows administrative ladder: Inspector $\rightarrow$ Mamlatdar $\rightarrow$ District Officer $\rightarrow$ State Vigilance.
+- **`add_note`**: Permitted across all open states by authorized personnel (including Vigilance).
 
 ---
 
-## 👥 Multi-Tier Administrative Roles & Jurisdiction Scoping
+## Administrative Roles & Security Scoping
 
-The system mirrors the actual administrative hierarchy of Gujarat across **8 Districts** and **69 Authentic Talukas**:
+The system enforces strict role-based access control (RBAC) across 5 administrative tiers:
 
-```mermaid
-graph TD
-    ADMIN["System Administrator<br/>(State Scope · User Provisioning & System Audit)"]
-    VIGILANCE["State Vigilance Directorate<br/>(State Scope · Cross-District Review & Case Escalation Notes)"]
-    DO["District Supply Officer (DO)<br/>(District Scope · Taluka Performance Oversight & Reallocation)"]
-    MAMLATDAR["Taluka Mamlatdar<br/>(Taluka Scope · Case Supervision, Officer Assignment & Case Closure)"]
-    INSPECTOR["Field Inspection Officer<br/>(Taluka Scope · Dedicated Case Queue, Field Audits & Enforcement)"]
+| Role | Geographic Scope | Queue Access | Case Actions Permitted | Administrative Privileges |
+|---|---|---|---|---|
+| **Inspector** | Single Taluka | Assigned cases only | Start, Record Outcome, Add Note, Escalate | None |
+| **Mamlatdar** | Single Taluka | All cases in taluka | Reassign, Add Note, Escalate, Close | Taluka officer roster |
+| **District Officer** | Entire District | All cases in district | Reassign, Add Note, Escalate, Close | District area matrix & officers |
+| **State Vigilance** | Entire State | All cases in state | Add Note (read-only audit oversight) | State oversight dashboards |
+| **System Admin** | Entire State | Full administrative view | Reassign, Close, Run Pipeline | User provisioning & audit log |
 
-    ADMIN --> VIGILANCE
-    VIGILANCE --> DO
-    DO --> MAMLATDAR
-    MAMLATDAR --> INSPECTOR
-```
-
-### Jurisdiction Security Principles:
-1. **Deny by Default:** No endpoint or resource is accessible without explicit capability claims.
-2. **Existence Cloaking (404 over 403):** If an Inspector in *Sanand (Ahmedabad)* attempts to access a case in *Kadi (Mehsana)*, the system returns a **404 Not Found** instead of a 403, preventing enumeration of state enforcement actions.
-3. **Dynamic Action Authority:** Action buttons in the UI are never rendered via hardcoded client-side role checks. The server computes and returns `allowed_actions: []` based on case status, active user ID, and assigned jurisdiction.
+### Security Highlights:
+- **Existence Cloaking (404 Not Found)**: Out-of-scope requests return 404 rather than 403, preventing unauthorized existence discovery across jurisdictions.
+- **Tamper-Proof Triggers**: SQLite database triggers block all `UPDATE` and `DELETE` commands on `case_actions` and `audit_log`.
+- **Session Security**: Passwords hashed using Argon2id. Sessions verified with signed JWTs stored in `HttpOnly`, `SameSite=Lax` cookies with CSRF validation.
 
 ---
 
-## 💻 Tech Stack & Engineering Standards
+## Pre-Seeded Evaluation Accounts
 
-| Layer | Technology | Key Capabilities & Patterns |
+The platform includes 149 pre-configured administrative personnel across Gujarat. Use the password **`demoPassword123`** (or click the quick demo buttons on the login page):
+
+| Role | Account Email | Assigned Geographic Jurisdiction |
 |---|---|---|
-| **Backend API** | **FastAPI (Python 3.11 / 3.13)** | Async ASGI, Pydantic v2 data contracts, Argon2 password hashing, PyJWT, connection pooling, zero-leak error boundaries. |
-| **Database** | **SQLite (WAL mode)** | Single-file embedded zero-latency architecture, foreign key integrity, append-only security triggers. |
-| **Statistical Engine** | **NumPy & Pandas** | Vectorized rolling MAD window computation, lognormal transaction distributions, deterministic seeded generation. |
-| **LLM Explainer** | **Groq Python SDK (Llama-3)** | Strict numeric fact validation, SHA-256 fact hashing, guaranteed deterministic template fallback. |
-| **Frontend Web** | **Next.js 14 (App Router)** | React 18 Server/Client components, dynamic streaming, responsive layouts (1280px desktop, 768px tablet). |
-| **UI & Styling** | **Tailwind CSS & CSS Tokens** | Zero AI-slop design: 100% WCAG AA contrast, custom multi-sort datatables, CSV export, skeleton loaders. |
-| **Quality & Tests** | **Pytest, Vitest, Ruff, Mypy** | 169 backend unit/RBAC matrix tests, 39 frontend unit/integration tests, full type-safety. |
+| **Field Inspector** | `ananya.patel.13@demo.invalid` | Ahmedabad District • Ahmedabad City Taluka |
+| **Taluka Mamlatdar** | `saanvi.patel.12@demo.invalid` | Ahmedabad District • Ahmedabad City Taluka |
+| **District Officer** | `vihaan.patel.4@demo.invalid` | Ahmedabad District (District-Wide) |
+| **State Vigilance** | `vivaan.patel.2@demo.invalid` | State of Gujarat (State-Wide Oversight) |
+| **System Administrator** | `aarav.patel.1@demo.invalid` | State of Gujarat (System Administration) |
 
 ---
 
-## 🚀 Quickstart & Single-Command Launch
+## Pre-Seeded Walkthrough Scenarios
+
+| Scenario ID | Planted Shop | Location | Signal Pattern | Primary Evidence |
+|---|---|---|---|---|
+| **S1 Stock Diversion** | `FPS-00183` | Mehsana | Closing stock deficit | 437 kg physical grain deficit vs book ledger |
+| **S2 Board Mismatch** | `FPS-00125` | Patan | Display board discrepancy | Public board displays 28% higher grain than ePoS sales |
+| **S3 Override Spike** | `FPS-00122` | Mehsana | Biometric override surge | Unauthenticated transactions 4x local peer median |
+| **S4 Complaint Surge** | `FPS-00001` | Mehsana | Citizen grievance spike | 14 citizen complaints regarding denied rations |
+| **S5 Multi-Signal** | `FPS-00167` | Mehsana | Compound severe fraud | Stock deficit + biometric overrides + complaint surge |
+| **S6 Vulnerable Shop** | `FPS-00131` | Mehsana | Vulnerability index uplift | Low-income cluster (VI: 0.88) with mild stock gap |
+| **S7 Outage Trap** | All shops | Kadi (Mehsana) | Telecom tower blackout | **Zero false alarms**; peer median protects clean shops |
+
+---
+
+## Quickstart & Launch Commands
 
 ### Prerequisites
-- **Python 3.11+** (Python 3.13 fully supported)
-- **Node.js 18+** (Node 20 LTS recommended)
-- Git & modern shell (PowerShell or Bash)
+- Python 3.11+ (Python 3.13 fully supported)
+- Node.js 18+ (Node 20 LTS recommended)
+- Git and command-line shell
 
-### 1. Automated Setup
-Clone the repository and install all dependencies:
+### 1. Installation
 ```bash
 git clone https://github.com/prempatel-ai/AI-Virtual-Inspection-System.git
 cd AI-Virtual-Inspection-System
 make setup
 ```
-*(On Windows systems without `make`: creates `.venv`, installs backend with `pip install -e "backend[dev]"`, and runs `npm install` inside `frontend/`)*
 
-### 2. Launch the Demo Environment
-Run the unified supervisor script. This automatically verifies the database, provisions seeded cases across Gujarat, and launches both services simultaneously:
+### 2. Launch Application
+Launch both backend and frontend servers with a single command:
 ```bash
 python scripts/demo.py
 # or: make demo
 ```
 
-Once running:
-- 🌐 **Web Interface:** [http://localhost:3000](http://localhost:3000)
-- 📑 **Interactive OpenAPI Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
-- 🧭 **7-Minute Guided Walkthrough:** [`docs/DEMO.md`](docs/DEMO.md)
+Access the system:
+- **Web Interface**: [http://localhost:3000](http://localhost:3000)
+- **API Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Evaluation Guide**: [`docs/DEMO.md`](docs/DEMO.md)
 
 ---
 
-## 🔑 Demo Personas & Pre-Seeded Scenarios
+## Quality Gates & Verification
 
-The system comes pre-seeded with 149 realistic administrative officers across Gujarat. Use the password **`demoPassword123`** (or quick-sign-in buttons on the login screen):
-
-| Role | Demo Account | Jurisdiction Scope | Core Responsibilities |
-|---|---|---|---|
-| **Inspector** | `ananya.patel.13@demo.invalid` | Ahmedabad • Ahmedabad City | Work assigned queue, start inspections, submit outcome verification. |
-| **Mamlatdar** | `saanvi.patel.12@demo.invalid` | Ahmedabad • Ahmedabad City | Supervise taluka queue, reassign inspectors, close completed cases. |
-| **District Officer** | `vihaan.patel.4@demo.invalid` | Ahmedabad District | District-wide oversight, cross-taluka flag metrics, escalate severe cases. |
-| **State Vigilance** | `vivaan.patel.2@demo.invalid` | State-wide (Gujarat) | State audit oversight, read-only case inspection, append formal notes. |
-| **System Admin** | `aarav.patel.1@demo.invalid` | State-wide (Gujarat) | Officer provisioning, credentials reset, tamper-proof security access log. |
-
-### Featured Inspection Walkthrough Scenarios:
-- **`FPS-00183` (Mehsana):** Physical Stock Diversion (unaccounted closing stock deficit >12%).
-- **`FPS-00125` (Patan):** Display Board Discrepancy (declared board kg exceeds ePoS records by 28%).
-- **`FPS-00122` (Mehsana):** Biometric Override Surge (unauthenticated transactions 4x peer median).
-- **`FPS-00001` (Mehsana):** Citizen Complaint Spike (short weight and denied ration reports).
-- **`FPS-00167` (Mehsana):** Multi-Signal Severe Case (stock deficit + overrides + complaints).
-- **`Kadi Taluka` (Mehsana):** **The Outage Trap** (cellular tower collapse isolated and suppressed from false alarms).
-
----
-
-## 🧪 Comprehensive Quality Gates
-
-Every layer of the codebase is verified by automated quality commands:
+Run the full automated verification test suite:
 
 ```bash
-# Run the entire test & verification suite:
 make check
 ```
 
-The validation suite executes:
-1. **Backend Code Quality:** `ruff check backend` (zero lint warnings).
-2. **Backend Type Integrity:** `mypy backend/app` (strict static typing).
-3. **Frontend Code Quality:** `npm run lint` inside `frontend/` (Next.js ESLint).
-4. **Frontend Type Integrity:** `npm run typecheck` inside `frontend/` (TypeScript `tsc --noEmit`).
-5. **Backend Unit & RBAC Tests:** `pytest backend/tests` (169 passed, including 55 RBAC matrix cases).
-6. **Frontend Unit & Component Tests:** `npm run test` inside `frontend/` (39 Vitest tests passed).
-7. **Accessibility & Contrast Verification:** `python scripts/check_contrast.py` (16 color pairs verified against WCAG AA $\ge 4.5:1$).
+Automated checks executed:
+- `ruff check backend`: Python linting (0 errors).
+- `mypy backend/app`: Python type verification (0 errors).
+- `npm run lint` (frontend): ESLint code style audit (0 warnings).
+- `npm run typecheck` (frontend): TypeScript static typechecking (0 errors).
+- `pytest backend/tests`: 169 backend unit and RBAC matrix tests (100% pass).
+- `npm run test` (frontend): 39 Vitest UI component and integration tests (100% pass).
+- `python scripts/check_contrast.py`: WCAG 2.1 AA color contrast verification (16/16 pass).
 
 ---
 
-## 📁 Repository Layout
+## Repository Structure
 
 ```
 ├── backend/
 │   ├── app/
-│   │   ├── api/             # FastAPI routers (auth, cases, oversight, admin, routes)
-│   │   ├── auth/            # Security (Argon2, JWT cookies, CSRF, lockout guard)
-│   │   ├── data/            # Generator, scenario planter & user/activity seeders
+│   │   ├── api/             # FastAPI routers (auth, cases, oversight, admin)
+│   │   ├── auth/            # Argon2 password security, JWT cookies, RBAC dependencies
+│   │   ├── data/            # Synthetic data generation, 69 talukas & user seeders
 │   │   ├── detection/       # Dual-baseline MAD z-score engine & stock reconciliation
-│   │   ├── llm/             # Fact extraction, Groq Llama-3 client & failsafe templates
+│   │   ├── llm/             # Fact extraction, Groq Llama-3 client & fallback templates
 │   │   ├── pipeline/        # Weekly audit execution, case provisioning & metrics
 │   │   └── scoring/         # Score decomposition & vulnerability index uplifts
 │   └── tests/               # 169 pytest tests (including test_rbac_matrix.py)
 ├── frontend/
-│   ├── app/                 # Next.js App Router (queue, cases, areas, officers, admin)
-│   ├── components/ui/       # Enterprise UI blocks (DataTable, AppShell, RoleNav, Skeletons)
-│   ├── lib/                 # Type-safe API client (SameSite cookies & CSRF handling)
-│   ├── styles/tokens.css    # Design tokens (colors, spacing, typography, light mode)
-│   └── tests/               # Vitest suite (screen components, state machines, navigation)
+│   ├── app/                 # Next.js App Router (overview, queue, cases, areas, officers)
+│   ├── components/ui/       # Enterprise UI components (DataTable, AppShell, Skeletons)
+│   ├── lib/                 # Type-safe API client (SameSite cookies & CSRF headers)
+│   ├── styles/tokens.css    # Central design tokens (light-theme palette, contrast AA)
+│   └── tests/               # Vitest suite (screen components, state machines, forms)
 ├── docs/
-│   ├── ARCHITECTURE.md      # Data flow, state machine & security architecture
-│   ├── DEMO.md              # Step-by-step 7-minute evaluator walkthrough
-│   ├── DESIGN.md            # Enterprise UX rules, contrast tokens & design system
-│   └── PRODUCT.md           # Business objectives, operational requirements & scope
+│   ├── images/              # High-resolution screenshots of running system screens
+│   ├── ARCHITECTURE.md      # Detailed system flow, data models & security contracts
+│   ├── DEMO.md              # 7-minute evaluator walkthrough guide
+│   ├── DESIGN.md            # UX principles, color tokens & banned UI patterns
+│   └── PRODUCT.md           # Product specifications & statutory audit background
 ├── scripts/
 │   ├── demo.py              # Single-command environment runner & supervisor
 │   ├── check_contrast.py    # Automated WCAG 2.1 AA token contrast auditor
-│   └── perf.py              # 17,000-shop performance & throughput benchmark
-└── Makefile                 # Build orchestration (setup, check, data, demo)
+│   └── capture_screenshots.js # Automated Playwright screen capture script
+└── Makefile                 # Orchestration targets (setup, check, demo, data)
 ```
 
 ---
 
-## 👨‍💻 Engineering & Ownership
+## Author & Maintainer
 
-Engineered and maintained with care by **Prem Patel** ([rolexhere03@gmail.com](mailto:rolexhere03@gmail.com)).
-Built for transparent, accountable, and resilient public ration governance.
+Maintained by **Prem Patel** ([rolexhere03@gmail.com](mailto:rolexhere03@gmail.com)).  
+Built for transparent, accountable, and tamper-proof public distribution monitoring.
