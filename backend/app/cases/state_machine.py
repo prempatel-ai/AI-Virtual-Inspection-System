@@ -1,7 +1,7 @@
 """Case state machine, transition validation, escalation, and allowed_actions computation."""
 
 import sqlite3
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, cast
 
 from fastapi import HTTPException, status
 
@@ -256,15 +256,16 @@ def validate_action_transition(
             detail=f"Unknown action type: {action_type}",
         )
 
-    rule = ACTION_STATUS_TRANSITIONS[action_type]
+    rule = cast(Dict[str, Any], ACTION_STATUS_TRANSITIONS[action_type])
     c_status = case.get("status")
     user_id = current_user.get("user_id")
     role = current_user.get("role", "")
     assignee_id = case.get("assignee_id")
     has_outcome = case_has_recorded_outcome(conn, case["case_id"])
 
+    allowed_from = cast(Set[str], rule["allowed_from"])
     # 1. Check if allowed from current status
-    if c_status not in rule["allowed_from"]:
+    if c_status not in allowed_from:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Action '{action_type}' is not allowed from status '{c_status}'",
@@ -311,4 +312,4 @@ def validate_action_transition(
                 detail=f"Role '{role}' cannot reopen cases",
             )
 
-    return rule["result_status"]
+    return cast(Optional[str], rule["result_status"])

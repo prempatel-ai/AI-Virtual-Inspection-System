@@ -84,19 +84,19 @@ export function ActionTimeline({ actions }: ActionTimelineProps) {
                     {/* Payload Details */}
                     {payload && Object.keys(payload).length > 0 && (
                       <div className="mt-2 text-meta text-text bg-bg border border-border/60 rounded p-2 text-xs space-y-1">
-                        {payload.reason && (
+                        {Boolean(payload.reason) && (
                           <div>
                             <span className="font-medium text-text-muted">Reason: </span>
                             <span>{String(payload.reason)}</span>
                           </div>
                         )}
-                        {payload.note && (
+                        {Boolean(payload.note) && (
                           <div>
                             <span className="font-medium text-text-muted">Note: </span>
                             <span>{String(payload.note)}</span>
                           </div>
                         )}
-                        {payload.action_taken && (
+                        {Boolean(payload.action_taken) && (
                           <div>
                             <span className="font-medium text-text-muted">Action taken: </span>
                             <span className="capitalize">{String(payload.action_taken).replace(/_/g, " ")}</span>

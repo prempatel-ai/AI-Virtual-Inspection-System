@@ -356,6 +356,11 @@ def post_case_action(
             payload_dict["escalated_to"] = target_assignee
 
         elif action_type == "reassign":
+            if not body.to_user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail="to_user_id is required for reassign action",
+                )
             validate_reassign_target(conn, current_user, body.to_user_id, shop_meta)
             new_assignee_id = body.to_user_id
 
@@ -413,7 +418,7 @@ def post_case_action(
         conn.commit()
 
         return CaseActionItem(
-            id=action_id,
+            id=int(action_id or 0),
             case_id=case_id,
             actor_id=current_user["user_id"],
             actor_name=current_user["name"],

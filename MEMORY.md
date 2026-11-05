@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P13 Frontend: auth and officer screens
-- Last completed task: P13.2 (UI Blocks created and tested)
-- Next task: P13.3 (/queue and /cases/[id] screens)
+- Current phase: P14 Frontend: oversight and admin
+- Last completed task: P13.4 (Phase 13 Exit Gate Passed)
+- Next task: P14.1 (/overview and /areas screens)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -78,3 +78,5 @@ none
 - 2026-11-05 P12.4 Regenerated frontend OpenAPI spec and TypeScript types via make types; all 168 tests pass. Phase 12 exit gate passed.
 - 2026-11-05 P13.1 Implemented AuthProvider, /login, 401 redirect, 403 page, role landing router, and RoleNav driven by permissions. Moved V1 dashboard to /flags.
 - 2026-11-05 P13.2 Created V2 reusable UI blocks: StatusBadge, CaseActionBar, OutcomeForm, ActionTimeline, AssigneeSelect, InlineConfirm, PermissionList. All tests and lint pass.
+- 2026-11-05 P13.3 Built /queue and /cases/[id] screens driven strictly by allowed_actions, inline confirm, action timeline, and shop evidence.
+- 2026-11-05 P13.4 Verified role landing, /flags migration, and complete inspector workflow. make check passes 100%. Phase 13 exit gate passed.
