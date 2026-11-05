@@ -27,7 +27,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 ## P3 Scoring and evaluation
 - [x] P3.1 `config.yaml` and loader (weights, thresholds, bands)
 - [x] P3.2 `scoring.py` with exact breakdown (points sum to score)
-- [ ] P3.3 `run.py` persists scores per shop-week
+- [x] P3.3 `run.py` persists scores per shop-week
 - [ ] P3.4 `evaluate.py` (precision@K, recall@2K, outage false-alarm rate against planted labels)
 - [ ] P3.5 Tuning pass: adjust `config.yaml` until the targets in docs/TESTING.md are met
 **Exit:** evaluation targets met on the default dataset. Property test on breakdown sums passes.
