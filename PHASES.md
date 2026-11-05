@@ -6,7 +6,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 ## P0 Foundation
 - [x] P0.1 Skeleton: `backend/` (pyproject, ruff, pytest, `app/main.py` with `GET /health`), `frontend/` (Next.js, TypeScript, Tailwind), `Makefile`, `.env.example`
 - [x] P0.2 `make check` runs lint, types and tests for backend and frontend; green on the empty skeleton
-- [ ] P0.3 GitHub Actions workflow running `make check`
+- [x] P0.3 GitHub Actions workflow running `make check`
 **Exit:** `make setup && make check` passes. `/health` returns ok. Frontend builds.
 
 ## P1 Synthetic data

@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P0
-- Last completed task: P0.2
-- Next task: P0.3
+- Current phase: P1
+- Last completed task: P0.3
+- Next task: P1.1
 
 ## Decisions
 - D-001 Stack: FastAPI + SQLite + pandas (backend), Next.js + TypeScript + Tailwind + Recharts (frontend).
@@ -36,3 +36,4 @@ none
 - 2026-11-05 Docs scaffolded. No code yet.
 - 2026-11-05 P0.1 Scaffolding: backend (FastAPI, health endpoint, config.yaml, checklists.yaml), frontend (Next.js 14, Tailwind, vitest), Makefile, .env.example. All checks pass.
 - 2026-11-05 P0.2 make check runs backend and frontend lint, typecheck, and unit tests; confirmed green on skeleton.
+- 2026-11-05 P0.3 Added GitHub Actions CI workflow running make setup, make check, and frontend build. Phase 0 exit gate passed.
