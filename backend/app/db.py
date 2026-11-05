@@ -116,8 +116,40 @@ def init_db(db_path: Optional[Union[str, Path]] = None) -> None:
                 )
                 conn.commit()
 
+        # Check if legacy feedback table exists
+        cursor.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='feedback';")
+        if cursor.fetchone()[0] > 0:
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS cases (
+                case_id TEXT PRIMARY KEY,
+                shop_id TEXT NOT NULL,
+                status TEXT NOT NULL,
+                assignee_id TEXT,
+                risk_score_latest REAL NOT NULL,
+                band_latest TEXT NOT NULL,
+                opened_week TEXT NOT NULL,
+                last_flagged_week TEXT NOT NULL,
+                closed_at TEXT,
+                last_action_at TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+            """)
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS case_actions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                case_id TEXT NOT NULL,
+                actor_id TEXT,
+                actor_role TEXT NOT NULL,
+                type TEXT NOT NULL,
+                payload_json TEXT NOT NULL DEFAULT '{}',
+                risk_score_at_action REAL NOT NULL,
+                created_at TEXT NOT NULL
+            );
+            """)
+            conn.commit()
+            migrate_feedback_to_case_actions(conn)
+
         conn.executescript(schema_sql)
-        migrate_feedback_to_case_actions(conn)
         conn.commit()
     finally:
         conn.close()

@@ -156,9 +156,13 @@ def seed_users(
                 if "inspector" not in demo_examples:
                     demo_examples["inspector"] = i_email
 
-        # 1. Clear existing users and insert all users first (satisfying FK constraints)
-        conn.execute("DELETE FROM users;")
+        # 1. Clear existing references and users first (satisfying FK constraints)
+        conn.execute("UPDATE shops SET inspector_id = NULL;")
         cursor = conn.cursor()
+        cursor.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='cases';")
+        if cursor.fetchone()[0] > 0:
+            conn.execute("UPDATE cases SET assignee_id = NULL;")
+        conn.execute("DELETE FROM users;")
         cursor.executemany(
             """
             INSERT INTO users (

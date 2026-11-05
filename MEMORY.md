@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P15 Activity data, demo, hardening
-- Last completed task: P14.4 (Phase 14 Exit Gate Passed)
-- Next task: P15.1 (seed-activity generator)
+- Last completed task: P15.1 (seed-activity implemented and tested)
+- Next task: P15.2 (Per-role Playwright e2e tests)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -84,3 +84,4 @@ none
 - 2026-11-05 P14.2 Built /officers roster and /officers/[id] profile (PermissionList, assigned cases, immutable recent action timeline, area flag rate).
 - 2026-11-05 P14.3 Built /actions audit feed with action-type filtering and search.
 - 2026-11-05 P14.4 Built /admin/users (provisioning, role/scope assignment, status toggle, password reset) and /admin/audit (append-only security log). Phase 14 exit gate passed.
+- 2026-11-05 P15.1 Built make seed-activity generator simulating 4 historical weeks of case progression, realistic officer outcomes, escalations, overdue aging, and target week scoring.

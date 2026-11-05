@@ -132,7 +132,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** supervisors see their scope; the admin sees the whole state, every officer's access and actions, and flag rates by area.
 
 ## P15 Activity data, demo, hardening
-- [ ] P15.1 `seed-activity`
+- [x] P15.1 `seed-activity`
 - [ ] P15.2 Per-role Playwright e2e; update V1 e2e to sign in
 - [ ] P15.3 Security pass: cookie flags, headers, rate limit, no sensitive fields in responses, RBAC matrix complete
 - [ ] P15.4 Accessibility and screenshot review of all new screens against `docs/DESIGN.md`

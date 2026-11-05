@@ -1,4 +1,4 @@
-.PHONY: setup data seed-users dev-api dev-web lint typecheck test-backend test-frontend test check types e2e demo check-contrast
+.PHONY: setup data seed-users seed-activity dev-api dev-web lint typecheck test-backend test-frontend test check types e2e demo check-contrast
 
 ifeq ($(OS),Windows_NT)
     VENV_BIN := .venv/Scripts
@@ -31,6 +31,9 @@ setup:
 
 seed-users:
 	$(PYTHON) -m app.data.seed_users
+
+seed-activity:
+	$(PYTHON) -m app.data.seed_activity
 
 data:
 	$(PYTHON) -m app.data.generator --shops $(SHOPS) --weeks $(WEEKS) --seed $(SEED)
