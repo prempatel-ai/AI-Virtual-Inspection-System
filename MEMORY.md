@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P13 Frontend: auth and officer screens
-- Last completed task: P12.4 (Phase 12 Exit Gate Passed)
-- Next task: P13.1 (/login, session handling, 401 redirect, 403 page, RoleNav from permissions)
+- Last completed task: P13.2 (UI Blocks created and tested)
+- Next task: P13.3 (/queue and /cases/[id] screens)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -76,3 +76,5 @@ none
 - 2026-11-05 P12.2 Implemented oversight endpoints GET /areas, GET /officers, GET /officers/{id}, GET /actions, and scope-aware open/overdue cases in GET /summary.
 - 2026-11-05 P12.3 Implemented admin user management (GET/POST/PATCH /admin/users), password reset, and access log (GET /admin/audit) with tests and audit logging.
 - 2026-11-05 P12.4 Regenerated frontend OpenAPI spec and TypeScript types via make types; all 168 tests pass. Phase 12 exit gate passed.
+- 2026-11-05 P13.1 Implemented AuthProvider, /login, 401 redirect, 403 page, role landing router, and RoleNav driven by permissions. Moved V1 dashboard to /flags.
+- 2026-11-05 P13.2 Created V2 reusable UI blocks: StatusBadge, CaseActionBar, OutcomeForm, ActionTimeline, AssigneeSelect, InlineConfirm, PermissionList. All tests and lint pass.

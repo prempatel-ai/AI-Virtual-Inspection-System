@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import DashboardPage from '../app/page'
+import DashboardPage from '../app/flags/page'
 import ShopDetailPage from '../app/shops/[id]/page'
 
 vi.mock('next/navigation', () => ({
@@ -14,6 +14,7 @@ vi.mock('next/navigation', () => ({
     replace: vi.fn(),
     prefetch: vi.fn(),
   }),
+  usePathname: () => '/',
 }))
 
 describe('Screens', () => {

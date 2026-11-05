@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description: "Inspection priority ranking and traceable evidence for Fair Price Shops",
 };
 
+import { AuthProvider } from "../lib/auth";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${publicSans.variable} font-sans antialiased text-text bg-surface`}>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

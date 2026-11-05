@@ -118,8 +118,8 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** all endpoints match the docs and pass the RBAC matrix.
 
 ## P13 Frontend: auth and officer screens
-- [ ] P13.1 `/login`, session handling, 401 redirect, 403 page, `RoleNav` from `permissions`
-- [ ] P13.2 Blocks: `StatusBadge`, `CaseActionBar`, `OutcomeForm`, `ActionTimeline`, `AssigneeSelect`, `InlineConfirm`
+- [x] P13.1 `/login`, session handling, 401 redirect, 403 page, `RoleNav` from `permissions`
+- [x] P13.2 Blocks: `StatusBadge`, `CaseActionBar`, `OutcomeForm`, `ActionTimeline`, `AssigneeSelect`, `InlineConfirm`
 - [ ] P13.3 `/queue` and `/cases/[id]` with actions from `allowed_actions`
 - [ ] P13.4 Role landing and V1 flags page moved to `/flags`
 **Exit:** an inspector signs in, works a case end to end, and sees only their own data.
