@@ -236,6 +236,8 @@ export default function OfficersPage() {
             columns={columns}
             data={filteredOfficers}
             keyField="user_id"
+            exportFilename="officers-roster"
+            defaultPageSize={25}
             onRowClick={(item) => router.push(`/officers/${item.user_id}`)}
           />
         )}

@@ -34,6 +34,7 @@ export default function QueuePage() {
         status: statusFilter === "all" ? undefined : statusFilter,
         band: bandFilter === "all" ? undefined : bandFilter,
         overdue: onlyOverdue ? true : undefined,
+        limit: 100,
       });
       setCases(res.items);
     } catch (err: unknown) {
@@ -76,6 +77,7 @@ export default function QueuePage() {
     {
       key: "case_id",
       header: "Case ID",
+      sortValue: (item) => item.case_id,
       render: (item) => (
         <span className="font-mono text-meta font-semibold text-accent">
           {item.case_id}
@@ -85,6 +87,7 @@ export default function QueuePage() {
     {
       key: "shop",
       header: "Shop Details",
+      sortValue: (item) => item.shop_name,
       render: (item) => (
         <div>
           <div className="font-medium text-text text-body leading-tight">
@@ -99,6 +102,7 @@ export default function QueuePage() {
     {
       key: "location",
       header: "Taluka / District",
+      sortValue: (item) => item.taluka,
       render: (item) => (
         <div>
           <div className="text-body text-text font-medium">{item.taluka}</div>
@@ -109,6 +113,7 @@ export default function QueuePage() {
     {
       key: "score",
       header: "Priority Score",
+      sortValue: (item) => item.risk_score_latest,
       render: (item) => (
         <div className="flex items-center space-x-2">
           <span className="font-mono font-semibold text-body text-text">
@@ -121,6 +126,7 @@ export default function QueuePage() {
     {
       key: "status",
       header: "Status",
+      sortValue: (item) => item.status,
       render: (item) => (
         <StatusBadge status={item.status} isOverdue={item.is_overdue} />
       ),
@@ -128,6 +134,7 @@ export default function QueuePage() {
     {
       key: "days_open",
       header: "Opened",
+      sortValue: (item) => item.opened_week,
       render: (item) => (
         <span className="text-meta text-text-muted font-mono">
           {item.opened_week}
@@ -137,6 +144,7 @@ export default function QueuePage() {
     {
       key: "assignee",
       header: "Assignee",
+      sortValue: (item) => item.assignee_name || "",
       render: (item) => (
         <span className="text-meta text-text">
           {item.assignee_name || (
@@ -288,6 +296,8 @@ export default function QueuePage() {
             columns={columns}
             data={filteredCases}
             keyField="case_id"
+            exportFilename="inspection-queue"
+            defaultPageSize={25}
             onRowClick={(item) => router.push(`/cases/${item.case_id}`)}
           />
         )}

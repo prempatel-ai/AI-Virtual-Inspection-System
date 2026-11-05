@@ -499,7 +499,13 @@ export default function AdminUsersPage() {
             }}
           />
         ) : (
-          <DataTable columns={columns} data={filteredUsers} keyField="user_id" />
+          <DataTable
+            columns={columns}
+            data={filteredUsers}
+            keyField="user_id"
+            exportFilename="user-roster"
+            defaultPageSize={25}
+          />
         )}
       </div>
     </AppShell>

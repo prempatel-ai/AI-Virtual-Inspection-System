@@ -242,6 +242,8 @@ export default function ActionsPage() {
             columns={columns}
             data={filteredActions}
             keyField="id"
+            exportFilename="case-action-audit-feed"
+            defaultPageSize={25}
             onRowClick={(item) => router.push(`/cases/${item.case_id}`)}
           />
         )}

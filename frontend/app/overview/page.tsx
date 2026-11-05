@@ -58,6 +58,7 @@ export default function OverviewPage() {
     {
       key: "name",
       header: `${childLevelName} Name`,
+      sortValue: (item) => item.name,
       render: (item) => (
         <span className="font-medium text-text text-body">{item.name}</span>
       ),
@@ -65,6 +66,7 @@ export default function OverviewPage() {
     {
       key: "shops_count",
       header: "Shops Monitored",
+      sortValue: (item) => item.shops_count,
       render: (item) => (
         <span className="font-mono text-text tabular-nums">{item.shops_count}</span>
       ),
@@ -72,6 +74,7 @@ export default function OverviewPage() {
     {
       key: "flagged_count",
       header: "Flagged Shops",
+      sortValue: (item) => item.flagged_count,
       render: (item) => (
         <span className="font-mono text-text font-semibold tabular-nums">
           {item.flagged_count}
@@ -81,6 +84,7 @@ export default function OverviewPage() {
     {
       key: "flag_rate",
       header: "Flag Rate",
+      sortValue: (item) => item.flag_rate,
       render: (item) => {
         const pct = (item.flag_rate * 100).toFixed(1);
         return (
@@ -99,6 +103,7 @@ export default function OverviewPage() {
     {
       key: "high_band_count",
       header: "High Risk",
+      sortValue: (item) => item.high_band_count,
       render: (item) => (
         <span className="font-mono text-risk-high font-semibold tabular-nums">
           {item.high_band_count}
@@ -108,6 +113,7 @@ export default function OverviewPage() {
     {
       key: "open_cases",
       header: "Open Cases",
+      sortValue: (item) => item.open_cases,
       render: (item) => (
         <span className="font-mono text-text tabular-nums">{item.open_cases}</span>
       ),
@@ -115,10 +121,13 @@ export default function OverviewPage() {
     {
       key: "overdue_cases",
       header: "Overdue",
+      sortValue: (item) => item.overdue_cases,
       render: (item) => (
         <span
           className={`font-mono tabular-nums font-semibold ${
-            item.overdue_cases > 0 ? "text-risk-high" : "text-text-muted"
+            item.overdue_cases > 0
+              ? "inline-flex items-center px-1.5 py-0.5 rounded-sm bg-risk-high-bg text-risk-high text-xs"
+              : "text-text-muted"
           }`}
         >
           {item.overdue_cases}
@@ -128,6 +137,7 @@ export default function OverviewPage() {
     {
       key: "confirmed_rate",
       header: "Confirmed Rate",
+      sortValue: (item) => item.confirmed_rate ?? -1,
       render: (item) => (
         <span className="font-mono text-text tabular-nums">
           {item.confirmed_rate !== null && item.confirmed_rate !== undefined
@@ -236,6 +246,8 @@ export default function OverviewPage() {
                 columns={areaColumns}
                 data={areaItems}
                 keyField="name"
+                exportFilename="district-flag-rates"
+                defaultPageSize={25}
                 onRowClick={(item) =>
                   router.push(
                     `/areas?level=${item.level}&parent=${encodeURIComponent(item.name)}`

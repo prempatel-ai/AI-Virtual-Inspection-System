@@ -109,8 +109,7 @@ export default function DashboardPage() {
           district: selectedDistrict || undefined,
           taluka: selectedTaluka || undefined,
           band: selectedBand || undefined,
-          page: 1,
-          pageSize: 100,
+          limit: 100,
         }),
       ]);
       setSummary(sumData);
@@ -361,6 +360,8 @@ export default function DashboardPage() {
                 columns={columns}
                 data={rankedShops}
                 keyField="shop_id"
+                exportFilename="inspection-priorities"
+                defaultPageSize={25}
                 getRowHref={(item) => `/shops/${item.shop_id}?week=${selectedWeek}`}
                 onRowClick={(item) => router.push(`/shops/${item.shop_id}?week=${selectedWeek}`)}
               />

@@ -98,6 +98,59 @@ describe('UI Blocks', () => {
     expect(screen.getByText('78')).toBeDefined()
   })
 
+  it('renders DataTable with pagination, sorting and export button', () => {
+    interface Item {
+      id: string
+      name: string
+      score: number
+    }
+    const data: Item[] = Array.from({ length: 30 }, (_, i) => ({
+      id: String(i + 1),
+      name: `Shop ${i + 1}`,
+      score: 50 + i,
+    }))
+    const columns = [
+      {
+        key: 'name',
+        header: 'Shop Name',
+        sortValue: (item: Item) => item.name,
+        render: (item: Item) => item.name,
+      },
+      {
+        key: 'score',
+        header: 'Score',
+        align: 'right' as const,
+        sortValue: (item: Item) => item.score,
+        render: (item: Item) => item.score,
+      },
+    ]
+
+    render(
+      <DataTable
+        columns={columns}
+        data={data}
+        keyField="id"
+        defaultPageSize={10}
+        pageSizeOptions={[10, 25, 50, 100, 0]}
+        enableExport={true}
+        exportFilename="test-shops"
+      />
+    )
+
+    // Export button
+    expect(screen.getByRole('button', { name: /Export CSV/i })).toBeDefined()
+
+    // Page size buttons: 10, 25, 50, 100, All
+    expect(screen.getByRole('button', { name: '10' })).toBeDefined()
+    expect(screen.getByRole('button', { name: '25' })).toBeDefined()
+    expect(screen.getByRole('button', { name: '100' })).toBeDefined()
+    expect(screen.getByRole('button', { name: 'All' })).toBeDefined()
+
+    // Shows 1 to 10 of 30 records
+    expect(screen.getByText(/Showing/i)).toBeDefined()
+    expect(screen.getByText(/records/i)).toBeDefined()
+  })
+
   it('renders ScoreBreakdown with signals summing to score', () => {
     const breakdown = [
       { key: 'stock_gap_pct', label: 'Stock gap', points: 25.0, value: 10.5, unit: '%' },

@@ -204,7 +204,13 @@ export default function AdminAuditPage() {
             }}
           />
         ) : (
-          <DataTable columns={columns} data={filteredLogs} keyField="id" />
+          <DataTable
+            columns={columns}
+            data={filteredLogs}
+            keyField="id"
+            exportFilename="security-audit-log"
+            defaultPageSize={25}
+          />
         )}
       </div>
     </AppShell>
