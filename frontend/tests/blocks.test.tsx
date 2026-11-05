@@ -15,6 +15,7 @@ import {
   ChecklistPanel,
   FeedbackForm,
 } from '../components/ui'
+import BlocksGalleryPage from '../app/_blocks/page'
 
 describe('UI Blocks', () => {
   it('renders SyntheticBanner with required notice', () => {
@@ -162,5 +163,12 @@ describe('UI Blocks', () => {
     const button = screen.getByRole('button', { name: /Save outcome/i })
     await fireEvent.click(button)
     expect(onSubmit).toHaveBeenCalledWith('confirmed', '')
+  })
+
+  it('renders BlocksGalleryPage component without crashing', () => {
+    render(<BlocksGalleryPage />)
+    expect(screen.getByText('UI Component Gallery')).toBeDefined()
+    expect(screen.getByText('Score breakdown')).toBeDefined()
+    expect(screen.getByText('Stock reconciliation')).toBeDefined()
   })
 })
