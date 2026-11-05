@@ -1,5 +1,6 @@
-"""Database utilities and initialization for SQLite."""
+"""Database utilities, schema initialization, and migrations for SQLite."""
 
+import json
 import sqlite3
 from pathlib import Path
 from typing import Optional, Union
@@ -18,6 +19,83 @@ def get_connection(db_path: Optional[Union[str, Path]] = None) -> sqlite3.Connec
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
+
+
+def migrate_feedback_to_case_actions(conn: sqlite3.Connection) -> int:
+    """Migrates any existing rows in the legacy feedback table to case_actions, then drops it."""
+    cursor = conn.cursor()
+    cursor.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='feedback';")
+    if cursor.fetchone()[0] == 0:
+        return 0
+
+    cursor.execute(
+        "SELECT id, shop_id, week_start, outcome, note, created_at FROM feedback ORDER BY id;"
+    )
+    feedback_rows = cursor.fetchall()
+    if not feedback_rows:
+        conn.execute("DROP TABLE IF EXISTS feedback;")
+        conn.commit()
+        return 0
+
+    migrated_count = 0
+    for row in feedback_rows:
+        s_id = row["shop_id"]
+        w_start = row["week_start"]
+        outcome = row["outcome"]
+        note = row["note"]
+        c_at = row["created_at"]
+
+        s_row = conn.execute(
+            "SELECT district, taluka, inspector_id FROM shops WHERE shop_id = ?;", (s_id,)
+        ).fetchone()
+        insp_id = s_row["inspector_id"] if s_row else None
+
+        score_row = conn.execute(
+            "SELECT risk_score, band FROM scores WHERE shop_id = ? AND week_start = ?;",
+            (s_id, w_start),
+        ).fetchone()
+        score = float(score_row["risk_score"]) if score_row else 50.0
+        band = score_row["band"] if score_row else "medium"
+
+        existing_case = conn.execute(
+            "SELECT case_id FROM cases WHERE shop_id = ?;", (s_id,)
+        ).fetchone()
+        if existing_case:
+            case_id = existing_case["case_id"]
+        else:
+            case_id = f"case-{s_id}"
+            conn.execute(
+                """
+                INSERT INTO cases (
+                    case_id, shop_id, status, assignee_id, risk_score_latest, band_latest,
+                    opened_week, last_flagged_week, closed_at, last_action_at, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """,
+                (
+                    case_id, s_id, "inspected", insp_id, score, band,
+                    w_start, w_start, None, c_at, c_at,
+                ),
+            )
+
+        payload = json.dumps({
+            "outcome": outcome,
+            "checklist_results": [],
+            "action_taken": "no_action",
+            "note": note,
+        })
+        conn.execute(
+            """
+            INSERT INTO case_actions (
+                case_id, actor_id, actor_role, type, payload_json, risk_score_at_action, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?);
+            """,
+            (case_id, insp_id, "inspector", "record_outcome", payload, score, c_at),
+        )
+        migrated_count += 1
+
+    conn.execute("DROP TABLE feedback;")
+    conn.commit()
+    return migrated_count
 
 
 def init_db(db_path: Optional[Union[str, Path]] = None) -> None:
@@ -39,6 +117,7 @@ def init_db(db_path: Optional[Union[str, Path]] = None) -> None:
                 conn.commit()
 
         conn.executescript(schema_sql)
+        migrate_feedback_to_case_actions(conn)
         conn.commit()
     finally:
         conn.close()

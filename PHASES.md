@@ -102,7 +102,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** every endpoint requires auth except health and login; matrix and scope tests pass; V1 tests updated and green.
 
 ## P11 Cases and actions
-- [ ] P11.1 Schema: `cases`, `case_actions` with append-only triggers; remove `feedback` with migration
+- [x] P11.1 Schema: `cases`, `case_actions` with append-only triggers; remove `feedback` with migration
 - [ ] P11.2 Case creation and update inside `POST /run` (section 3 rules)
 - [ ] P11.3 State machine and `allowed_actions`
 - [ ] P11.4 `GET /cases`, `GET /cases/{id}`, `POST /cases/{id}/actions` with payload validation
