@@ -28,6 +28,13 @@ def init_db(db_path: Optional[Union[str, Path]] = None) -> None:
     conn = get_connection(db_path)
     try:
         conn.executescript(schema_sql)
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(shops);")
+        columns = [row["name"] for row in cursor.fetchall()]
+        if columns and "inspector_id" not in columns:
+            conn.execute(
+                "ALTER TABLE shops ADD COLUMN inspector_id TEXT REFERENCES users(user_id);"
+            )
         conn.commit()
     finally:
         conn.close()

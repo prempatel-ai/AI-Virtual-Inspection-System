@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P10 Auth and users
-- Last completed task: P10.1
-- Next task: P10.2 (Schema: `users`, `shops.inspector_id`, `audit_log` with triggers; config keys)
+- Last completed task: P10.2
+- Next task: P10.3 (Password hashing, login, logout, me, cookie session, lockout, CSRF header, audit_log writes)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -61,3 +61,4 @@ none
 - 2026-11-05 Phases P0-P9 completed. Baseline verified: 29 backend tests, 30 frontend tests pass.
 - 2026-11-05 P10.0 Code audit completed against V2 spec. Recorded deviations DEV-001..DEV-003 in MEMORY.md. Verified make check pass.
 - 2026-11-05 P10.1 Merged docs/V2_SPEC.md into PRODUCT, ARCHITECTURE, API, DATA_SPEC, TESTING, DESIGN, RULES, MEMORY; appended P10-P15 to PHASES.md.
+- 2026-11-05 P10.2 Added users, shops.inspector_id, and audit_log tables with append-only triggers, config keys for auth and cases, and tests.

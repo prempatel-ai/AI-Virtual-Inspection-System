@@ -35,3 +35,22 @@ vulnerability:
 
 explanation:
   top_k: 20
+
+auth:
+  session_hours: 8
+  max_failed_logins: 5
+  lockout_minutes: 15
+  min_password_length: 10
+
+cases:
+  flag_min_band: medium
+  overdue_days: 7
+  action_taken_options:
+    - no_action
+    - warning_issued
+    - stock_verification_ordered
+    - referred_to_higher_authority
+    - other
+
+seeding:
+  inspector_load: 25

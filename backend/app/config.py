@@ -1,4 +1,4 @@
-"""Configuration loader for backend settings, scoring, anomaly detection, and bands."""
+"""Configuration loader for backend settings, scoring, anomaly detection, bands, auth, and cases."""
 
 import os
 from pathlib import Path
@@ -31,3 +31,13 @@ def load_checklists() -> Dict[str, Any]:
     """Loads backend/checklists.yaml."""
     with open(CHECKLISTS_PATH, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+def get_auth_config() -> Dict[str, Any]:
+    """Returns the auth configuration sub-dictionary."""
+    return load_config().get("auth", {})
+
+
+def get_cases_config() -> Dict[str, Any]:
+    """Returns the cases configuration sub-dictionary."""
+    return load_config().get("cases", {})
