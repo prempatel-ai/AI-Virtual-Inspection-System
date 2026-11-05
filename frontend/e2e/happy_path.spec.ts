@@ -2,8 +2,14 @@ import { test, expect } from '@playwright/test';
 
 test.describe('PDS Inspection System Happy Path', () => {
   test('end-to-end audit flow: dashboard -> filter -> detail -> record outcome -> KPI change', async ({ page }) => {
-    // 1. Open Dashboard
-    await page.goto('/');
+    // 0. Sign in
+    await page.goto('/login');
+    await page.locator('input[type="email"]').fill('aarav.patel.1@demo.invalid');
+    await page.locator('input[type="password"]').fill('demoPassword123');
+    await page.getByRole('button', { name: /Sign In to System/i }).click();
+
+    // 1. Open Flags Dashboard
+    await page.goto('/flags');
 
     // Verify Page Header and KPI Cards
     await expect(page.getByRole('heading', { level: 1, name: /Inspection priorities/i })).toBeVisible();

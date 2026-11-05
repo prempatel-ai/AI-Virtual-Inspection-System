@@ -23,14 +23,16 @@ DATA_DIR = PROJECT_ROOT / "data"
 sys.path.insert(0, str(BACKEND_DIR))
 
 from app.data.generator import generate_pds_data
+from app.data.seed_activity import seed_activity
+from app.data.seed_users import seed_users
 from app.db import get_connection, get_db_path, init_db
-from app.pipeline.run import run_pipeline_for_week
 
 
 def ensure_data_and_run(force: bool = False, shops: int = 500, weeks: int = 12, seed: int = 42) -> None:
-    """Ensure seeded data and scoring run exist in SQLite database."""
+    """Ensure seeded data, users, and simulated activity exist in SQLite database."""
     db_path = get_db_path()
     needs_data = force or not db_path.exists()
+    needs_activity = False
 
     if not needs_data:
         try:
@@ -40,9 +42,15 @@ def ensure_data_and_run(force: bool = False, shops: int = 500, weeks: int = 12, 
             shop_count = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM scores")
             score_count = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM users")
+            user_count = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM cases")
+            case_count = cursor.fetchone()[0]
             conn.close()
             if shop_count < shops or score_count == 0:
                 needs_data = True
+            elif user_count == 0 or case_count == 0:
+                needs_activity = True
         except (sqlite3.Error, OSError):
             needs_data = True
 
@@ -50,12 +58,17 @@ def ensure_data_and_run(force: bool = False, shops: int = 500, weeks: int = 12, 
         print("[DEMO] Generating synthetic PDS dataset (shops=500, weeks=12, seed=42)...")
         init_db(db_path)
         generate_pds_data(num_shops=shops, num_weeks=weeks, seed=seed, db_path=db_path)
-
-        print("[DEMO] Running scoring pipeline for latest week...")
-        run_pipeline_for_week(db_path=db_path)
-        print("[DEMO] Dataset and scores generated successfully.")
+        print("[DEMO] Seeding users and simulating officer activity...")
+        seed_users(db_path=db_path)
+        seed_activity(db_path=db_path)
+        print("[DEMO] Dataset, users, and activity generated successfully.")
+    elif needs_activity:
+        print("[DEMO] Seeding users and simulating officer activity...")
+        seed_users(db_path=db_path)
+        seed_activity(db_path=db_path)
+        print("[DEMO] Users and activity generated successfully.")
     else:
-        print(f"[DEMO] Found existing dataset and scores at {db_path}.")
+        print(f"[DEMO] Found existing dataset, users, and cases at {db_path}.")
 
 
 def get_server_commands() -> tuple[list[str], list[str]]:

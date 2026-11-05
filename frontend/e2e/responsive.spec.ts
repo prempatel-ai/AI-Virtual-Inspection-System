@@ -1,10 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Responsive Layout Verification (1280px & 768px)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/login');
+    await page.locator('input[type="email"]').fill('aarav.patel.1@demo.invalid');
+    await page.locator('input[type="password"]').fill('demoPassword123');
+    await page.getByRole('button', { name: /Sign In to System/i }).click();
+    await page.waitForURL(/\/overview/);
+  });
+
   test('dashboard conforms to 1280px and 768px layouts without horizontal overflow', async ({ page }) => {
     // 1. Desktop 1280px
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/');
+    await page.goto('/flags');
     await page.waitForSelector('table tbody tr');
 
     const bodyOverflow1280 = await page.evaluate(() => {
@@ -28,7 +36,7 @@ test.describe('Responsive Layout Verification (1280px & 768px)', () => {
 
   test('shop detail conforms to 1280px two-column and 768px single-column layouts', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/');
+    await page.goto('/flags');
     await page.waitForSelector('table tbody tr');
     await page.locator('table tbody tr').first().locator('td a').first().click();
     await page.waitForURL(/\/shops\//);

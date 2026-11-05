@@ -4,8 +4,16 @@ import path from 'path';
 const axePath = require.resolve('axe-core/axe.min.js');
 
 test.describe('Accessibility & Keyboard Navigation (WCAG AA)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/login');
+    await page.locator('input[type="email"]').fill('aarav.patel.1@demo.invalid');
+    await page.locator('input[type="password"]').fill('demoPassword123');
+    await page.getByRole('button', { name: /Sign In to System/i }).click();
+    await page.waitForURL(/\/overview/);
+  });
+
   test('dashboard has zero serious or critical accessibility violations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/flags');
     await page.waitForSelector('table tbody tr');
 
     // Inject axe-core
@@ -28,7 +36,7 @@ test.describe('Accessibility & Keyboard Navigation (WCAG AA)', () => {
   });
 
   test('shop detail has zero serious or critical accessibility violations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/flags');
     await page.waitForSelector('table tbody tr');
 
     // Click first shop row

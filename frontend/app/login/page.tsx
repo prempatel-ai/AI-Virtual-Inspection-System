@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { useAuth } from "../../lib/auth";
 
 const DEMO_ACCOUNTS = [
-  { role: "Inspector", email: "inspector.ahm@demo.invalid" },
-  { role: "Mamlatdar", email: "mamlatdar.ahm1@demo.invalid" },
-  { role: "District Officer", email: "do.ahm@demo.invalid" },
-  { role: "Vigilance", email: "vigilance.1@demo.invalid" },
-  { role: "Admin", email: "admin@demo.invalid" },
+  { role: "Inspector", email: "ananya.patel.13@demo.invalid" },
+  { role: "Mamlatdar", email: "saanvi.patel.12@demo.invalid" },
+  { role: "District Officer", email: "vihaan.patel.4@demo.invalid" },
+  { role: "Vigilance", email: "vivaan.patel.2@demo.invalid" },
+  { role: "Admin", email: "aarav.patel.1@demo.invalid" },
 ];
 
 export default function LoginPage() {
