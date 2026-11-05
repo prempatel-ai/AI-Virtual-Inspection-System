@@ -1,4 +1,4 @@
-.PHONY: setup data dev-api dev-web lint typecheck test-backend test-frontend test check types e2e demo
+.PHONY: setup data dev-api dev-web lint typecheck test-backend test-frontend test check types e2e demo check-contrast
 
 ifeq ($(OS),Windows_NT)
     VENV_BIN := .venv/Scripts
@@ -54,7 +54,10 @@ test-frontend:
 
 test: test-backend test-frontend
 
-check: lint typecheck test
+check-contrast:
+	$(PYTHON) scripts/check_contrast.py
+
+check: lint typecheck test check-contrast
 
 types:
 	$(PYTHON) -c "import json; from app.main import app; open('frontend/openapi.json', 'w', encoding='utf-8').write(json.dumps(app.openapi(), indent=2))"

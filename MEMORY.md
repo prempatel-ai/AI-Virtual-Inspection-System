@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P6
-- Last completed task: P6.5
-- Next task: P6.6
+- Current phase: P7
+- Last completed task: P6.6
+- Next task: P7.1
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -71,3 +71,4 @@ none
 - 2026-11-05 P6.3 Built domain UI blocks (ScoreBreakdown, TrendChart, ReconcileTable, EvidenceList, ChecklistPanel, FeedbackForm) with unit tests.
 - 2026-11-05 P6.4 Built lib/format.ts (en-IN numbers, dates) and lib/api.ts client wrapper using auto-generated types with unit tests.
 - 2026-11-05 P6.5 Created dev-only block gallery page at /_blocks showcasing all UI components and domain blocks.
+- 2026-11-05 P6.6 Created scripts/check_contrast.py verifying WCAG AA contrast for all token pairs. Added to make check. Phase 6 exit gate passed.

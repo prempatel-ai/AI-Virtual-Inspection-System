@@ -56,7 +56,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P6.3 Blocks: ScoreBreakdown, TrendChart, ReconcileTable, EvidenceList, ChecklistPanel, FeedbackForm
 - [x] P6.4 API client wrapper using generated types
 - [x] P6.5 Dev-only block gallery at `/_blocks`
-- [ ] P6.6 Contrast check script for all token pairs (WCAG AA)
+- [x] P6.6 Contrast check script for all token pairs (WCAG AA)
 **Exit:** lint, types, component tests pass. Gallery renders every block. Contrast script passes.
 
 ## P7 Screens
