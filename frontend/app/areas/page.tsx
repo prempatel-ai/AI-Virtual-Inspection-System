@@ -284,7 +284,7 @@ export default function AreasPage() {
             data={filteredAreas}
             keyField="name"
             exportFilename="area-performance-matrix"
-            defaultPageSize={50}
+            defaultPageSize={10}
           />
         )}
       </div>

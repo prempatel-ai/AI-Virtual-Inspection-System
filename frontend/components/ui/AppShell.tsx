@@ -11,7 +11,6 @@ interface AppShellProps {
 export function AppShell({ children, headerRight }: AppShellProps) {
   return (
     <div className="min-h-screen bg-surface flex flex-col">
-      <SyntheticBanner />
       <header className="w-full bg-bg border-b border-border sticky top-0 z-30">
         <div className="max-w-container mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-6">
           {/* Brand Identity */}

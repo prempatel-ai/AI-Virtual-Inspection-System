@@ -43,7 +43,7 @@ export function DataTable<T>({
   onRowClick,
   getRowHref,
   enablePagination = true,
-  defaultPageSize = 25,
+  defaultPageSize = 10,
   pageSizeOptions = [10, 25, 50, 100, 0],
   enableSearch,
   searchPlaceholder = "Search in table...",

@@ -296,7 +296,7 @@ export default function QueuePage() {
             data={filteredCases}
             keyField="case_id"
             exportFilename="inspection-queue"
-            defaultPageSize={25}
+            defaultPageSize={10}
             onRowClick={(item) => router.push(`/cases/${item.case_id}`)}
           />
         )}

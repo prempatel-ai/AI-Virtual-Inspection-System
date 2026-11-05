@@ -503,7 +503,7 @@ export default function AdminUsersPage() {
             data={filteredUsers}
             keyField="user_id"
             exportFilename="user-roster"
-            defaultPageSize={25}
+            defaultPageSize={10}
           />
         )}
       </div>

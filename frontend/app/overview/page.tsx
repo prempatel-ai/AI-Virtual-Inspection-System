@@ -249,7 +249,7 @@ export default function OverviewPage() {
                 data={areaItems}
                 keyField="name"
                 exportFilename="district-flag-rates"
-                defaultPageSize={25}
+                defaultPageSize={10}
                 onRowClick={(item) =>
                   router.push(
                     `/areas?level=${item.level}&parent=${encodeURIComponent(item.name)}`

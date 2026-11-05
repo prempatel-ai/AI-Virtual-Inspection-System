@@ -357,7 +357,7 @@ export default function DashboardPage() {
                 data={rankedShops}
                 keyField="shop_id"
                 exportFilename="inspection-priorities"
-                defaultPageSize={25}
+                defaultPageSize={10}
                 getRowHref={(item) => `/shops/${item.shop_id}?week=${selectedWeek}`}
                 onRowClick={(item) => router.push(`/shops/${item.shop_id}?week=${selectedWeek}`)}
               />

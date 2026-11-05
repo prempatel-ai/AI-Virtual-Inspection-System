@@ -208,7 +208,7 @@ export default function AdminAuditPage() {
             data={filteredLogs}
             keyField="id"
             exportFilename="security-audit-log"
-            defaultPageSize={25}
+            defaultPageSize={10}
           />
         )}
       </div>
