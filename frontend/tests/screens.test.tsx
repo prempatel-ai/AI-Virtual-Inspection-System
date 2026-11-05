@@ -157,4 +157,61 @@ describe('Screens', () => {
       expect(screen.getByText('Record visit outcome')).toBeDefined()
     })
   })
+
+  it('submits visit outcome feedback and updates visit records', async () => {
+    let feedbackSubmitted = false
+    const mockDetail = {
+      shop: {
+        shop_id: 'FPS-00012',
+        name: 'Shop FPS-00012',
+        district: 'Ahmedabad',
+        taluka: 'Taluka 1',
+        cards_count: 450,
+        vulnerability_index: 0.85,
+      },
+      week: '2026-11-02',
+      risk_score: 84.5,
+      band: 'high',
+      rank: 1,
+      breakdown: [],
+      history: { weeks: [], series: {} },
+      stock_reconciliation: {
+        opening_kg: 0, received_kg: 0, sold_kg: 0, closing_kg: 0, gap_kg: 0, gap_pct: 0,
+      },
+      board_check: { board_kg: 0, sold_kg: 0, mismatch_pct: 0 },
+      complaints: [],
+      explanation: { source: 'template', reason: '', evidence: [], checklist: [] },
+      feedback: feedbackSubmitted
+        ? [{ outcome: 'confirmed', note: 'Godown verified', created_at: '2026-11-05' }]
+        : [],
+    }
+
+    const fetchSpy = vi.spyOn(global, 'fetch').mockImplementation(async (url, opts) => {
+      const u = String(url)
+      if (u.includes('/shops/FPS-00012/feedback') && opts?.method === 'POST') {
+        feedbackSubmitted = true
+        return { ok: true, json: async () => ({ id: 1, shop_id: 'FPS-00012', outcome: 'confirmed' }) } as Response
+      }
+      if (u.includes('/shops/FPS-00012')) {
+        return { ok: true, json: async () => mockDetail } as Response
+      }
+      return { ok: false, status: 404 } as Response
+    })
+
+    const { getByRole } = render(<ShopDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Record visit outcome')).toBeDefined()
+    })
+
+    const saveButton = getByRole('button', { name: /Save outcome/i })
+    saveButton.click()
+
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/shops/FPS-00012/feedback'),
+        expect.objectContaining({ method: 'POST' })
+      )
+    })
+  })
 })
