@@ -60,21 +60,21 @@ export default function ShopDetailPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDetail = React.useCallback(async () => {
+  const fetchDetail = React.useCallback(async (showLoading = true) => {
     try {
-      setIsLoading(true);
+      if (showLoading) setIsLoading(true);
       setError(null);
       const data = await getShopDetail(shopId, week);
       setDetail(data);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Could not load shop details");
     } finally {
-      setIsLoading(false);
+      if (showLoading) setIsLoading(false);
     }
   }, [shopId, week]);
 
   useEffect(() => {
-    fetchDetail();
+    fetchDetail(true);
   }, [fetchDetail]);
 
   const handleFeedbackSubmit = async (outcome: OutcomeType, note: string) => {
@@ -84,8 +84,8 @@ export default function ShopDetailPage() {
       outcome,
       note,
     });
-    // Refresh detail to show recorded feedback
-    await fetchDetail();
+    // Refresh detail silently to show recorded feedback without unmounting form
+    await fetchDetail(false);
   };
 
   if (isLoading) {
