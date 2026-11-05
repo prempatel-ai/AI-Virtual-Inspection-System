@@ -128,7 +128,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [ ] P14.1 `/overview` and `/areas` with flag rates
 - [ ] P14.2 `/officers` and `/officers/[id]` with `PermissionList` and action timeline
 - [ ] P14.3 `/actions` feed
-- [ ] P14.4 `/admin/users` and `/admin/audit`
+- [ ] P14.4 `/admin/users` and  `/admin/audit`
 **Exit:** supervisors see their scope; the admin sees the whole state, every officer's access and actions, and flag rates by area.
 
 ## P15 Activity data, demo, hardening
