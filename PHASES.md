@@ -60,7 +60,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** lint, types, component tests pass. Gallery renders every block. Contrast script passes.
 
 ## P7 Screens
-- [ ] P7.1 Dashboard: KPIs, filters, ranked table
+- [x] P7.1 Dashboard: KPIs, filters, ranked table
 - [ ] P7.2 Shop detail: breakdown, charts, reconciliation, board check, explanation, checklist
 - [ ] P7.3 Visit outcome form; confirmed rate updates on the dashboard
 - [ ] P7.4 Run audit button with progress and result
