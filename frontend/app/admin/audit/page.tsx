@@ -5,6 +5,7 @@ import { AppShell } from "../../../components/ui/AppShell";
 import { DataTable, Column } from "../../../components/ui/DataTable";
 import { ErrorState } from "../../../components/ui/ErrorState";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { getAdminAudit, AuditLogItem } from "../../../lib/api";
 import { formatDate } from "../../../lib/format";
 import { useAuth } from "../../../lib/auth";
@@ -190,9 +191,7 @@ export default function AdminAuditPage() {
         {error ? (
           <ErrorState message={error} onRetry={fetchAudit} />
         ) : loading ? (
-          <div className="bg-surface border border-border rounded-md p-12 text-center text-meta text-text-muted animate-pulse">
-            Loading security audit log...
-          </div>
+          <TableSkeleton rows={8} cols={5} />
         ) : filteredLogs.length === 0 ? (
           <EmptyState
             title="No audit events found"

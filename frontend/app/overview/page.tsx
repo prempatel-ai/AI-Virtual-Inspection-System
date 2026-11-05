@@ -7,6 +7,7 @@ import { AppShell } from "../../components/ui/AppShell";
 import { KpiCard } from "../../components/ui/KpiCard";
 import { DataTable, Column } from "../../components/ui/DataTable";
 import { ErrorState } from "../../components/ui/ErrorState";
+import { KpiGridSkeleton, TableSkeleton, CardSkeleton } from "../../components/ui/Skeleton";
 import {
   getSummary,
   getAreas,
@@ -182,13 +183,14 @@ export default function OverviewPage() {
           <ErrorState message={error} onRetry={fetchOverviewData} />
         ) : loading || !summary ? (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
-              <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
-              <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
-              <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
+            <KpiGridSkeleton count={4} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <CardSkeleton className="h-44" />
+              <div className="lg:col-span-2">
+                <CardSkeleton className="h-44" />
+              </div>
             </div>
-            <div className="h-64 bg-surface border border-border rounded-md animate-pulse" />
+            <TableSkeleton rows={7} cols={8} />
           </div>
         ) : (
           <>

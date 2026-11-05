@@ -7,6 +7,7 @@ import { KpiCard } from "../../components/ui/KpiCard";
 import { DataTable, Column } from "../../components/ui/DataTable";
 import { ErrorState } from "../../components/ui/ErrorState";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import { getAreas, getMeta, AreaMetricItem } from "../../lib/api";
 import { useAuth } from "../../lib/auth";
 
@@ -265,9 +266,7 @@ export default function AreasPage() {
         {error ? (
           <ErrorState message={error} onRetry={fetchAreas} />
         ) : loading ? (
-          <div className="bg-surface border border-border rounded-md p-12 text-center text-meta text-text-muted animate-pulse">
-            Loading area metrics...
-          </div>
+          <TableSkeleton rows={8} cols={8} />
         ) : filteredAreas.length === 0 ? (
           <EmptyState
             title="No area metrics found"

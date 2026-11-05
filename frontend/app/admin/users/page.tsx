@@ -6,6 +6,7 @@ import { DataTable, Column } from "../../../components/ui/DataTable";
 import { InlineConfirm } from "../../../components/ui/InlineConfirm";
 import { ErrorState } from "../../../components/ui/ErrorState";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { TableSkeleton } from "../../../components/ui/Skeleton";
 import {
   getAdminUsers,
   createAdminUser,
@@ -485,9 +486,7 @@ export default function AdminUsersPage() {
         {error ? (
           <ErrorState message={error} onRetry={fetchUsers} />
         ) : loading ? (
-          <div className="bg-surface border border-border rounded-md p-12 text-center text-meta text-text-muted animate-pulse">
-            Loading user accounts...
-          </div>
+          <TableSkeleton rows={8} cols={7} />
         ) : filteredUsers.length === 0 ? (
           <EmptyState
             title="No users found"

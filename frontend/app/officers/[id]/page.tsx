@@ -11,6 +11,7 @@ import { RiskBadge } from "../../../components/ui/RiskBadge";
 import { PermissionList } from "../../../components/ui/PermissionList";
 import { ActionTimeline } from "../../../components/ui/ActionTimeline";
 import { ErrorState } from "../../../components/ui/ErrorState";
+import { Skeleton, KpiGridSkeleton, CardSkeleton, TableSkeleton } from "../../../components/ui/Skeleton";
 import { getOfficerDetail, OfficerDetailResponse, CaseListItem } from "../../../lib/api";
 
 export default function OfficerDetailPage() {
@@ -102,14 +103,13 @@ export default function OfficerDetailPage() {
     return (
       <AppShell>
         <div className="space-y-6">
-          <div className="h-8 w-64 bg-border/40 rounded animate-pulse" />
-          <div className="h-44 bg-surface border border-border rounded-md animate-pulse" />
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
-            <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
-            <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
-            <div className="h-24 bg-surface border border-border rounded-md animate-pulse" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-7 w-64" />
           </div>
+          <CardSkeleton className="h-36" />
+          <KpiGridSkeleton count={4} />
+          <TableSkeleton rows={5} cols={5} />
         </div>
       </AppShell>
     );

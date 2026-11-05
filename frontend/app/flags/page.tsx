@@ -14,6 +14,7 @@ import {
   EmptyState,
   ErrorState,
   Skeleton,
+  TableSkeleton,
 } from "../../components/ui";
 import {
   getMeta,
@@ -337,12 +338,7 @@ export default function DashboardPage() {
 
           {/* Ranked Shops Table */}
           {isLoading && rankedShops.length === 0 ? (
-            <div className="space-y-2">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-            </div>
+            <TableSkeleton rows={8} cols={7} />
           ) : rankedShops.length === 0 ? (
             <EmptyState
               title="No shops match these filters."

@@ -15,6 +15,7 @@ import {
   OutcomeType,
   ErrorState,
   Skeleton,
+  CardSkeleton,
 } from "../../../components/ui";
 import { getShopDetail, submitFeedback, ShopDetailResponse } from "../../../lib/api";
 import { formatDate } from "../../../lib/format";
@@ -92,12 +93,16 @@ export default function ShopDetailPage() {
     return (
       <AppShell>
         <div className="space-y-6">
-          <Skeleton className="h-10 w-1/3" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-7 w-64" />
+            <Skeleton className="h-4 w-44" />
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-48 w-full" />
+            <CardSkeleton className="h-64" />
+            <CardSkeleton className="h-64" />
+            <CardSkeleton className="h-56" />
+            <CardSkeleton className="h-56" />
           </div>
         </div>
       </AppShell>

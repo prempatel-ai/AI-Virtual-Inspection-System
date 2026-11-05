@@ -6,6 +6,7 @@ import { AppShell } from "../../components/ui/AppShell";
 import { DataTable, Column } from "../../components/ui/DataTable";
 import { ErrorState } from "../../components/ui/ErrorState";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import { getActionFeed, ActionFeedItem } from "../../lib/api";
 import { formatDate } from "../../lib/format";
 
@@ -224,9 +225,7 @@ export default function ActionsPage() {
         {error ? (
           <ErrorState message={error} onRetry={fetchActions} />
         ) : loading ? (
-          <div className="bg-surface border border-border rounded-md p-12 text-center text-meta text-text-muted animate-pulse">
-            Loading activity feed...
-          </div>
+          <TableSkeleton rows={8} cols={6} />
         ) : filteredActions.length === 0 ? (
           <EmptyState
             title="No actions found"

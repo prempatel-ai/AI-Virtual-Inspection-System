@@ -9,6 +9,7 @@ import { StatusBadge } from "../../components/ui/StatusBadge";
 import { RiskBadge } from "../../components/ui/RiskBadge";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { ErrorState } from "../../components/ui/ErrorState";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import { getCases, CaseListItem } from "../../lib/api";
 import { useAuth } from "../../lib/auth";
 
@@ -272,9 +273,7 @@ export default function QueuePage() {
             onRetry={fetchQueue}
           />
         ) : loading ? (
-          <div className="bg-surface border border-border rounded-md p-12 text-center text-meta text-text-muted animate-pulse">
-            Loading inspection queue...
-          </div>
+          <TableSkeleton rows={8} cols={7} />
         ) : filteredCases.length === 0 ? (
           <EmptyState
             title="No cases found"

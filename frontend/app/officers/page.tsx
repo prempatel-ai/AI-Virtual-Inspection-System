@@ -7,6 +7,7 @@ import { KpiCard } from "../../components/ui/KpiCard";
 import { DataTable, Column } from "../../components/ui/DataTable";
 import { ErrorState } from "../../components/ui/ErrorState";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import { getOfficers, OfficerListItem } from "../../lib/api";
 
 export default function OfficersPage() {
@@ -218,9 +219,7 @@ export default function OfficersPage() {
         {error ? (
           <ErrorState message={error} onRetry={fetchOfficers} />
         ) : loading ? (
-          <div className="bg-surface border border-border rounded-md p-12 text-center text-meta text-text-muted animate-pulse">
-            Loading officer roster...
-          </div>
+          <TableSkeleton rows={8} cols={7} />
         ) : filteredOfficers.length === 0 ? (
           <EmptyState
             title="No officers found"

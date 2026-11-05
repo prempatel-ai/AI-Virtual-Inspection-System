@@ -15,6 +15,8 @@ import {
   OutcomeForm,
   ActionTimeline,
   ErrorState,
+  Skeleton,
+  CardSkeleton,
 } from "../../../components/ui";
 import {
   getCaseDetail,
@@ -124,11 +126,41 @@ export default function CaseDetailPage() {
     return (
       <AppShell>
         <div className="space-y-6">
-          <div className="h-8 w-64 bg-border/40 rounded animate-pulse" />
-          <div className="h-40 bg-surface border border-border rounded-md animate-pulse" />
+          {/* Header bar skeleton */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-7 w-64" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-9 w-28 rounded-sm" />
+              <Skeleton className="h-9 w-32 rounded-sm" />
+            </div>
+          </div>
+
+          {/* Action Bar Skeleton */}
+          <div className="bg-bg border border-border rounded-md p-4 flex items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center space-x-3">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-6 w-24 rounded-sm" />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-8 w-24 rounded-sm" />
+              <Skeleton className="h-8 w-28 rounded-sm" />
+            </div>
+          </div>
+
+          {/* 2-column Evidence & Timeline Skeletons */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 h-96 bg-surface border border-border rounded-md animate-pulse" />
-            <div className="h-96 bg-surface border border-border rounded-md animate-pulse" />
+            <div className="lg:col-span-2 space-y-6">
+              <CardSkeleton className="h-56" />
+              <CardSkeleton className="h-64" />
+            </div>
+            <div className="space-y-6">
+              <CardSkeleton className="h-72" />
+              <CardSkeleton className="h-48" />
+            </div>
           </div>
         </div>
       </AppShell>
