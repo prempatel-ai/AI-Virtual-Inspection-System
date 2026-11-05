@@ -25,7 +25,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** unit tests pass. Shops in the outage taluka do not show high rate-signal scores.
 
 ## P3 Scoring and evaluation
-- [ ] P3.1 `config.yaml` and loader (weights, thresholds, bands)
+- [x] P3.1 `config.yaml` and loader (weights, thresholds, bands)
 - [ ] P3.2 `scoring.py` with exact breakdown (points sum to score)
 - [ ] P3.3 `run.py` persists scores per shop-week
 - [ ] P3.4 `evaluate.py` (precision@K, recall@2K, outage false-alarm rate against planted labels)

@@ -1,4 +1,4 @@
-"""Configuration loader for the backend."""
+"""Configuration loader for backend settings, scoring, anomaly detection, and bands."""
 
 import os
 from pathlib import Path
