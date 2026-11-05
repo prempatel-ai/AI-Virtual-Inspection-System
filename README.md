@@ -330,5 +330,5 @@ Automated checks executed:
 
 ## Author & Maintainer
 
-Maintained by **Prem Patel** ([rolexhere03@gmail.com](mailto:rolexhere03@gmail.com)).  
+Maintained by **Prem Patel** ([prempatel7740@gmail.com](mailto:prempatel7740@gmail.com)).  
 Built for transparent, accountable, and tamper-proof public distribution monitoring.
