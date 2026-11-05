@@ -71,7 +71,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P8.2 17,000-shop run: measure run time and ranked-endpoint latency; optimise if over targets
 - [x] P8.3 Accessibility pass (axe, keyboard, focus)
 - [x] P8.4 Responsive check at 1280 and 768 widths
-- [ ] P8.5 Screenshot self-review against docs/DESIGN.md; remove any slop found
+- [x] P8.5 Screenshot self-review against docs/DESIGN.md; remove any slop found
 **Exit:** all checks pass. Performance targets met or logged as known gaps in MEMORY.md.
 
 ## P9 Demo readiness
