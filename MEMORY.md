@@ -5,8 +5,11 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P1
-- Last completed task: P1.3
-- Next task: P1.4
+- Last completed task: P1.4
+- Next task: P1.5
+
+## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
+- Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
 
 ## Decisions
 - D-001 Stack: FastAPI + SQLite + pandas (backend), Next.js + TypeScript + Tailwind + Recharts (frontend).
@@ -40,3 +43,4 @@ none
 - 2026-11-05 P1.1 Created schema.sql and db.py with tables for shops, shop_weeks, complaints, ground_truth, runs, scores, explanations, and feedback.
 - 2026-11-05 P1.2 Built seeded deterministic generator for shops, weekly records, and complaints.
 - 2026-11-05 P1.3 Planted scenarios S1-S7 with labels in ground_truth; verified outage taluka exclusion.
+- 2026-11-05 P1.4 Scaled to 17,000 shops x 12 weeks: generated in 5.41 s (target: < 120 s). Recorded in MEMORY.md.
