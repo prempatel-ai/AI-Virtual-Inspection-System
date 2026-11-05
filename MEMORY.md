@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P12 Oversight APIs
-- Last completed task: P11.6 (Phase 11 Exit Gate Passed)
-- Next task: P12.1 (metrics.py with golden tests)
+- Last completed task: P12.1
+- Next task: P12.2 (GET /areas, GET /officers, GET /officers/{id}, GET /actions, scope-aware GET /summary)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -72,3 +72,4 @@ none
 - 2026-11-05 P11.4 Implemented GET /cases (filtering, overdue, scope), GET /cases/{id} (allowed_actions, timeline), and POST /cases/{id}/actions with validation and state transitions.
 - 2026-11-05 P11.5 Linked case summaries to GET /shops/ranked and GET /shops/{id}; verified POST /run is admin-only.
 - 2026-11-05 P11.6 Added integration tests for cases API lifecycle, state transitions, scope isolation, and expanded RBAC matrix (126 passing tests). Phase 11 exit gate passed.
+- 2026-11-05 P12.1 Built central metrics engine in backend/app/metrics.py (area metrics, officer stats, confirmed rate, overdue, median time to first action) with golden tests.

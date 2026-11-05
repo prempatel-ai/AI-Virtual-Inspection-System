@@ -111,7 +111,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** a flagged shop becomes a case; actions follow the state machine; history is immutable.
 
 ## P12 Oversight APIs
-- [ ] P12.1 `metrics.py` (flag rate, confirmed rate, overdue, time to first action) with golden tests
+- [x] P12.1 `metrics.py` (flag rate, confirmed rate, overdue, time to first action) with golden tests
 - [ ] P12.2 `GET /areas`, `GET /officers`, `GET /officers/{id}`, `GET /actions`, scope-aware `GET /summary`
 - [ ] P12.3 `GET/POST/PATCH /admin/users`, reset password, `GET /admin/audit`
 - [ ] P12.4 Update `docs/API.md`; regenerate frontend types
