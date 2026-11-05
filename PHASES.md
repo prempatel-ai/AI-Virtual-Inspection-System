@@ -51,7 +51,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** app works with and without `GROQ_API_KEY`. Validation tests pass.
 
 ## P6 Frontend foundation
-- [ ] P6.1 `tokens.css`, Tailwind mapped to tokens, font loaded
+- [x] P6.1 `tokens.css`, Tailwind mapped to tokens, font loaded
 - [ ] P6.2 Blocks: AppShell, PageHeader, SyntheticBanner, KpiCard, DataTable, RiskBadge, SignalChip, EmptyState, ErrorState, Skeleton, FilterBar
 - [ ] P6.3 Blocks: ScoreBreakdown, TrendChart, ReconcileTable, EvidenceList, ChecklistPanel, FeedbackForm
 - [ ] P6.4 API client wrapper using generated types
