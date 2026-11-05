@@ -63,7 +63,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P7.1 Dashboard: KPIs, filters, ranked table
 - [x] P7.2 Shop detail: breakdown, charts, reconciliation, board check, explanation, checklist
 - [x] P7.3 Visit outcome form; confirmed rate updates on the dashboard
-- [ ] P7.4 Run audit button with progress and result
+- [x] P7.4 Run audit button with progress and result
 **Exit:** Playwright happy path passes (dashboard, open shop, record outcome, see KPI change).
 
 ## P8 Integration and hardening

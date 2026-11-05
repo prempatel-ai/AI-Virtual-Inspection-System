@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P7
-- Last completed task: P7.3
-- Next task: P7.4
+- Current phase: P8
+- Last completed task: P7.4
+- Next task: P8.1
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -75,3 +75,4 @@ none
 - 2026-11-05 P7.1 Built Dashboard screen (frontend/app/page.tsx) with KPIs, filters, week selection, ranked table, and 8-week sparkline.
 - 2026-11-05 P7.2 Built Shop detail screen (frontend/app/shops/[id]/page.tsx) with ScoreBreakdown, TrendChart, ReconcileTable, BoardCheck, EvidenceList, and ChecklistPanel.
 - 2026-11-05 P7.3 Connected visit outcome form to POST /shops/{id}/feedback and verified confirmed visit rate updates on dashboard.
+- 2026-11-05 P7.4 Configured Playwright e2e happy path test (dashboard -> filter -> detail -> checklist -> outcome -> KPI update) and screenshots at 1280 and 768. make e2e passed. Phase 7 exit gate passed.
