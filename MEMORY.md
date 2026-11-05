@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P9
-- Last completed task: P9.2
-- Next task: P9.3
+- Last completed task: P9.3
+- Next task: P9.4 (Final Gate)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -85,3 +85,4 @@ none
 - 2026-11-05 P8.5 Performed screenshot and codebase self-review against docs/DESIGN.md banned list (no gradients, no emojis, no buzzwords, no raw hex outside tokens, no em dashes/middle dots/arrows in text). Phase 8 exit gate passed.
 - 2026-11-05 P9.1 Created scripts/demo.py and make demo target; seeds default data if missing, runs pipeline, starts both backend and frontend servers with graceful shutdown.
 - 2026-11-05 P9.2 Authored docs/DEMO.md with structured 5-minute walkthrough referencing real planted shop IDs, figures, and scenario explanations.
+- 2026-11-05 P9.3 Updated README.md with comprehensive Quickstart, architecture overview, quality gates table, and verified commands.
