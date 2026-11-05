@@ -1,10 +1,10 @@
 """Synthetic PDS Data Generator."""
 
 import argparse
-from datetime import datetime, timedelta
 import json
-from pathlib import Path
 import sqlite3
+from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
@@ -178,33 +178,47 @@ def generate_pds_data(
             if anomaly_progress > 0:
                 # S1 Stock Diversion (closing stock lower by 8% to 15%)
                 if scenario in ("S1", "S5"):
-                    factor = 0.08 + (0.07 * anomaly_progress) if scenario == "S1" else 0.12 + (0.06 * anomaly_progress)
+                    factor = (
+                        0.08 + (0.07 * anomaly_progress)
+                        if scenario == "S1"
+                        else 0.12 + (0.06 * anomaly_progress)
+                    )
                     shortfall = (opening_kg + received_kg) * factor
                     closing_kg = round(max(0.0, closing_kg - shortfall), 1)
 
                 # S2 Board Mismatch (board = sold * 1.15 to 1.35)
                 if scenario == "S2":
-                    inflation = 1.0 + ((0.15 + (0.20 * rng.uniform(0.8, 1.0))) * anomaly_progress)
+                    inflation = 1.0 + (
+                        (0.15 + (0.20 * rng.uniform(0.8, 1.0))) * anomaly_progress
+                    )
                     board_kg = round(float(sold_kg * inflation), 1)
 
                 # S3 Override Heavy (unauth_share jumps, auth failures rise)
                 if scenario in ("S3", "S5"):
-                    target_unauth = 0.35 + (0.20 * anomaly_progress) if scenario == "S3" else 0.40 + (0.20 * anomaly_progress)
+                    target_unauth = (
+                        0.35 + (0.20 * anomaly_progress)
+                        if scenario == "S3"
+                        else 0.40 + (0.20 * anomaly_progress)
+                    )
                     unauth_rate = min(0.60, target_unauth)
                     fail_rate = min(0.65, fail_rate + (0.20 * anomaly_progress))
 
                 # S4 Complaint Spike (last 3 weeks: w_idx >= 9, 4 to 6x complaints)
                 if scenario in ("S4", "S5") and w_idx >= 9:
-                    multiplier = float(rng.uniform(4.5, 6.5)) if scenario == "S4" else float(rng.uniform(6.0, 8.0))
+                    multiplier = (
+                        float(rng.uniform(4.5, 6.5))
+                        if scenario == "S4"
+                        else float(rng.uniform(6.0, 8.0))
+                    )
                     comp_count = max(3, int(round(comp_count * multiplier + rng.poisson(3.5))))
 
                 # S6 Vulnerable, Mild Stock Gap (gap of 3% to 5%)
                 if scenario == "S6":
-                    gap_factor = (0.03 + 0.02 * anomaly_progress)
+                    gap_factor = 0.03 + 0.02 * anomaly_progress
                     shortfall = (opening_kg + received_kg) * gap_factor
                     closing_kg = round(max(0.0, closing_kg - shortfall), 1)
 
-            # S7 Outage Trap: in last 2 weeks (w_idx >= 10), shops in outage taluka get +20 to +30 pp auth fail
+            # S7 Outage Trap: last 2 weeks (w_idx >= 10), outage taluka +20 to +30 pp auth fail
             if scenario == "S7" and w_idx >= 10:
                 extra_fail = float(rng.uniform(0.22, 0.30))
                 fail_rate = min(0.75, fail_rate + extra_fail)
@@ -305,7 +319,11 @@ def generate_pds_data(
         VALUES (?, ?, ?);
         """,
         [
-            (s["shop_id"], planted_scenario_map[s["shop_index"]], SCENARIOS[planted_scenario_map[s["shop_index"]]].is_positive)
+            (
+                s["shop_id"],
+                planted_scenario_map[s["shop_index"]],
+                SCENARIOS[planted_scenario_map[s["shop_index"]]].is_positive,
+            )
             for s in shops_data
         ],
     )
@@ -338,7 +356,9 @@ def main() -> None:
     parser.add_argument("--shops", type=int, default=500, help="Number of shops (default: 500)")
     parser.add_argument("--weeks", type=int, default=12, help="Number of weeks (default: 12)")
     parser.add_argument("--seed", type=int, default=42, help="Random seed (default: 42)")
-    parser.add_argument("--start-date", type=str, default="2026-08-17", help="Start date Monday YYYY-MM-DD")
+    parser.add_argument(
+        "--start-date", type=str, default="2026-08-17", help="Start date Monday YYYY-MM-DD"
+    )
     parser.add_argument("--db-path", type=str, default=None, help="Database path")
     args = parser.parse_args()
 
@@ -352,7 +372,9 @@ def main() -> None:
 
     print("==================================================")
     print("PDS SYNTHETIC DATA GENERATION COMPLETE")
-    print(f"Shops: {summary['num_shops']} | Weeks: {summary['num_weeks']} | Seed: {summary['seed']}")
+    print(
+        f"Shops: {summary['num_shops']} | Weeks: {summary['num_weeks']} | Seed: {summary['seed']}"
+    )
     print(f"Outage Taluka (S7): {summary['outage_taluka']} ({summary['outage_district']})")
     print("Scenario breakdown:")
     for s_id, count in summary["scenario_counts"].items():

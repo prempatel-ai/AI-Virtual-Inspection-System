@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P1
-- Last completed task: P1.4
-- Next task: P1.5
+- Current phase: P2
+- Last completed task: P1.5
+- Next task: P2.1
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -44,3 +44,4 @@ none
 - 2026-11-05 P1.2 Built seeded deterministic generator for shops, weekly records, and complaints.
 - 2026-11-05 P1.3 Planted scenarios S1-S7 with labels in ground_truth; verified outage taluka exclusion.
 - 2026-11-05 P1.4 Scaled to 17,000 shops x 12 weeks: generated in 5.41 s (target: < 120 s). Recorded in MEMORY.md.
+- 2026-11-05 P1.5 Added data tests for determinism, planted counts, ranges, stock chain, and outage trap. Phase 1 exit gate passed.

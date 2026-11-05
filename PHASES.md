@@ -14,7 +14,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P1.2 Baseline generator: shops, weekly records, complaints. Seeded and deterministic
 - [x] P1.3 Plant scenarios S1 to S7 with labels (docs/DATA_SPEC.md)
 - [x] P1.4 Scale: `SHOPS=17000` completes within the target in docs/ARCHITECTURE.md
-- [ ] P1.5 Data tests (determinism, planted counts, outage effect, value ranges)
+- [x] P1.5 Data tests (determinism, planted counts, outage effect, value ranges)
 **Exit:** `make data` is deterministic. Tests pass. 17,000-shop generation completes.
 
 ## P2 Detection
