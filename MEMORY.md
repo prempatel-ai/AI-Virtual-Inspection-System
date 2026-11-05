@@ -4,9 +4,9 @@ Agent state. Read at the start of every iteration. Update at the end of every ta
 Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md).
 
 ## Status
-- Current phase: P10 Auth and users
-- Last completed task: P10.5
-- Next task: P10.6 (Auth and RBAC tests: matrix, scope, lockout, cookie flags)
+- Current phase: P11 Cases and actions
+- Last completed task: P10.6
+- Next task: P11.1 (Schema: cases, case_actions with append-only triggers; remove feedback with migration)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -65,3 +65,4 @@ none
 - 2026-11-05 P10.3 Implemented argon2 password hashing, JWT HttpOnly cookie sessions, CSRF validation, generic login error, 15-min lockout after 5 failures, login/logout/me routes with audit_log tracking, and unit tests.
 - 2026-11-05 P10.4 Applied single permission dependency (require_permission) and shared scope filter (ScopeFilter) across V1 endpoints; enforced 404 for out-of-scope records and areas.
 - 2026-11-05 P10.5 Implemented make seed-users generator creating 1 admin, 2 vigilance, district officers, mamlatdars, and inspectors with round-robin shop assignment; wrote data/demo_users.json without passwords.
+- 2026-11-05 P10.6 Implemented programmatically generated RBAC matrix (55 tests) covering every endpoint x every role, strict 404 scope isolation, lockout, and session verification. Phase 10 exit gate passed.

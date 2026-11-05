@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.auth.audit import is_email_locked, log_audit_event
-from app.auth.dependencies import get_current_user, get_current_user_optional, verify_csrf
+from app.auth.dependencies import get_current_user, verify_csrf
 from app.auth.permissions import get_user_permissions, get_user_scope
 from app.auth.security import (
     clear_session_cookie,
@@ -121,22 +121,24 @@ def login(req: LoginRequest, request: Request, response: Response) -> LoginRespo
 
 
 @router.post("/logout", response_model=LogoutResponse, dependencies=[Depends(verify_csrf)])
-def logout(request: Request, response: Response) -> LogoutResponse:
+def logout(
+    request: Request,
+    response: Response,
+    current_user: dict = Depends(get_current_user),
+) -> LogoutResponse:
     """Logs out current user, records audit event, and clears session cookie."""
-    current_user = get_current_user_optional(request)
     client_ip = request.client.host if request.client else None
 
-    if current_user:
-        conn = get_connection()
-        try:
-            log_audit_event(
-                conn,
-                event="logout",
-                actor_id=current_user["user_id"],
-                ip=client_ip,
-            )
-        finally:
-            conn.close()
+    conn = get_connection()
+    try:
+        log_audit_event(
+            conn,
+            event="logout",
+            actor_id=current_user["user_id"],
+            ip=client_ip,
+        )
+    finally:
+        conn.close()
 
     clear_session_cookie(response)
     return LogoutResponse(status="ok")
