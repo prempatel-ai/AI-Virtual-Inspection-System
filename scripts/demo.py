@@ -106,7 +106,7 @@ def get_server_commands() -> tuple[list[str], list[str]]:
         "--app-dir",
         str(BACKEND_DIR),
         "--host",
-        "127.0.0.1",
+        "0.0.0.0",
         "--port",
         "8000",
         "--reload",
