@@ -21,20 +21,24 @@ def get_connection(db_path: Optional[Union[str, Path]] = None) -> sqlite3.Connec
 
 
 def init_db(db_path: Optional[Union[str, Path]] = None) -> None:
-    """Initializes the database using schema.sql."""
+    """Initializes the database using schema.sql and migrates existing tables."""
     with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
         schema_sql = f.read()
 
     conn = get_connection(db_path)
     try:
-        conn.executescript(schema_sql)
         cursor = conn.cursor()
-        cursor.execute("PRAGMA table_info(shops);")
-        columns = [row["name"] for row in cursor.fetchall()]
-        if columns and "inspector_id" not in columns:
-            conn.execute(
-                "ALTER TABLE shops ADD COLUMN inspector_id TEXT REFERENCES users(user_id);"
-            )
+        cursor.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='shops';")
+        if cursor.fetchone()[0] > 0:
+            cursor.execute("PRAGMA table_info(shops);")
+            columns = [row["name"] for row in cursor.fetchall()]
+            if "inspector_id" not in columns:
+                conn.execute(
+                    "ALTER TABLE shops ADD COLUMN inspector_id TEXT REFERENCES users(user_id);"
+                )
+                conn.commit()
+
+        conn.executescript(schema_sql)
         conn.commit()
     finally:
         conn.close()

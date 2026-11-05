@@ -97,7 +97,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 - [x] P10.2 Schema: `users`, `shops.inspector_id`, `audit_log` with triggers; config keys
 - [x] P10.3 Password hashing, login, logout, `me`, cookie session, lockout, CSRF header, `audit_log` writes
 - [x] P10.4 Shared permission table, auth dependency, scope filter; apply to all V1 endpoints
-- [ ] P10.5 `seed-users` and demo users file
+- [x] P10.5 `seed-users` and demo users file
 - [ ] P10.6 Auth and RBAC tests (matrix, scope, lockout, cookie flags)
 **Exit:** every endpoint requires auth except health and login; matrix and scope tests pass; V1 tests updated and green.
 

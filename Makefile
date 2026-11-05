@@ -1,4 +1,4 @@
-.PHONY: setup data dev-api dev-web lint typecheck test-backend test-frontend test check types e2e demo check-contrast
+.PHONY: setup data seed-users dev-api dev-web lint typecheck test-backend test-frontend test check types e2e demo check-contrast
 
 ifeq ($(OS),Windows_NT)
     VENV_BIN := .venv/Scripts
@@ -29,8 +29,12 @@ setup:
 	$(PYTHON) -m pip install -e "backend[dev]"
 	cd frontend && $(NPM) install
 
+seed-users:
+	$(PYTHON) -m app.data.seed_users
+
 data:
 	$(PYTHON) -m app.data.generator --shops $(SHOPS) --weeks $(WEEKS) --seed $(SEED)
+	$(PYTHON) -m app.data.seed_users
 
 dev-api:
 	$(PYTHON) -m uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000 --reload
