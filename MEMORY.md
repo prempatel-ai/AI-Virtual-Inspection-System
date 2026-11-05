@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P6
-- Last completed task: P6.2
-- Next task: P6.3
+- Last completed task: P6.3
+- Next task: P6.4
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -68,3 +68,4 @@ none
 - 2026-11-05 P5.6 Added tests for LLM validation (unknown fact_id, invented number, empty checklist, cache, fake client, template fallback). Phase 5 exit gate passed.
 - 2026-11-05 P6.1 Defined tokens.css, mapped Tailwind configuration exclusively to tokens, configured Public Sans font and typography.
 - 2026-11-05 P6.2 Built core UI blocks in components/ui (AppShell, PageHeader, SyntheticBanner, KpiCard, DataTable, RiskBadge, SignalChip, EmptyState, ErrorState, Skeleton, FilterBar) with unit tests.
+- 2026-11-05 P6.3 Built domain UI blocks (ScoreBreakdown, TrendChart, ReconcileTable, EvidenceList, ChecklistPanel, FeedbackForm) with unit tests.
