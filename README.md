@@ -1,6 +1,6 @@
 # AI Virtual Inspection System
 
-Demo MVP for the problem "PDS Self-Auditing / AI Virtual Inspection System" (Food, Civil Supplies & Consumer Affairs Department, Gujarat).
+Demo MVP for the problem "PDS Self-Auditing / AI Virtual Inspection System" (Food, Civil Supplies & Consumer Affairs Department).
 
 The system ranks Fair Price Shops (FPS) by inspection priority, explains why each shop was flagged, and lists the evidence an officer should check. All data in this repo is synthetic.
 
