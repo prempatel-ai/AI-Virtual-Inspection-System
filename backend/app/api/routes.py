@@ -4,8 +4,10 @@ import json
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query
 
+from app.auth.dependencies import get_current_user, require_permission, verify_csrf
+from app.auth.scope import ScopeFilter, get_scope_filter
 from app.db import get_connection
 from app.llm.templates import generate_template_explanation
 from app.pipeline.run import run_pipeline_for_week
@@ -46,7 +48,7 @@ def get_latest_week(conn) -> str:
 
 
 @router.get("/meta", response_model=MetaResponse)
-def get_meta() -> MetaResponse:
+def get_meta(current_user: Dict[str, Any] = Depends(get_current_user)) -> MetaResponse:
     """Returns metadata about the PDS system dataset and available weeks."""
     conn = get_connection()
     try:
@@ -93,8 +95,12 @@ def get_meta() -> MetaResponse:
 
 
 @router.get("/summary", response_model=SummaryResponse)
-def get_summary(week: Optional[str] = Query(default=None)) -> SummaryResponse:
-    """Returns summary KPIs, evaluation metrics, and visit outcomes for a week."""
+def get_summary(
+    week: Optional[str] = Query(default=None),
+    current_user: Dict[str, Any] = Depends(require_permission("flags:view")),
+    scope_filter: ScopeFilter = Depends(get_scope_filter),
+) -> SummaryResponse:
+    """Returns summary KPIs, evaluation metrics, and visit outcomes scoped to user."""
     conn = get_connection()
     try:
         target_week = week or get_latest_week(conn)
@@ -107,29 +113,56 @@ def get_summary(week: Optional[str] = Query(default=None)) -> SummaryResponse:
         if score_count == 0:
             run_pipeline_for_week(week_start=target_week)
 
-        # Monitored shops count
-        monitored = conn.execute("SELECT count(*) FROM shops;").fetchone()[0]
+        scope_sql, scope_params = scope_filter.sql_filter("s")
 
-        # Band counts
-        high_count = conn.execute(
-            "SELECT count(*) FROM scores WHERE week_start = ? AND band = 'high';",
-            (target_week,),
+        # Monitored shops count in scope
+        monitored = conn.execute(
+            f"SELECT count(*) FROM shops s WHERE {scope_sql};",
+            tuple(scope_params),
         ).fetchone()[0]
+
+        # Band counts in scope
+        high_count = conn.execute(
+            f"""
+            SELECT count(*)
+            FROM scores sc
+            JOIN shops s ON sc.shop_id = s.shop_id
+            WHERE sc.week_start = ? AND sc.band = 'high' AND {scope_sql};
+            """,
+            tuple([target_week] + scope_params),
+        ).fetchone()[0]
+
         med_count = conn.execute(
-            "SELECT count(*) FROM scores WHERE week_start = ? AND band = 'medium';",
-            (target_week,),
+            f"""
+            SELECT count(*)
+            FROM scores sc
+            JOIN shops s ON sc.shop_id = s.shop_id
+            WHERE sc.week_start = ? AND sc.band = 'medium' AND {scope_sql};
+            """,
+            tuple([target_week] + scope_params),
         ).fetchone()[0]
         flagged = high_count + med_count
 
-        # Visits recorded and confirmed rate
+        # Visits recorded and confirmed rate in scope
         v_total = conn.execute(
-            "SELECT count(*) FROM feedback WHERE week_start = ?;",
-            (target_week,),
+            f"""
+            SELECT count(*)
+            FROM feedback fb
+            JOIN shops s ON fb.shop_id = s.shop_id
+            WHERE fb.week_start = ? AND {scope_sql};
+            """,
+            tuple([target_week] + scope_params),
         ).fetchone()[0]
+
         if v_total > 0:
             v_conf = conn.execute(
-                "SELECT count(*) FROM feedback WHERE week_start = ? AND outcome = 'confirmed';",
-                (target_week,),
+                f"""
+                SELECT count(*)
+                FROM feedback fb
+                JOIN shops s ON fb.shop_id = s.shop_id
+                WHERE fb.week_start = ? AND fb.outcome = 'confirmed' AND {scope_sql};
+                """,
+                tuple([target_week] + scope_params),
             ).fetchone()[0]
             conf_rate = round(float(v_conf) / float(v_total), 3)
         else:
@@ -191,14 +224,24 @@ def get_ranked_shops(
     band: Optional[str] = Query(default=None),
     limit: int = Query(default=50, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
+    current_user: Dict[str, Any] = Depends(require_permission("flags:view")),
+    scope_filter: ScopeFilter = Depends(get_scope_filter),
 ) -> RankedShopsResponse:
-    """Returns ranked list of shops sorted by risk score descending."""
+    """Returns ranked list of shops sorted by risk score descending within user's scope."""
+    # 404 if client queries for area outside user scope
+    scope_filter.validate_requested_area(district=district, taluka=taluka)
+
     conn = get_connection()
     try:
         target_week = week or get_latest_week(conn)
 
         where_clauses = ["sc.week_start = ?"]
         params: List[Any] = [target_week]
+
+        # Scope restriction
+        scope_sql, scope_params = scope_filter.sql_filter("s")
+        where_clauses.append(scope_sql)
+        params.extend(scope_params)
 
         if district:
             where_clauses.append("s.district = ?")
@@ -301,18 +344,20 @@ def get_ranked_shops(
 
 
 @router.get("/shops/{shop_id}", response_model=ShopDetailResponse)
-def get_shop_detail(shop_id: str, week: Optional[str] = Query(default=None)) -> ShopDetailResponse:
-    """Returns detailed audit file for a single shop."""
+def get_shop_detail(
+    shop_id: str,
+    week: Optional[str] = Query(default=None),
+    current_user: Dict[str, Any] = Depends(require_permission("flags:view")),
+    scope_filter: ScopeFilter = Depends(get_scope_filter),
+) -> ShopDetailResponse:
+    """Returns detailed audit file for a single shop within user scope (404 if out of scope)."""
     conn = get_connection()
     try:
-        target_week = week or get_latest_week(conn)
+        # Enforce scope check; raises 404 if out of scope or nonexistent
+        scope_filter.require_shop_in_scope(conn, shop_id)
 
+        target_week = week or get_latest_week(conn)
         shop_row = conn.execute("SELECT * FROM shops WHERE shop_id = ?;", (shop_id,)).fetchone()
-        if not shop_row:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"code": "SHOP_NOT_FOUND", "message": f"Shop {shop_id} does not exist"},
-            )
 
         score_row = conn.execute(
             """
@@ -589,6 +634,7 @@ def get_shop_detail(shop_id: str, week: Optional[str] = Query(default=None)) -> 
             taluka=shop_row["taluka"],
             cards_count=shop_row["cards_count"],
             vulnerability_index=float(shop_row["vulnerability_index"]),
+            inspector_id=shop_row["inspector_id"],
         )
 
         return ShopDetailResponse(
@@ -609,9 +655,12 @@ def get_shop_detail(shop_id: str, week: Optional[str] = Query(default=None)) -> 
         conn.close()
 
 
-@router.post("/run", response_model=RunResponse)
-def post_run(body: Optional[RunRequest] = None) -> RunResponse:
-    """Triggers an audit run for a specific week or the latest week."""
+@router.post("/run", response_model=RunResponse, dependencies=[Depends(verify_csrf)])
+def post_run(
+    body: Optional[RunRequest] = None,
+    current_user: Dict[str, Any] = Depends(require_permission("run:execute")),
+) -> RunResponse:
+    """Triggers an audit run for a specific week (admin only)."""
     week = body.week if body else None
     top_k = body.top_k if body and body.top_k is not None else 20
     res = run_pipeline_for_week(week_start=week, top_k=top_k)
@@ -624,17 +673,22 @@ def post_run(body: Optional[RunRequest] = None) -> RunResponse:
     )
 
 
-@router.post("/shops/{shop_id}/feedback", response_model=FeedbackResponse)
-def post_feedback(shop_id: str, body: FeedbackRequest) -> FeedbackResponse:
-    """Stores officer visit outcome feedback for a shop."""
+@router.post(
+    "/shops/{shop_id}/feedback",
+    response_model=FeedbackResponse,
+    dependencies=[Depends(verify_csrf)],
+)
+def post_feedback(
+    shop_id: str,
+    body: FeedbackRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    scope_filter: ScopeFilter = Depends(get_scope_filter),
+) -> FeedbackResponse:
+    """Stores officer visit outcome feedback for a shop within user scope."""
     conn = get_connection()
     try:
-        shop_exists = conn.execute("SELECT 1 FROM shops WHERE shop_id = ?;", (shop_id,)).fetchone()
-        if not shop_exists:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"code": "SHOP_NOT_FOUND", "message": f"Shop {shop_id} does not exist"},
-            )
+        # Enforce scope check; raises 404 if out of scope or nonexistent
+        scope_filter.require_shop_in_scope(conn, shop_id)
 
         created_at = datetime.now(timezone.utc).isoformat()
         cursor = conn.cursor()
