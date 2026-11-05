@@ -33,7 +33,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** evaluation targets met on the default dataset. Property test on breakdown sums passes.
 
 ## P4 API and persistence
-- [ ] P4.1 `GET /shops/ranked`, `GET /shops/{id}`
+- [x] P4.1 `GET /shops/ranked`, `GET /shops/{id}`
 - [ ] P4.2 `GET /meta`, `GET /summary`
 - [ ] P4.3 `POST /run`
 - [ ] P4.4 `POST /shops/{id}/feedback` and confirmed-rate in summary

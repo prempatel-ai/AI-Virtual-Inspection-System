@@ -1,12 +1,18 @@
 """FastAPI main application."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+
+from app.api.routes import router
+from app.schemas import HealthResponse
 
 app = FastAPI(
     title="PDS Self-Auditing & AI Virtual Inspection System API",
     version="0.1.0",
+    docs_url="/docs",
+    openapi_url="/openapi.json",
 )
 
 app.add_middleware(
@@ -18,11 +24,36 @@ app.add_middleware(
 )
 
 
-class HealthResponse(BaseModel):
-    status: str
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    """Formats HTTPException into {"error": {"code": "...", "message": "..."}}."""
+    detail = exc.detail
+    if isinstance(detail, dict) and "code" in detail and "message" in detail:
+        return JSONResponse(status_code=exc.status_code, content={"error": detail})
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": {"code": f"HTTP_{exc.status_code}", "message": str(detail)}},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Formats validation errors into standard error format."""
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "error": {
+                "code": "VALIDATION_ERROR",
+                "message": str(exc.errors()[0]["msg"]) if exc.errors() else "Validation failed",
+            }
+        },
+    )
 
 
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
     """Health check endpoint."""
     return HealthResponse(status="ok")
+
+
+app.include_router(router)

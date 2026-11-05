@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P4
-- Last completed task: P3.5
-- Next task: P4.1
+- Last completed task: P4.1
+- Next task: P4.2
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -54,3 +54,4 @@ none
 - 2026-11-05 P3.3 Implemented run.py to run full inspection pipeline and persist scores and run records.
 - 2026-11-05 P3.4 Implemented evaluate.py to compute precision@K, recall@2K, and outage false alarm rate against ground truth.
 - 2026-11-05 P3.5 Tuned config.yaml: precision@K=0.8077 (>=0.80), recall@2K=0.9615 (>=0.90), outage_fa=0.0 (<=0.05). Property test on decomposition passed. Phase 3 exit gate passed.
+- 2026-11-05 P4.1 Implemented GET /shops/ranked (with filters, pagination, trend) and GET /shops/{id} (full audit detail).
