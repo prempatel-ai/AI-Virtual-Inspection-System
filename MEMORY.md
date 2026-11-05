@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P0
-- Last completed task: P0.1
-- Next task: P0.2
+- Last completed task: P0.2
+- Next task: P0.3
 
 ## Decisions
 - D-001 Stack: FastAPI + SQLite + pandas (backend), Next.js + TypeScript + Tailwind + Recharts (frontend).
@@ -35,3 +35,4 @@ none
 ## Log (append only, newest last)
 - 2026-11-05 Docs scaffolded. No code yet.
 - 2026-11-05 P0.1 Scaffolding: backend (FastAPI, health endpoint, config.yaml, checklists.yaml), frontend (Next.js 14, Tailwind, vitest), Makefile, .env.example. All checks pass.
+- 2026-11-05 P0.2 make check runs backend and frontend lint, typecheck, and unit tests; confirmed green on skeleton.
