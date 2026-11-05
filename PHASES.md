@@ -67,7 +67,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 **Exit:** Playwright happy path passes (dashboard, open shop, record outcome, see KPI change).
 
 ## P8 Integration and hardening
-- [ ] P8.1 Loading, empty and error states on every screen
+- [x] P8.1 Loading, empty and error states on every screen
 - [ ] P8.2 17,000-shop run: measure run time and ranked-endpoint latency; optimise if over targets
 - [ ] P8.3 Accessibility pass (axe, keyboard, focus)
 - [ ] P8.4 Responsive check at 1280 and 768 widths

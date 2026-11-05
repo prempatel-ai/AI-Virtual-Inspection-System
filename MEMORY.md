@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P8
-- Last completed task: P7.4
-- Next task: P8.1
+- Last completed task: P8.1
+- Next task: P8.2
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.41 s (target: < 120 s) - PASS
@@ -76,3 +76,4 @@ none
 - 2026-11-05 P7.2 Built Shop detail screen (frontend/app/shops/[id]/page.tsx) with ScoreBreakdown, TrendChart, ReconcileTable, BoardCheck, EvidenceList, and ChecklistPanel.
 - 2026-11-05 P7.3 Connected visit outcome form to POST /shops/{id}/feedback and verified confirmed visit rate updates on dashboard.
 - 2026-11-05 P7.4 Configured Playwright e2e happy path test (dashboard -> filter -> detail -> checklist -> outcome -> KPI update) and screenshots at 1280 and 768. make e2e passed. Phase 7 exit gate passed.
+- 2026-11-05 P8.1 Verified and tested loading, empty, and error states across all screens with unit tests.

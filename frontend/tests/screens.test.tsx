@@ -214,4 +214,73 @@ describe('Screens', () => {
       )
     })
   })
+
+  it('renders dashboard error state on API failure', async () => {
+    vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('Connection refused to API server'))
+
+    render(<DashboardPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Connection refused to API server/i)).toBeDefined()
+      expect(screen.getByRole('button', { name: /Retry/i })).toBeDefined()
+    })
+  })
+
+  it('renders dashboard empty state when no shops match filters', async () => {
+    const mockMeta = {
+      synthetic: true,
+      weeks: ['2026-11-02'],
+      latest_week: '2026-11-02',
+      districts: ['Ahmedabad'],
+      talukas: { Ahmedabad: ['Taluka 1'] },
+      shops_count: 500,
+      has_run: true,
+    }
+    const mockSummary = {
+      week: '2026-11-02',
+      shops_monitored: 500,
+      flagged: 0,
+      high: 0,
+      medium: 0,
+      inspection_priority_k: 26,
+      visits_recorded: 0,
+      confirmed_rate: 0.0,
+      evaluation: null,
+    }
+    const mockRanked = {
+      week: '2026-11-02',
+      total: 0,
+      items: [],
+    }
+
+    vi.spyOn(global, 'fetch').mockImplementation(async (url) => {
+      const u = String(url)
+      if (u.includes('/meta')) return { ok: true, json: async () => mockMeta } as Response
+      if (u.includes('/summary')) return { ok: true, json: async () => mockSummary } as Response
+      if (u.includes('/shops/ranked')) return { ok: true, json: async () => mockRanked } as Response
+      return { ok: false, status: 404 } as Response
+    })
+
+    render(<DashboardPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('No shops match these filters.')).toBeDefined()
+      expect(screen.getByRole('button', { name: /Clear filters/i })).toBeDefined()
+    })
+  })
+
+  it('renders shop detail error state on 404', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      json: async () => ({ detail: 'Shop FPS-00012 not found' }),
+    } as Response)
+
+    render(<ShopDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Shop FPS-00012 not found/i)).toBeDefined()
+      expect(screen.getByRole('button', { name: /Retry/i })).toBeDefined()
+    })
+  })
 })
