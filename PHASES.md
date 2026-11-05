@@ -103,7 +103,7 @@ Tick `[x]` when a task is done and `make check` is green. Task IDs are used in c
 
 ## P11 Cases and actions
 - [x] P11.1 Schema: `cases`, `case_actions` with append-only triggers; remove `feedback` with migration
-- [ ] P11.2 Case creation and update inside `POST /run` (section 3 rules)
+- [x] P11.2 Case creation and update inside `POST /run` (section 3 rules)
 - [ ] P11.3 State machine and `allowed_actions`
 - [ ] P11.4 `GET /cases`, `GET /cases/{id}`, `POST /cases/{id}/actions` with payload validation
 - [ ] P11.5 Add `case` summary to ranked and detail responses; make `POST /run` admin only

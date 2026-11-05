@@ -669,6 +669,8 @@ def post_run(
         week=res["week"],
         shops_scored=res["shops_scored"],
         explained=res["explained"],
+        cases_created=res.get("cases_created", 0),
+        cases_updated=res.get("cases_updated", 0),
         duration_ms=res["duration_ms"],
     )
 

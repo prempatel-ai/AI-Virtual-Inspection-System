@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P11 Cases and actions
-- Last completed task: P11.1
-- Next task: P11.2 (Case creation and update inside POST /run per section 3 rules)
+- Last completed task: P11.2
+- Next task: P11.3 (State machine and allowed_actions)
 
 ## Performance (measured real numbers vs docs/ARCHITECTURE.md targets)
 - Data generation (17,000 shops x 12 weeks): 5.85 s (target: < 120 s) - PASS
@@ -67,3 +67,4 @@ none
 - 2026-11-05 P10.5 Implemented make seed-users generator creating 1 admin, 2 vigilance, district officers, mamlatdars, and inspectors with round-robin shop assignment; wrote data/demo_users.json without passwords.
 - 2026-11-05 P10.6 Implemented programmatically generated RBAC matrix (55 tests) covering every endpoint x every role, strict 404 scope isolation, lockout, and session verification. Phase 10 exit gate passed.
 - 2026-11-05 P11.1 Implemented cases and case_actions tables with append-only SQLite triggers, migrated feedback table to case_actions with backwards-compatible view and INSTEAD OF INSERT trigger.
+- 2026-11-05 P11.2 Implemented case synchronization and auto-assignment in POST /run pipeline (section 3 rules), system append-only actions, and unit tests.

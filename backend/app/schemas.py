@@ -218,6 +218,8 @@ class RunResponse(BaseModel):
     week: str
     shops_scored: int
     explained: int
+    cases_created: int = 0
+    cases_updated: int = 0
     duration_ms: int
 
 

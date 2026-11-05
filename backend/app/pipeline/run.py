@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 
+from app.cases.service import sync_cases_for_scored_shops
 from app.config import get_db_path, load_config
 from app.db import get_connection
 from app.llm.explain import get_or_generate_explanation
@@ -187,6 +188,9 @@ def run_pipeline_for_week(
     )
     conn.commit()
 
+    # 7.5 Synchronize Cases
+    cases_sync = sync_cases_for_scored_shops(conn, scored_rows, target_week, cfg)
+
     # 8. Explain top K shops
     top_k_count = min(top_k, len(scored_rows))
     scored_sorted = sorted(scored_rows, key=lambda x: x["risk_score"], reverse=True)
@@ -268,4 +272,6 @@ def run_pipeline_for_week(
         "explained": explained_count,
         "duration_ms": duration_ms,
         "evaluation": eval_result,
+        "cases_created": cases_sync["cases_created"],
+        "cases_updated": cases_sync["cases_updated"],
     }
