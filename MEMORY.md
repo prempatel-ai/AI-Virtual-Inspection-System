@@ -5,8 +5,8 @@ Keep this file under 250 lines. Compact the Log when it grows (see AGENT_LOOP.md
 
 ## Status
 - Current phase: P1
-- Last completed task: P1.1
-- Next task: P1.2
+- Last completed task: P1.2
+- Next task: P1.3
 
 ## Decisions
 - D-001 Stack: FastAPI + SQLite + pandas (backend), Next.js + TypeScript + Tailwind + Recharts (frontend).
@@ -38,3 +38,4 @@ none
 - 2026-11-05 P0.2 make check runs backend and frontend lint, typecheck, and unit tests; confirmed green on skeleton.
 - 2026-11-05 P0.3 Added GitHub Actions CI workflow running make setup, make check, and frontend build. Phase 0 exit gate passed.
 - 2026-11-05 P1.1 Created schema.sql and db.py with tables for shops, shop_weeks, complaints, ground_truth, runs, scores, explanations, and feedback.
+- 2026-11-05 P1.2 Built seeded deterministic generator for shops, weekly records, and complaints.
