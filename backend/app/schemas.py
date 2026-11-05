@@ -1,6 +1,6 @@
 """Pydantic schemas for the Virtual Inspection System API."""
 
-from typing import Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -236,3 +236,79 @@ class FeedbackResponse(BaseModel):
     outcome: str
     note: Optional[str]
     created_at: str
+
+
+class ChecklistResultItem(BaseModel):
+    item_action: str
+    result: Literal["ok", "issue", "not_checked"]
+    note: Optional[str] = None
+
+
+class CaseListItem(BaseModel):
+    case_id: str
+    shop_id: str
+    shop_name: str
+    district: str
+    taluka: str
+    status: str
+    risk_score_latest: float
+    band_latest: str
+    opened_week: str
+    last_flagged_week: str
+    assignee_id: Optional[str] = None
+    assignee_name: Optional[str] = None
+    is_overdue: bool
+    last_action_at: str
+    created_at: str
+
+
+class CaseListResponse(BaseModel):
+    total: int
+    items: List[CaseListItem]
+
+
+class CaseDetail(BaseModel):
+    case_id: str
+    shop_id: str
+    shop_name: str
+    district: str
+    taluka: str
+    status: str
+    risk_score_latest: float
+    band_latest: str
+    opened_week: str
+    last_flagged_week: str
+    assignee_id: Optional[str] = None
+    assignee_name: Optional[str] = None
+    is_overdue: bool
+    closed_at: Optional[str] = None
+    last_action_at: str
+    created_at: str
+
+
+class CaseActionItem(BaseModel):
+    id: int
+    case_id: str
+    actor_id: Optional[str] = None
+    actor_name: Optional[str] = None
+    actor_role: str
+    type: str
+    payload: Dict[str, Any]
+    risk_score_at_action: Optional[float] = None
+    created_at: str
+
+
+class CaseDetailResponse(BaseModel):
+    case: CaseDetail
+    allowed_actions: List[str]
+    actions: List[CaseActionItem]
+
+
+class CaseActionRequest(BaseModel):
+    type: str
+    note: Optional[str] = None
+    reason: Optional[str] = None
+    to_user_id: Optional[str] = None
+    outcome: Optional[Literal["confirmed", "not_confirmed"]] = None
+    action_taken: Optional[str] = None
+    checklist_results: Optional[List[ChecklistResultItem]] = None

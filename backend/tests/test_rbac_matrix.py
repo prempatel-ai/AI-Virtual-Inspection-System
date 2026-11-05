@@ -33,6 +33,8 @@ ENDPOINT_SPECS: List[Tuple[str, str, str, Optional[str], bool, Optional[Dict[str
     ("summary", "GET", "/summary", "flags:view", False, None),
     ("shops_ranked", "GET", "/shops/ranked", "flags:view", False, None),
     ("shop_detail_in_scope", "GET", "/shops/{own_shop_id}", "flags:view", False, None),
+    ("cases_list", "GET", "/cases", "cases:view", False, None),
+    ("case_detail_in_scope", "GET", "/cases/{own_case_id}", "cases:view", False, None),
     ("run_pipeline", "POST", "/run", "run:execute", True, {"top_k": 5}),
 ]
 
@@ -85,12 +87,28 @@ def rbac_test_env(tmp_path_factory) -> Generator[Dict[str, str], None, None]:
 
     # Assign own_shop_id to inspector
     cursor.execute("UPDATE shops SET inspector_id = 'u-insp' WHERE shop_id = ?;", (own_shop_id,))
+
+    cursor.execute(
+        """
+        INSERT OR REPLACE INTO cases (
+            case_id, shop_id, status, assignee_id, risk_score_latest, band_latest,
+            opened_week, last_flagged_week, closed_at, last_action_at, created_at
+        ) VALUES
+            ('case-own-001', ?, 'assigned', 'u-insp', 80.0, 'high',
+             '2026-11-02', '2026-11-02', NULL, '2026-11-02T10:00:00Z', '2026-11-02T10:00:00Z'),
+            ('case-foreign-001', ?, 'assigned', NULL, 85.0, 'high',
+             '2026-11-02', '2026-11-02', NULL, '2026-11-02T10:00:00Z', '2026-11-02T10:00:00Z');
+        """,
+        (own_shop_id, foreign_shop_id),
+    )
     conn.commit()
     conn.close()
 
     ids = {
         "own_shop_id": own_shop_id,
         "foreign_shop_id": foreign_shop_id,
+        "own_case_id": "case-own-001",
+        "foreign_case_id": "case-foreign-001",
     }
     yield ids
     if "DB_PATH" in os.environ:
@@ -199,6 +217,16 @@ def test_scope_isolation_matrix(rbac_test_env: Dict[str, str]):
     # Vigilance and Admin have state scope -> 200
     vig_client = get_client_for_role("vigilance")
     assert vig_client.get(f"/shops/{foreign_shop}").status_code == 200
+
+    foreign_case = rbac_test_env["foreign_case_id"]
+    # Inspector cannot access foreign case -> 404
+    assert insp_client.get(f"/cases/{foreign_case}").status_code == 404
+    # Mamlatdar cannot access foreign case -> 404
+    assert mam_client.get(f"/cases/{foreign_case}").status_code == 404
+    # District officer cannot access foreign case -> 404
+    assert do_client.get(f"/cases/{foreign_case}").status_code == 404
+    # Vigilance can access foreign case -> 200
+    assert vig_client.get(f"/cases/{foreign_case}").status_code == 200
 
     adm_client = get_client_for_role("admin")
     assert adm_client.get(f"/shops/{foreign_shop}").status_code == 200

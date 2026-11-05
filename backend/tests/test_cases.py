@@ -1,9 +1,12 @@
 """Tests for case lifecycle, synchronization, auto-assignment, and state transitions."""
 
 import json
+import os
 
 import pytest
+from fastapi.testclient import TestClient
 
+from app.auth.security import hash_password
 from app.cases.service import sync_cases_for_scored_shops
 from app.cases.state_machine import (
     get_allowed_actions,
@@ -11,7 +14,10 @@ from app.cases.state_machine import (
     validate_action_transition,
     validate_reassign_target,
 )
+from app.data.generator import generate_pds_data
 from app.db import get_connection
+from app.main import app
+from app.pipeline.run import run_pipeline_for_week
 
 
 @pytest.fixture
@@ -298,4 +304,273 @@ def test_reassign_scope_check(memory_db):
     with pytest.raises(HTTPException) as exc:
         validate_reassign_target(memory_db, user_mam, "insp-1", shop)
     assert exc.value.status_code == 403
+
+
+@pytest.fixture
+def case_api_env(tmp_path):
+    db_file = tmp_path / "cases_test.db"
+    old_db = os.environ.get("DB_PATH")
+    os.environ["DB_PATH"] = str(db_file)
+
+    generate_pds_data(num_shops=30, num_weeks=6, seed=42, db_path=db_file)
+    run_pipeline_for_week(db_path=db_file)
+
+    conn = get_connection(db_file)
+    # Seed users for testing
+    conn.execute(
+        """
+        INSERT INTO users (
+            user_id, name, email, password_hash, role, district, taluka, is_active, created_at
+        ) VALUES
+            ('admin-case', 'Admin', 'admin@case.test', ?, 'admin', NULL, NULL, 1,
+             '2026-01-01T00:00:00Z'),
+            ('insp-case-1', 'Insp A1', 'insp1@case.test', ?, 'inspector', 'Ahmedabad',
+             'Ahmedabad Taluka 1', 1, '2026-01-01T00:00:00Z'),
+            ('insp-case-2', 'Insp A2', 'insp2@case.test', ?, 'inspector', 'Ahmedabad',
+             'Ahmedabad Taluka 1', 1, '2026-01-01T00:00:00Z'),
+            ('mam-case-1', 'Mam A1', 'mam1@case.test', ?, 'mamlatdar', 'Ahmedabad',
+             'Ahmedabad Taluka 1', 1, '2026-01-01T00:00:00Z'),
+            ('insp-surat', 'Insp Surat', 'surat@case.test', ?, 'inspector', 'Surat',
+             'Surat Taluka 1', 1, '2026-01-01T00:00:00Z');
+        """,
+        (
+            hash_password("adminPass123"),
+            hash_password("inspPass123"),
+            hash_password("inspPass123"),
+            hash_password("mamPass123"),
+            hash_password("inspPass123"),
+        ),
+    )
+
+    target_week = conn.execute("SELECT max(week_start) FROM shop_weeks;").fetchone()[0]
+    # Ensure a case exists on shop FPS-00001
+    conn.execute(
+        """
+        INSERT OR REPLACE INTO scores (
+            shop_id, week_start, risk_score, band, breakdown_json, run_id
+        ) VALUES ('FPS-00001', ?, 82.5, 'high', '[]', 1);
+        """,
+        (target_week,),
+    )
+    conn.execute(
+        """
+        INSERT OR REPLACE INTO cases (
+            case_id, shop_id, status, assignee_id, risk_score_latest, band_latest,
+            opened_week, last_flagged_week, closed_at, last_action_at, created_at
+        ) VALUES (
+            'case-test-001', 'FPS-00001', 'assigned', 'insp-case-1', 82.5, 'high',
+            ?, ?, NULL, '2026-11-02T10:00:00Z', '2026-11-02T10:00:00Z'
+        );
+        """,
+        (target_week, target_week),
+    )
+    conn.execute(
+        """
+        UPDATE shops
+        SET district = 'Ahmedabad', taluka = 'Ahmedabad Taluka 1', inspector_id = 'insp-case-1'
+        WHERE shop_id = 'FPS-00001';
+        """
+    )
+    conn.commit()
+    conn.close()
+
+    yield db_file
+
+    if old_db:
+        os.environ["DB_PATH"] = old_db
+    else:
+        del os.environ["DB_PATH"]
+
+
+def test_get_cases_api(case_api_env):
+    client = TestClient(app)
+    # Login as admin
+    client.post(
+        "/auth/login",
+        json={"email": "admin@case.test", "password": "adminPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+
+    res = client.get("/cases")
+    assert res.status_code == 200
+    data = res.json()
+    assert "total" in data
+    assert "items" in data
+    assert len(data["items"]) >= 1
+
+    item = data["items"][0]
+    assert "case_id" in item
+    assert "shop_id" in item
+    assert "is_overdue" in item
+    assert "status" in item
+
+
+def test_cases_scope_isolation_api(case_api_env):
+    client = TestClient(app)
+    # Login as Surat inspector
+    client.post(
+        "/auth/login",
+        json={"email": "surat@case.test", "password": "inspPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+
+    # Trying to query cases for Ahmedabad returns 404
+    res = client.get("/cases?district=Ahmedabad")
+    assert res.status_code == 404
+
+    # Trying to fetch Ahmedabad case detail returns 404
+    res_detail = client.get("/cases/case-test-001")
+    assert res_detail.status_code == 404
+
+
+def test_case_action_lifecycle_and_allowed_actions(case_api_env):
+    insp_client = TestClient(app)
+    insp_client.post(
+        "/auth/login",
+        json={"email": "insp1@case.test", "password": "inspPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+
+    # 1. Inspector views case, sees allowed_actions
+    res = insp_client.get("/cases/case-test-001")
+    assert res.status_code == 200
+    detail = res.json()
+    assert "start_inspection" in detail["allowed_actions"]
+    assert detail["case"]["status"] == "assigned"
+
+    # 2. Inspector starts inspection -> status becomes in_progress
+    act1 = insp_client.post(
+        "/cases/case-test-001/actions",
+        json={"type": "start_inspection", "note": "On site inspection begun"},
+        headers={"X-Requested-With": "fetch"},
+    )
+    assert act1.status_code == 200
+    assert act1.json()["type"] == "start_inspection"
+
+    res_after1 = insp_client.get("/cases/case-test-001")
+    assert res_after1.json()["case"]["status"] == "in_progress"
+    assert "record_outcome" in res_after1.json()["allowed_actions"]
+
+    # 3. Inspector records outcome -> status becomes inspected
+    act2 = insp_client.post(
+        "/cases/case-test-001/actions",
+        json={
+            "type": "record_outcome",
+            "outcome": "confirmed",
+            "action_taken": "warning_issued",
+            "note": "Discrepancy verified",
+        },
+        headers={"X-Requested-With": "fetch"},
+    )
+    assert act2.status_code == 200
+
+    res_after2 = insp_client.get("/cases/case-test-001")
+    assert res_after2.json()["case"]["status"] == "inspected"
+
+    # 4. Mamlatdar logs in and closes case
+    mam_client = TestClient(app)
+    mam_client.post(
+        "/auth/login",
+        json={"email": "mam1@case.test", "password": "mamPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+    act3 = mam_client.post(
+        "/cases/case-test-001/actions",
+        json={"type": "close", "reason": "Penalty assessed and warning issued"},
+        headers={"X-Requested-With": "fetch"},
+    )
+    assert act3.status_code == 200
+
+    res_after3 = mam_client.get("/cases/case-test-001")
+    assert res_after3.json()["case"]["status"] == "closed"
+    assert res_after3.json()["case"]["closed_at"] is not None
+
+    # 5. Mamlatdar reopens case -> status becomes assigned
+    act4 = mam_client.post(
+        "/cases/case-test-001/actions",
+        json={"type": "reopen", "reason": "Repeat violation reported"},
+        headers={"X-Requested-With": "fetch"},
+    )
+    assert act4.status_code == 200
+    res_after4 = mam_client.get("/cases/case-test-001")
+    assert res_after4.json()["case"]["status"] == "assigned"
+    assert res_after4.json()["case"]["closed_at"] is None
+
+
+def test_case_action_reassign_and_errors(case_api_env):
+    mam_client = TestClient(app)
+    mam_client.post(
+        "/auth/login",
+        json={"email": "mam1@case.test", "password": "mamPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+
+    # Mamlatdar reassigns to inspector 2 in same taluka
+    reassign_res = mam_client.post(
+        "/cases/case-test-001/actions",
+        json={
+            "type": "reassign",
+            "to_user_id": "insp-case-2",
+            "reason": "Inspector 1 on leave",
+        },
+        headers={"X-Requested-With": "fetch"},
+    )
+    assert reassign_res.status_code == 200
+
+    # Non-assignee (inspector 1) cannot start inspection now -> 403
+    insp1_client = TestClient(app)
+    insp1_client.post(
+        "/auth/login",
+        json={"email": "insp1@case.test", "password": "inspPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+    bad_act = insp1_client.post(
+        "/cases/case-test-001/actions",
+        json={"type": "start_inspection"},
+        headers={"X-Requested-With": "fetch"},
+    )
+    assert bad_act.status_code == 403
+
+    # Invalid transition (record_outcome from assigned status) -> 409
+    insp2_client = TestClient(app)
+    insp2_client.post(
+        "/auth/login",
+        json={"email": "insp2@case.test", "password": "inspPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+    invalid_trans = insp2_client.post(
+        "/cases/case-test-001/actions",
+        json={
+            "type": "record_outcome",
+            "outcome": "confirmed",
+            "action_taken": "no_action",
+        },
+        headers={"X-Requested-With": "fetch"},
+    )
+    assert invalid_trans.status_code == 409
+
+
+def test_shop_endpoints_include_case_summary(case_api_env):
+    admin_client = TestClient(app)
+    admin_client.post(
+        "/auth/login",
+        json={"email": "admin@case.test", "password": "adminPass123"},
+        headers={"X-Requested-With": "fetch"},
+    )
+
+    # GET /shops/ranked includes case summary
+    res_ranked = admin_client.get("/shops/ranked")
+    assert res_ranked.status_code == 200
+    ranked_data = res_ranked.json()
+    fps1 = next(item for item in ranked_data["items"] if item["shop_id"] == "FPS-00001")
+    assert fps1["case"] is not None
+    assert fps1["case"]["case_id"] == "case-test-001"
+
+    # GET /shops/FPS-00001 includes case summary
+    res_detail = admin_client.get("/shops/FPS-00001")
+    assert res_detail.status_code == 200
+    detail_data = res_detail.json()
+    assert detail_data["case"] is not None
+    assert detail_data["case"]["case_id"] == "case-test-001"
+
 

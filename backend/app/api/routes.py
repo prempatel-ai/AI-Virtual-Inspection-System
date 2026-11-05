@@ -14,6 +14,7 @@ from app.pipeline.run import run_pipeline_for_week
 from app.schemas import (
     BoardCheck,
     BreakdownItem,
+    CaseSummary,
     ChecklistItem,
     ComplaintCategoryCount,
     EvaluationSummary,
@@ -275,10 +276,13 @@ def get_ranked_shops(
                 JOIN shops s ON sc.shop_id = s.shop_id
                 WHERE sc.week_start = ?
             )
-            SELECT r.*
+            SELECT r.*, c.case_id, c.status as case_status, c.assignee_id, u.name as assignee_name
             FROM ranked r
             JOIN shops s ON r.shop_id = s.shop_id
             JOIN scores sc ON r.shop_id = sc.shop_id AND r.week_start = sc.week_start
+            LEFT JOIN cases c ON r.shop_id = c.shop_id
+                AND c.status != 'closed' AND c.closed_at IS NULL
+            LEFT JOIN users u ON c.assignee_id = u.user_id
             WHERE {where_sql}
             ORDER BY r.risk_score DESC
             LIMIT ? OFFSET ?;
@@ -320,6 +324,15 @@ def get_ranked_shops(
             signals.sort(key=lambda x: x.points, reverse=True)
             top_sigs = signals[:3]
 
+            case_info = None
+            if r["case_id"]:
+                case_info = CaseSummary(
+                    case_id=r["case_id"],
+                    status=r["case_status"],
+                    assignee_id=r["assignee_id"],
+                    assignee_name=r["assignee_name"],
+                )
+
             items.append(
                 RankedShopItem(
                     rank=r["overall_rank"],
@@ -331,6 +344,7 @@ def get_ranked_shops(
                     band=r["band"],
                     top_signals=top_sigs,
                     trend=trend_map.get(s_id, [float(r["risk_score"])]),
+                    case=case_info,
                 )
             )
 
@@ -627,6 +641,26 @@ def get_shop_detail(
             for r in fb_rows
         ]
 
+        case_row = conn.execute(
+            """
+            SELECT c.case_id, c.status, c.assignee_id, u.name as assignee_name
+            FROM cases c
+            LEFT JOIN users u ON c.assignee_id = u.user_id
+            WHERE c.shop_id = ? AND c.status != 'closed' AND c.closed_at IS NULL
+            ORDER BY c.created_at DESC LIMIT 1;
+            """,
+            (shop_id,),
+        ).fetchone()
+
+        case_summary = None
+        if case_row:
+            case_summary = CaseSummary(
+                case_id=case_row["case_id"],
+                status=case_row["status"],
+                assignee_id=case_row["assignee_id"],
+                assignee_name=case_row["assignee_name"],
+            )
+
         shop_meta = ShopMeta(
             shop_id=shop_row["shop_id"],
             name=shop_row["name"],
@@ -650,6 +684,7 @@ def get_shop_detail(
             complaints=complaints_list,
             explanation=expl_data,
             feedback=feedback_list,
+            case=case_summary,
         )
     finally:
         conn.close()

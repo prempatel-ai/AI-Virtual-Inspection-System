@@ -75,6 +75,58 @@ class ScopeFilter:
                     detail={"code": "AREA_NOT_FOUND", "message": f"Taluka '{taluka}' not found"},
                 )
 
+    def sql_case_filter(
+        self, case_alias: str = "c", shop_alias: str = "s"
+    ) -> Tuple[str, List[Any]]:
+        """Returns WHERE clause and parameters for scoping cases."""
+        c_p = f"{case_alias}." if case_alias else ""
+        s_p = f"{shop_alias}." if shop_alias else ""
+        if self.role in ("admin", "vigilance"):
+            return "1=1", []
+        if self.role == "district_officer":
+            return f"{s_p}district = ?", [self.district]
+        if self.role == "mamlatdar":
+            return f"{s_p}district = ? AND {s_p}taluka = ?", [self.district, self.taluka]
+        if self.role == "inspector":
+            return f"({s_p}inspector_id = ? OR {c_p}assignee_id = ?)", [self.user_id, self.user_id]
+        return "1=0", []
+
+    def require_case_in_scope(self, conn: sqlite3.Connection, case_id: str) -> Dict[str, Any]:
+        """Raises 404 if case does not exist or is out of user scope. Returns case row."""
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT c.*, s.district, s.taluka, s.inspector_id, s.name as shop_name
+            FROM cases c
+            JOIN shops s ON c.shop_id = s.shop_id
+            WHERE c.case_id = ?;
+            """,
+            (case_id,),
+        )
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={"code": "CASE_NOT_FOUND", "message": f"Case {case_id} not found"},
+            )
+
+        in_scope = False
+        if self.role in ("admin", "vigilance"):
+            in_scope = True
+        elif self.role == "district_officer":
+            in_scope = (row["district"] == self.district)
+        elif self.role == "mamlatdar":
+            in_scope = (row["district"] == self.district and row["taluka"] == self.taluka)
+        elif self.role == "inspector":
+            in_scope = (row["assignee_id"] == self.user_id or row["inspector_id"] == self.user_id)
+
+        if not in_scope:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={"code": "CASE_NOT_FOUND", "message": f"Case {case_id} not found"},
+            )
+        return dict(row)
+
     def is_shop_in_scope(self, conn: sqlite3.Connection, shop_id: str) -> bool:
         """Checks if a shop_id is within the user's scope."""
         cursor = conn.cursor()

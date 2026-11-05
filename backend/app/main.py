@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.auth import router as auth_router
+from app.api.cases import router as cases_router
 from app.api.routes import router
 from app.schemas import HealthResponse
 
@@ -72,4 +73,5 @@ def health() -> HealthResponse:
 
 
 app.include_router(auth_router)
+app.include_router(cases_router)
 app.include_router(router)
