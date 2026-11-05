@@ -9,6 +9,7 @@ def generate_template_explanation(
     breakdown: List[Dict[str, Any]],
     stock_recon: Dict[str, Any],
     board_check: Dict[str, Any],
+    facts_payload: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     """Generates standard template explanation matching the LLM output schema."""
     checklists_cfg = load_checklists().get("signals", {})
@@ -27,7 +28,7 @@ def generate_template_explanation(
         checklist: List[Dict[str, str]] = [{
             "action": "Routine annual compliance audit",
             "why": "Shop is operating within normal variance parameters",
-            "fact_id": "routine_audit",
+            "fact_id": "risk_score",
         }]
     else:
         sig_names = ", ".join(f"{s['label'].lower()} ({s['points']:.1f} pts)" for s in top_signals)
@@ -44,7 +45,7 @@ def generate_template_explanation(
             pts = s["points"]
             val = s["value"]
             unit = s["unit"]
-            fact_id = f"fact_{key}"
+            fact_id = f"val_{key}"
 
             # Evidence text
             if key == "stock_gap_pct":
