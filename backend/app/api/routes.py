@@ -407,9 +407,16 @@ def get_shop_detail(shop_id: str, week: Optional[str] = Query(default=None)) -> 
         hist_rows = conn.execute(
             """
             SELECT week_start,
-                   auth_failures * 1.0 / max(auth_attempts, 1) as auth_fail_rate,
-                   unauth_sales * 1.0 / max(transactions, 1) as unauth_share,
-                   complaints_count * 100.0 / max(transactions, 1) as complaints_rate
+                   stock_opening_kg,
+                   stock_received_kg,
+                   stock_sold_kg,
+                   stock_closing_kg,
+                   board_distributed_kg,
+                   transactions,
+                   auth_attempts,
+                   auth_failures,
+                   unauth_sales,
+                   complaints_count
             FROM shop_weeks
             WHERE shop_id = ? AND week_start <= ?
             ORDER BY week_start DESC
@@ -422,20 +429,92 @@ def get_shop_detail(shop_id: str, week: Optional[str] = Query(default=None)) -> 
 
         taluka = shop_row["taluka"]
         peer_medians_auth: List[float] = []
+        peer_medians_gap: List[float] = []
+        peer_medians_board: List[float] = []
+        peer_medians_unauth: List[float] = []
+        peer_medians_comp: List[float] = []
+
         for w in weeks_list:
             pm_row = conn.execute(
                 """
-                SELECT avg(auth_failures * 1.0 / max(auth_attempts, 1))
+                SELECT
+                    avg(auth_failures * 1.0 / max(auth_attempts, 1)) as auth_fail,
+                    avg(
+                        abs(stock_opening_kg + stock_received_kg - stock_sold_kg - stock_closing_kg)
+                        * 1.0 / max(stock_opening_kg + stock_received_kg, 1.0)
+                    ) as stock_gap,
+                    avg(
+                        abs(board_distributed_kg - stock_sold_kg) * 1.0 / max(stock_sold_kg, 1.0)
+                    ) as board_mismatch,
+                    avg(unauth_sales * 1.0 / max(transactions, 1)) as unauth_share,
+                    avg(complaints_count * 100.0 / max(transactions, 1)) as complaints_rate
                 FROM shop_weeks sw
                 JOIN shops s ON sw.shop_id = s.shop_id
                 WHERE sw.week_start = ? AND s.taluka = ? AND s.shop_id != ?;
                 """,
                 (w, taluka, shop_id),
             ).fetchone()
-            val = float(pm_row[0]) if pm_row and pm_row[0] is not None else 0.30
-            peer_medians_auth.append(round(val * 100.0, 1))
 
-        shop_auth_series = [round(float(r["auth_fail_rate"]) * 100.0, 1) for r in hist_rows]
+            p_auth = (
+                float(pm_row["auth_fail"])
+                if pm_row and pm_row["auth_fail"] is not None
+                else 0.30
+            )
+            p_gap = (
+                float(pm_row["stock_gap"])
+                if pm_row and pm_row["stock_gap"] is not None
+                else 0.005
+            )
+            p_board = (
+                float(pm_row["board_mismatch"])
+                if pm_row and pm_row["board_mismatch"] is not None
+                else 0.005
+            )
+            p_unauth = (
+                float(pm_row["unauth_share"])
+                if pm_row and pm_row["unauth_share"] is not None
+                else 0.02
+            )
+            p_comp = (
+                float(pm_row["complaints_rate"])
+                if pm_row and pm_row["complaints_rate"] is not None
+                else 0.0
+            )
+
+            peer_medians_auth.append(round(p_auth * 100.0, 1))
+            peer_medians_gap.append(round(p_gap * 100.0, 1))
+            peer_medians_board.append(round(p_board * 100.0, 1))
+            peer_medians_unauth.append(round(p_unauth * 100.0, 1))
+            peer_medians_comp.append(round(p_comp, 2))
+
+        shop_auth_series: List[float] = []
+        shop_gap_series: List[float] = []
+        shop_board_series: List[float] = []
+        shop_unauth_series: List[float] = []
+        shop_comp_series: List[float] = []
+
+        for r in hist_rows:
+            att = max(float(r["auth_attempts"]), 1.0)
+            shop_auth_series.append(round((float(r["auth_failures"]) / att) * 100.0, 1))
+
+            op = float(r["stock_opening_kg"])
+            rec = float(r["stock_received_kg"])
+            sold = float(r["stock_sold_kg"])
+            clo = float(r["stock_closing_kg"])
+            base_stock = max(op + rec, 1.0)
+            gap = (abs(op + rec - sold - clo) / base_stock) * 100.0
+            shop_gap_series.append(round(gap, 2))
+
+            board = float(r["board_distributed_kg"])
+            b_mismatch = (abs(board - sold) / max(sold, 1.0)) * 100.0
+            shop_board_series.append(round(b_mismatch, 2))
+
+            tx = max(float(r["transactions"]), 1.0)
+            unauth = (float(r["unauth_sales"]) / tx) * 100.0
+            shop_unauth_series.append(round(unauth, 2))
+
+            comp = float(r["complaints_count"]) * 100.0 / tx
+            shop_comp_series.append(round(comp, 2))
 
         history_payload = HistoryData(
             weeks=weeks_list,
@@ -443,7 +522,23 @@ def get_shop_detail(shop_id: str, week: Optional[str] = Query(default=None)) -> 
                 "auth_fail_rate": SeriesData(
                     shop=shop_auth_series,
                     peer_median=peer_medians_auth,
-                )
+                ),
+                "stock_gap_pct": SeriesData(
+                    shop=shop_gap_series,
+                    peer_median=peer_medians_gap,
+                ),
+                "board_mismatch_pct": SeriesData(
+                    shop=shop_board_series,
+                    peer_median=peer_medians_board,
+                ),
+                "unauth_share": SeriesData(
+                    shop=shop_unauth_series,
+                    peer_median=peer_medians_unauth,
+                ),
+                "complaints_rate": SeriesData(
+                    shop=shop_comp_series,
+                    peer_median=peer_medians_comp,
+                ),
             },
         )
 

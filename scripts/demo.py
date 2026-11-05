@@ -72,6 +72,7 @@ def get_server_commands() -> tuple[list[str], list[str]]:
         "127.0.0.1",
         "--port",
         "8000",
+        "--reload",
     ]
 
     is_windows = sys.platform.startswith("win")

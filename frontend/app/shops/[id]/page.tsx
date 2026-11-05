@@ -114,13 +114,17 @@ export default function ShopDetailPage() {
   }
 
   // Prepare trend data for top signal
-  const topSignal = detail.breakdown.find((b) => b.key !== "vulnerability_uplift") || detail.breakdown[0];
+  const topSignal = detail.breakdown.find((b) => b.key !== "vulnerability_uplift" && (b.points > 0 || (b.value && b.value > 0))) || detail.breakdown[0];
   const signalKey = topSignal ? topSignal.key : "stock_gap_pct";
-  const historySeries = detail.history.series[signalKey];
+  const historySeries =
+    detail.history.series[signalKey] ||
+    detail.history.series["stock_gap_pct"] ||
+    detail.history.series["auth_fail_rate"] ||
+    Object.values(detail.history.series)[0];
   const trendData = (detail.history.weeks || []).map((w, idx) => ({
     week: formatDate(w),
-    shopValue: historySeries ? historySeries.shop[idx] ?? 0 : 0,
-    peerMedian: historySeries ? historySeries.peer_median[idx] ?? 0 : 0,
+    shopValue: historySeries && historySeries.shop ? historySeries.shop[idx] ?? 0 : 0,
+    peerMedian: historySeries && historySeries.peer_median ? historySeries.peer_median[idx] ?? 0 : 0,
   }));
 
   const reconData = {
