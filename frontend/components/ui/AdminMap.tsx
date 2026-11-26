@@ -43,16 +43,19 @@ export default function AdminMap({
       attributionControl: true,
     });
 
-    // CartoDB Positron - light, legible government-grade tile layer
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-      {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 19,
-      }
-    ).addTo(map);
+    // CartoDB Voyager basemap with verified API key for crisp government-grade rendering
+    const cartoApiKey =
+      process.env.NEXT_PUBLIC_CARTO_API_KEY || "cb1_5gnv_1_5066a35bc2c5d5cf2138d413";
+    const tileUrl = cartoApiKey
+      ? `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`
+      : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+
+    L.tileLayer(tileUrl, {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 19,
+    }).addTo(map);
 
     const layerGroup = L.layerGroup().addTo(map);
     markersLayerRef.current = layerGroup;
