@@ -29,6 +29,30 @@ const config: Config = {
         low: "var(--risk-low)",
         "low-bg": "var(--risk-low-bg)",
       },
+      background: "var(--color-bg)",
+      foreground: "var(--color-text)",
+      primary: {
+        DEFAULT: "var(--color-accent)",
+        foreground: "var(--color-accent-fg)",
+      },
+      secondary: {
+        DEFAULT: "var(--color-surface)",
+        foreground: "var(--color-text)",
+      },
+      muted: {
+        DEFAULT: "var(--color-surface)",
+        foreground: "var(--color-text-muted)",
+      },
+      popover: {
+        DEFAULT: "var(--color-bg)",
+        foreground: "var(--color-text)",
+      },
+      destructive: {
+        DEFAULT: "var(--risk-high)",
+        foreground: "#FFFFFF",
+      },
+      input: "var(--color-border)",
+      ring: "var(--color-accent)",
     },
     borderRadius: {
       none: "0px",
@@ -61,7 +85,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
 
 export default config;
