@@ -111,6 +111,14 @@ def test_admin_users_crud_and_audit(admin_api_db):
     assert "user_deactivated" in events
     assert "password_reset" in events
 
+    # 6. Mapped shops endpoint
+    map_res = admin_client.get("/admin/map/shops")
+    assert map_res.status_code == 200
+    m_data = map_res.json()
+    assert "items" in m_data
+    assert "high_count" in m_data
+    assert "latest_week" in m_data
+
 
 def test_non_admin_forbidden_on_admin_routes(admin_api_db):
     insp_client = TestClient(app)
@@ -130,3 +138,4 @@ def test_non_admin_forbidden_on_admin_routes(admin_api_db):
         == 403
     )
     assert insp_client.get("/admin/audit").status_code == 403
+    assert insp_client.get("/admin/map/shops").status_code == 403

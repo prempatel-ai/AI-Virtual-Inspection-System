@@ -41,6 +41,7 @@ ENDPOINT_SPECS: List[Tuple[str, str, str, Optional[str], bool, Optional[Dict[str
     ("actions", "GET", "/actions", "actions:view", False, None),
     ("admin_users", "GET", "/admin/users", "users:manage", False, None),
     ("admin_audit", "GET", "/admin/audit", "audit:view", False, None),
+    ("admin_map_shops", "GET", "/admin/map/shops", "users:manage", False, None),
     ("run_pipeline", "POST", "/run", "run:execute", True, {"top_k": 5}),
 ]
 

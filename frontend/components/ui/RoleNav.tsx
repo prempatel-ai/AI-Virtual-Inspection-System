@@ -53,6 +53,7 @@ export function RoleNav({ headerRight }: RoleNavProps = {}) {
 
   if (permissions.includes("users:manage")) {
     adminLinks.push({ label: "Users", href: "/admin/users", admin: true });
+    adminLinks.push({ label: "Gujarat Map", href: "/admin/map", admin: true });
   }
 
   if (permissions.includes("audit:view")) {

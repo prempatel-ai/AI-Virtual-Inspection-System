@@ -447,3 +447,28 @@ class AuditLogItem(BaseModel):
 class AuditLogResponse(BaseModel):
     total: int
     items: List[AuditLogItem]
+
+
+class MapShopItem(BaseModel):
+    shop_id: str
+    name: str
+    district: str
+    taluka: str
+    lat: float
+    lng: float
+    risk_score: float
+    band: str
+    cards_count: int
+    vulnerability_index: float
+    case_id: Optional[str] = None
+    case_status: Optional[str] = None
+    top_signals: List[Dict[str, Any]] = []
+
+
+class AdminMapResponse(BaseModel):
+    total_shops: int
+    high_count: int
+    medium_count: int
+    low_count: int
+    latest_week: str
+    items: List[MapShopItem]

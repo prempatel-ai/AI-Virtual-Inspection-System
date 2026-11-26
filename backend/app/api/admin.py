@@ -11,14 +11,17 @@ from app.auth.audit import log_audit_event
 from app.auth.dependencies import require_permission, verify_csrf
 from app.auth.permissions import VALID_ROLES
 from app.auth.security import hash_password
+from app.data.coordinates import get_shop_coordinates
 from app.db import get_connection
 from app.schemas import (
+    AdminMapResponse,
     AdminUserItem,
     AdminUserListResponse,
     AuditLogItem,
     AuditLogResponse,
     CreateUserRequest,
     CreateUserResponse,
+    MapShopItem,
     ResetPasswordResponse,
     UpdateUserRequest,
 )
@@ -346,5 +349,112 @@ def get_admin_audit_log(
             )
 
         return AuditLogResponse(total=total, items=items)
+    finally:
+        conn.close()
+
+
+@router.get("/map/shops", response_model=AdminMapResponse)
+def get_admin_map_shops(
+    district: Optional[str] = Query(default=None),
+    band: Optional[str] = Query(default=None),
+    current_user: Dict[str, Any] = Depends(require_permission("users:manage")),
+) -> AdminMapResponse:
+    """Returns mapped shops with coordinates, risk scores, and case status (Admin only)."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+
+        # 1. Determine latest week
+        cursor.execute("SELECT MAX(week_start) as latest_week FROM scores;")
+        row_w = cursor.fetchone()
+        latest_week = row_w["latest_week"] if row_w and row_w["latest_week"] else ""
+        if not latest_week:
+            cursor.execute("SELECT MAX(week_start) as latest_week FROM shop_weeks;")
+            row_sw = cursor.fetchone()
+            latest_week = (
+                row_sw["latest_week"]
+                if row_sw and row_sw["latest_week"]
+                else "2026-11-02"
+            )
+
+        # 2. Query all shops joined with scores for the latest week and open cases
+        query = """
+            SELECT s.shop_id, s.name, s.district, s.taluka, s.cards_count, s.vulnerability_index,
+                   COALESCE(sc.risk_score, 0.0) as risk_score,
+                   COALESCE(sc.band, 'low') as band,
+                   sc.breakdown_json,
+                   c.case_id, c.status as case_status
+            FROM shops s
+            LEFT JOIN scores sc ON s.shop_id = sc.shop_id AND sc.week_start = ?
+            LEFT JOIN cases c
+              ON s.shop_id = c.shop_id AND c.status != 'closed' AND c.closed_at IS NULL
+            ORDER BY sc.risk_score DESC, s.shop_id ASC;
+        """
+        cursor.execute(query, (latest_week,))
+        rows = cursor.fetchall()
+
+        items: List[MapShopItem] = []
+        high_cnt = 0
+        med_cnt = 0
+        low_cnt = 0
+
+        for r in rows:
+            r_band = r["band"]
+            if r_band == "high":
+                high_cnt += 1
+            elif r_band == "medium":
+                med_cnt += 1
+            else:
+                low_cnt += 1
+
+            # Filter if district or band specified
+            if district and r["district"] != district:
+                continue
+            if band and r["band"] != band:
+                continue
+
+            lat, lng = get_shop_coordinates(r["shop_id"], r["district"], r["taluka"])
+
+            # Top signals extraction
+            top_sigs: List[Dict[str, Any]] = []
+            if r["breakdown_json"]:
+                try:
+                    bd = json.loads(r["breakdown_json"])
+                    for b in bd:
+                        if b.get("key") != "vulnerability_uplift" and b.get("points", 0) > 0:
+                            top_sigs.append({
+                                "label": b.get("label", b.get("key")),
+                                "points": round(b.get("points", 0), 1),
+                            })
+                    top_sigs = sorted(top_sigs, key=lambda x: x["points"], reverse=True)[:3]
+                except Exception:
+                    pass
+
+            items.append(
+                MapShopItem(
+                    shop_id=r["shop_id"],
+                    name=r["name"],
+                    district=r["district"],
+                    taluka=r["taluka"],
+                    lat=lat,
+                    lng=lng,
+                    risk_score=round(float(r["risk_score"]), 1),
+                    band=r_band,
+                    cards_count=r["cards_count"],
+                    vulnerability_index=round(float(r["vulnerability_index"]), 2),
+                    case_id=r["case_id"],
+                    case_status=r["case_status"],
+                    top_signals=top_sigs,
+                )
+            )
+
+        return AdminMapResponse(
+            total_shops=len(rows),
+            high_count=high_cnt,
+            medium_count=med_cnt,
+            low_count=low_cnt,
+            latest_week=latest_week,
+            items=items,
+        )
     finally:
         conn.close()

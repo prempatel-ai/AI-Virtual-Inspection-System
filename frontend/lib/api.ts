@@ -300,3 +300,41 @@ export async function getAdminAudit(params: AuditParams = {}): Promise<AuditLogR
   const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
   return fetchJson<AuditLogResponse>(`/admin/audit${query}`);
 }
+
+// 6. Admin Geographic Risk Map
+export interface MapShopItem {
+  shop_id: string;
+  name: string;
+  district: string;
+  taluka: string;
+  lat: number;
+  lng: number;
+  risk_score: number;
+  band: "high" | "medium" | "low";
+  cards_count: number;
+  vulnerability_index: number;
+  case_id?: string | null;
+  case_status?: string | null;
+  top_signals: { label: string; points: number }[];
+}
+
+export interface AdminMapResponse {
+  total_shops: number;
+  high_count: number;
+  medium_count: number;
+  low_count: number;
+  latest_week: string;
+  items: MapShopItem[];
+}
+
+export async function getAdminMapShops(params?: {
+  district?: string;
+  band?: string;
+}): Promise<AdminMapResponse> {
+  const searchParams = new URLSearchParams();
+  if (params?.district) searchParams.set("district", params.district);
+  if (params?.band) searchParams.set("band", params.band);
+  const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
+  return fetchJson<AdminMapResponse>(`/admin/map/shops${query}`);
+}
+
