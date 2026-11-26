@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
   AppShell,
   PageHeader,
@@ -11,6 +12,7 @@ import {
   ReconcileTable,
   EvidenceList,
   ChecklistPanel,
+  StatusBadge,
   FeedbackForm,
   OutcomeType,
   ErrorState,
@@ -154,10 +156,21 @@ export default function ShopDetailPage() {
         </div>
       }
     >
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center space-x-2 text-meta text-text-muted mb-4">
+        <Link href="/flags" className="hover:text-accent hover:underline">
+          Flags
+        </Link>
+        <span>/</span>
+        <span className="text-text font-medium">{detail.shop.taluka}</span>
+        <span>/</span>
+        <span className="font-mono text-text font-semibold">{detail.shop.shop_id}</span>
+      </div>
+
       <PageHeader
         title={`${detail.shop.name} (${detail.shop.shop_id})`}
         description={`${detail.shop.taluka}, ${detail.shop.district} | ${detail.shop.cards_count} cards | Vulnerability index: ${detail.shop.vulnerability_index.toFixed(2)}`}
-        backHref="/"
+        backHref="/flags"
         actions={
           <div className="flex items-center space-x-3 bg-bg border border-border rounded-md px-3 py-1.5">
             <span className="text-meta text-text-muted">Rank #{detail.rank}</span>
@@ -168,6 +181,32 @@ export default function ShopDetailPage() {
           </div>
         }
       />
+
+      {/* Active Case Link Banner */}
+      {detail.case && (
+        <div className="bg-surface border border-accent/30 rounded-md p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs">
+          <div className="flex items-center space-x-3">
+            <div className="w-2.5 h-2.5 rounded-full bg-accent shrink-0 animate-pulse" />
+            <div>
+              <div className="text-body font-semibold text-text flex items-center gap-2">
+                <span>Active Inspection Case: {detail.case.case_id}</span>
+                <StatusBadge status={detail.case.status} />
+              </div>
+              <p className="text-meta text-text-muted mt-0.5">
+                {detail.case.assignee_name
+                  ? `Assigned to ${detail.case.assignee_name} for virtual / field inspection.`
+                  : "Awaiting assignment by Taluka Mamlatdar."}
+              </p>
+            </div>
+          </div>
+          <Link
+            href={`/cases/${detail.case.case_id}`}
+            className="inline-flex items-center justify-center px-4 py-2 bg-accent text-accent-fg font-medium text-meta rounded-sm hover:opacity-90 transition-opacity shrink-0 shadow-2xs"
+          >
+            Open Active Case &rarr;
+          </Link>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left column: Analytics & Measurements */}

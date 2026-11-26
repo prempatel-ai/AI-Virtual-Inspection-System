@@ -35,10 +35,19 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickDemo = (demoEmail: string) => {
+  const handleQuickDemo = async (demoEmail: string) => {
     setEmail(demoEmail);
-    // Standard demo password
-    setPassword("demoPassword123");
+    const demoPassword = "demoPassword123";
+    setPassword(demoPassword);
+    setError(null);
+    setSubmitting(true);
+    try {
+      await login({ email: demoEmail, password: demoPassword });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Invalid email or password");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

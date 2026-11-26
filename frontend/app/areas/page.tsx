@@ -34,6 +34,13 @@ export default function AreasPage() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const qLevel = searchParams?.get("level") as "district" | "taluka" | null;
+    const qParent = searchParams?.get("parent");
+    if (qLevel) setLevel(qLevel);
+    if (qParent !== null && qParent !== undefined) setParentDistrict(qParent);
+  }, [searchParams]);
+
   const fetchAreas = useCallback(async () => {
     setLoading(true);
     setError(null);

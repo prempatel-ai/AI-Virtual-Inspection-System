@@ -10,6 +10,7 @@ import {
   TrendChart,
   ReconcileTable,
   EvidenceList,
+  ChecklistPanel,
   StatusBadge,
   CaseActionBar,
   OutcomeForm,
@@ -112,7 +113,16 @@ export default function CaseDetailPage() {
     setActionSuccess(null);
     try {
       await postCaseAction(caseData.case.case_id, action);
-      setActionSuccess(`Action '${action.type}' recorded successfully.`);
+      const actionFeedback: Record<string, string> = {
+        start_inspection: "Inspection commenced. Case is now in progress.",
+        record_outcome: "Inspection findings submitted successfully. Status updated to inspected.",
+        escalate: "Case successfully escalated to superior authority.",
+        reassign: "Case successfully reassigned to officer.",
+        close: "Case formally resolved and closed.",
+        reopen: "Case reopened and returned to assigned status.",
+        add_note: "Note appended to case activity log.",
+      };
+      setActionSuccess(actionFeedback[action.type] || `Action '${action.type}' recorded successfully.`);
       setShowOutcomeForm(false);
       await fetchDetails(false);
     } catch (err: unknown) {
@@ -234,13 +244,17 @@ export default function CaseDetailPage() {
     <AppShell>
       <div className="space-y-6">
         {/* Navigation Breadcrumb */}
-        <div>
+        <div className="flex items-center space-x-2 text-meta text-text-muted">
           <Link
             href="/queue"
-            className="text-meta font-medium text-accent hover:underline inline-flex items-center space-x-1"
+            className="hover:text-accent hover:underline inline-flex items-center space-x-1"
           >
-            <span>&larr; Back to Queue</span>
+            <span>Inspection Queue</span>
           </Link>
+          <span>/</span>
+          <span className="text-text font-medium">{c.taluka}</span>
+          <span>/</span>
+          <span className="text-text font-medium">Case Overview</span>
         </div>
 
         {/* Case Header Card */}
@@ -302,14 +316,27 @@ export default function CaseDetailPage() {
 
         {/* Action Alert Banner */}
         {actionSuccess && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded text-meta flex items-center justify-between">
-            <span>{actionSuccess}</span>
-            <button
-              onClick={() => setActionSuccess(null)}
-              className="text-emerald-900 font-bold ml-2"
-            >
-              &times;
-            </button>
+          <div className="p-4 bg-accent-subtle border border-accent/30 text-accent rounded-md text-body flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 rounded-full bg-accent shrink-0" />
+              <span className="font-medium text-text">{actionSuccess}</span>
+            </div>
+            <div className="flex items-center space-x-3 shrink-0">
+              <Link
+                href="/queue"
+                className="text-meta font-medium text-accent hover:underline"
+              >
+                &larr; Return to Queue
+              </Link>
+              <button
+                type="button"
+                onClick={() => setActionSuccess(null)}
+                className="text-text-muted hover:text-text font-bold text-lg leading-none"
+                aria-label="Dismiss notification"
+              >
+                &times;
+              </button>
+            </div>
           </div>
         )}
 
@@ -392,6 +419,11 @@ export default function CaseDetailPage() {
 
           {/* Right Column: 1 Span */}
           <div className="space-y-6">
+            {/* Physical Verification Checklist */}
+            {shopData?.explanation?.checklist && shopData.explanation.checklist.length > 0 && (
+              <ChecklistPanel items={shopData.explanation.checklist} />
+            )}
+
             {/* Timeline */}
             <div className="bg-surface border border-border rounded-md p-4">
               <h3 className="text-section font-semibold text-text mb-3 border-b border-border pb-2">

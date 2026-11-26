@@ -250,11 +250,12 @@ export default function OverviewPage() {
                 keyField="name"
                 exportFilename="district-flag-rates"
                 defaultPageSize={10}
-                onRowClick={(item) =>
+                onRowClick={(item) => {
+                  const targetLevel = item.level === "district" ? "taluka" : item.level;
                   router.push(
-                    `/areas?level=${item.level}&parent=${encodeURIComponent(item.name)}`
-                  )
-                }
+                    `/areas?level=${targetLevel}&parent=${encodeURIComponent(item.name)}`
+                  );
+                }}
               />
             </div>
           </>

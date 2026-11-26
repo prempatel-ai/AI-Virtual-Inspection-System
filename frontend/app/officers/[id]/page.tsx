@@ -136,13 +136,15 @@ export default function OfficerDetailPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <div>
-          <Link
-            href="/officers"
-            className="text-meta font-medium text-accent hover:underline inline-flex items-center space-x-1"
-          >
-            <span>&larr; Back to Officers</span>
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center space-x-2 text-meta text-text-muted">
+          <Link href="/officers" className="hover:text-accent hover:underline">
+            Officers
           </Link>
+          <span>/</span>
+          <span className="text-text font-medium">{officer.role.replace("_", " ")}</span>
+          <span>/</span>
+          <span className="text-text font-medium">Profile</span>
         </div>
 
         {/* Profile Card */}
