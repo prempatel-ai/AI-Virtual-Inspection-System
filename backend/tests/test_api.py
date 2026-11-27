@@ -258,3 +258,13 @@ def test_post_run(admin_client: TestClient, inspector_client: TestClient):
     assert data["week"] == "2026-11-02"
     assert data["shops_scored"] == 100
     assert data["duration_ms"] >= 0
+
+
+def test_areas_parent_taluka_resolves_cleanly(admin_client: TestClient):
+    # When parent is given as a taluka name (e.g. Ahmedabad City), it resolves its parent district
+    res = admin_client.get("/areas?level=taluka&parent=Ahmedabad%20City")
+    assert res.status_code == 200
+    data = res.json()
+    assert "items" in data
+    assert len(data["items"]) > 0
+

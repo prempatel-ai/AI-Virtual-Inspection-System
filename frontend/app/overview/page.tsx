@@ -371,10 +371,16 @@ export default function OverviewPage() {
                 exportFilename="district-flag-rates"
                 defaultPageSize={10}
                 onRowClick={(item) => {
-                  const targetLevel = item.level === "district" ? "taluka" : item.level;
-                  router.push(
-                    `/areas?level=${targetLevel}&parent=${encodeURIComponent(item.name)}`
-                  );
+                  if (item.level === "district") {
+                    router.push(
+                      `/areas?level=taluka&parent=${encodeURIComponent(item.name)}`
+                    );
+                  } else {
+                    const dist = scope?.district || "";
+                    router.push(
+                      `/areas?level=taluka&parent=${encodeURIComponent(dist)}&search=${encodeURIComponent(item.name)}`
+                    );
+                  }
                 }}
               />
             </div>

@@ -40,26 +40,45 @@ def get_areas(
     user_district = current_user.get("district")
     user_taluka = current_user.get("taluka")
 
-    if user_role == "district_officer":
-        if parent and parent != user_district:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"code": "AREA_NOT_FOUND", "message": f"District {parent} not found"},
-            )
-        if level == "taluka":
-            parent = user_district
-
-    elif user_role == "mamlatdar":
-        if parent and parent != user_district:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"code": "AREA_NOT_FOUND", "message": f"District {parent} not found"},
-            )
-        level = "taluka"
-        parent = user_district
-
     conn = get_connection()
     try:
+        # If parent was provided, check if it's actually a taluka name
+        if parent:
+            taluka_row = conn.execute(
+                "SELECT district FROM shops WHERE taluka = ? LIMIT 1;", (parent,)
+            ).fetchone()
+            if taluka_row:
+                resolved_district = taluka_row["district"]
+                if user_role == "district_officer" and resolved_district != user_district:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail={"code": "AREA_NOT_FOUND", "message": f"District {parent} not found"},
+                    )
+                if user_role == "mamlatdar" and resolved_district != user_district:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail={"code": "AREA_NOT_FOUND", "message": f"District {parent} not found"},
+                    )
+                parent = resolved_district
+
+        if user_role == "district_officer":
+            if parent and parent != user_district:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail={"code": "AREA_NOT_FOUND", "message": f"District {parent} not found"},
+                )
+            if level == "taluka":
+                parent = user_district
+
+        elif user_role == "mamlatdar":
+            if parent and parent != user_district:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail={"code": "AREA_NOT_FOUND", "message": f"District {parent} not found"},
+                )
+            level = "taluka"
+            parent = user_district
+
         cfg = load_config()
         all_metrics = compute_area_metrics(
             conn=conn,

@@ -16,7 +16,14 @@ export default function AreasPage() {
   const { scope } = useAuth();
 
   const initialLevel = (searchParams?.get("level") as "district" | "taluka") || (scope?.district ? "taluka" : "district");
-  const initialParent = searchParams?.get("parent") || scope?.district || "";
+  const rawParent = searchParams?.get("parent");
+  const rawSearch = searchParams?.get("search");
+
+  // For district-scoped users, parent district is always their scope.district.
+  // If parent in URL was a taluka name (e.g. Ahmedabad City), use it as initial search.
+  const isParentTaluka = scope?.district && rawParent && rawParent !== scope.district;
+  const initialParent = scope?.district || rawParent || "";
+  const initialSearch = rawSearch || (isParentTaluka ? rawParent : "") || "";
 
   const [level, setLevel] = useState<"district" | "taluka">(initialLevel);
   const [parentDistrict, setParentDistrict] = useState<string>(initialParent);
@@ -24,7 +31,7 @@ export default function AreasPage() {
   const [areas, setAreas] = useState<AreaMetricItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
 
   useEffect(() => {
     getMeta()
@@ -37,15 +44,26 @@ export default function AreasPage() {
   useEffect(() => {
     const qLevel = searchParams?.get("level") as "district" | "taluka" | null;
     const qParent = searchParams?.get("parent");
+    const qSearch = searchParams?.get("search");
     if (qLevel) setLevel(qLevel);
-    if (qParent !== null && qParent !== undefined) setParentDistrict(qParent);
-  }, [searchParams]);
+    if (scope?.district) {
+      setParentDistrict(scope.district);
+      if (qParent && qParent !== scope.district) {
+        setSearchQuery((prev) => prev || qParent);
+      }
+    } else if (qParent !== null && qParent !== undefined) {
+      setParentDistrict(qParent);
+    }
+    if (qSearch) {
+      setSearchQuery(qSearch);
+    }
+  }, [searchParams, scope]);
 
   const fetchAreas = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const parent = level === "taluka" && parentDistrict ? parentDistrict : undefined;
+      const parent = level === "taluka" ? (scope?.district || (parentDistrict ? parentDistrict : undefined)) : undefined;
       const res = await getAreas(level, parent);
       setAreas(res.items);
     } catch (err: unknown) {
@@ -53,7 +71,7 @@ export default function AreasPage() {
     } finally {
       setLoading(false);
     }
-  }, [level, parentDistrict]);
+  }, [level, parentDistrict, scope]);
 
   useEffect(() => {
     fetchAreas();
