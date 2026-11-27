@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setPermissions([]);
       setScope(null);
-      if (pathname !== "/login") {
+      if (pathname !== "/login" && pathname !== "/") {
         router.push("/login");
       }
     } finally {
