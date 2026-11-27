@@ -312,6 +312,46 @@ export default function CaseDetailPage() {
               <span className="font-medium text-text">{c.last_flagged_week}</span>
             </div>
           </div>
+
+          {/* Connected System Lineage Strip */}
+          <div className="pt-3 border-t border-border flex flex-wrap items-center justify-between gap-3 text-meta">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-accent mr-1">
+                Connected Lineage:
+              </span>
+              <Link
+                href={`/admin/map?shop=${encodeURIComponent(c.shop_id)}`}
+                className="px-2 py-1 bg-bg border border-border rounded text-[11px] font-medium text-text hover:border-accent hover:text-accent transition-colors inline-flex items-center space-x-1"
+                title="Locate this shop geographically on the Gujarat Map"
+              >
+                <span>FPS: <strong className="font-mono">{c.shop_id}</strong> on Gujarat Map</span>
+                <span>&rarr;</span>
+              </Link>
+              {c.assignee_id && (
+                <Link
+                  href={`/officers/${encodeURIComponent(c.assignee_id)}`}
+                  className="px-2 py-1 bg-bg border border-border rounded text-[11px] font-medium text-text hover:border-accent hover:text-accent transition-colors inline-flex items-center space-x-1"
+                  title="View assigned officer operational profile"
+                >
+                  <span>Inspector: <strong className="font-mono">{c.assignee_name || c.assignee_id}</strong></span>
+                  <span>&rarr;</span>
+                </Link>
+              )}
+              <Link
+                href={`/areas?parent=${encodeURIComponent(c.district)}`}
+                className="px-2 py-1 bg-bg border border-border rounded text-[11px] font-medium text-text hover:border-accent hover:text-accent transition-colors"
+              >
+                Area: {c.district}
+              </Link>
+            </div>
+
+            <Link
+              href="/admin/audit"
+              className="text-[11px] text-text-muted hover:text-text hover:underline"
+            >
+              Audit Trail Verified &rarr;
+            </Link>
+          </div>
         </div>
 
         {/* Action Alert Banner */}

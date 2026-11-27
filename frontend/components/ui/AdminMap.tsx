@@ -121,6 +121,15 @@ export default function AdminMap({
             ${shop.taluka} Taluka, ${shop.district} District
           </div>
 
+          ${
+            shop.case_id
+              ? `<div style="font-size: 11px; color: #1B5E4B; background: #E8F2EE; padding: 4px 6px; border-radius: 4px; margin-bottom: 6px;">
+                  <div><strong>Case:</strong> ${shop.case_id}</div>
+                  ${shop.assignee_name ? `<div style="color: #20242A; margin-top: 1px;">Officer: ${shop.assignee_name} (${shop.assignee_role})</div>` : ""}
+                </div>`
+              : ""
+          }
+
           <div style="display: flex; justify-content: space-between; font-size: 11px; color: #5B636E; margin-bottom: 6px;">
             <span>Cards: <strong style="color: #20242A;">${shop.cards_count}</strong></span>
             <span>Vulnerability: <strong style="color: #20242A;">${(shop.vulnerability_index * 100).toFixed(0)}%</strong></span>

@@ -377,17 +377,27 @@ def get_admin_map_shops(
                 else "2026-11-02"
             )
 
-        # 2. Query all shops joined with scores for the latest week and open cases
+        # 2. Query shops joined with latest scores, open cases, assignees, and actions
         query = """
             SELECT s.shop_id, s.name, s.district, s.taluka, s.cards_count, s.vulnerability_index,
                    COALESCE(sc.risk_score, 0.0) as risk_score,
                    COALESCE(sc.band, 'low') as band,
                    sc.breakdown_json,
-                   c.case_id, c.status as case_status
+                   c.case_id, c.status as case_status,
+                   c.assignee_id, u.name as assignee_name, u.role as assignee_role,
+                   latest_act.id as latest_action_id, latest_act.type as latest_action_type
             FROM shops s
             LEFT JOIN scores sc ON s.shop_id = sc.shop_id AND sc.week_start = ?
             LEFT JOIN cases c
               ON s.shop_id = c.shop_id AND c.status != 'closed' AND c.closed_at IS NULL
+            LEFT JOIN users u ON c.assignee_id = u.user_id
+            LEFT JOIN (
+              SELECT ca.case_id, ca.id, ca.type
+              FROM case_actions ca
+              WHERE ca.id = (
+                SELECT MAX(ca2.id) FROM case_actions ca2 WHERE ca2.case_id = ca.case_id
+              )
+            ) latest_act ON latest_act.case_id = c.case_id
             ORDER BY sc.risk_score DESC, s.shop_id ASC;
         """
         cursor.execute(query, (latest_week,))
@@ -444,6 +454,11 @@ def get_admin_map_shops(
                     vulnerability_index=round(float(r["vulnerability_index"]), 2),
                     case_id=r["case_id"],
                     case_status=r["case_status"],
+                    assignee_id=r["assignee_id"],
+                    assignee_name=r["assignee_name"],
+                    assignee_role=r["assignee_role"],
+                    latest_action_id=r["latest_action_id"],
+                    latest_action_type=r["latest_action_type"],
                     top_signals=top_sigs,
                 )
             )

@@ -315,6 +315,11 @@ export interface MapShopItem {
   vulnerability_index: number;
   case_id?: string | null;
   case_status?: string | null;
+  assignee_id?: string | null;
+  assignee_name?: string | null;
+  assignee_role?: string | null;
+  latest_action_id?: number | null;
+  latest_action_type?: string | null;
   top_signals: { label: string; points: number }[];
 }
 

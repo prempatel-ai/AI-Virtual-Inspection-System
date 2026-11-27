@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { AppShell } from "../../../components/ui/AppShell";
 import { ErrorState } from "../../../components/ui/ErrorState";
 import { useAuth } from "../../../lib/auth";
@@ -36,10 +37,23 @@ export default function AdminMapPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Filters & selection
+  const searchParams = useSearchParams();
+  const shopQueryParam = searchParams?.get("shop");
+
   const [selectedDistrict, setSelectedDistrict] = useState<string>("all");
   const [selectedBand, setSelectedBand] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedShop, setSelectedShop] = useState<MapShopItem | null>(null);
+
+  // Auto-select shop from query param if provided
+  useEffect(() => {
+    if (shopQueryParam && data?.items) {
+      const match = data.items.find(
+        (s) => s.shop_id.toLowerCase() === shopQueryParam.toLowerCase()
+      );
+      if (match) setSelectedShop(match);
+    }
+  }, [shopQueryParam, data?.items]);
 
   // Load metadata and shops
   const loadShops = useCallback(async () => {
@@ -364,6 +378,75 @@ export default function AdminMapPage() {
                     </ul>
                   </div>
                 )}
+
+                {/* Connected System Lineage */}
+                <div className="border-t border-border pt-2 space-y-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-accent block">
+                    Connected Pipeline Lineage
+                  </span>
+
+                  {/* Connected Case */}
+                  <div className="p-2 bg-bg border border-border rounded-sm text-meta space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-text-muted text-[11px]">Case ID:</span>
+                      {selectedShop.case_id ? (
+                        <Link
+                          href={`/cases/${encodeURIComponent(selectedShop.case_id)}`}
+                          className="font-mono text-[11px] font-bold text-accent hover:underline flex items-center gap-1"
+                        >
+                          <span>{selectedShop.case_id}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      ) : (
+                        <span className="text-[11px] text-text-muted font-mono">None</span>
+                      )}
+                    </div>
+                    {selectedShop.case_status && (
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-text-muted">Case Status:</span>
+                        <span className="capitalize font-semibold text-text">{selectedShop.case_status}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Assigned Field Inspector */}
+                  {selectedShop.assignee_id && (
+                    <div className="p-2 bg-bg border border-border rounded-sm text-meta space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-text-muted text-[11px]">Assigned Officer:</span>
+                        <Link
+                          href={`/officers/${encodeURIComponent(selectedShop.assignee_id)}`}
+                          className="font-semibold text-[11px] text-accent hover:underline"
+                        >
+                          {selectedShop.assignee_name || selectedShop.assignee_id}
+                        </Link>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-text-muted">Officer ID:</span>
+                        <span className="font-mono text-text-muted">{selectedShop.assignee_id}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Latest Action Trace */}
+                  {selectedShop.latest_action_id && (
+                    <div className="p-2 bg-bg border border-border rounded-sm text-meta space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-text-muted text-[11px]">Latest Action:</span>
+                        <Link
+                          href="/actions"
+                          className="font-mono text-[11px] font-bold text-accent hover:underline"
+                        >
+                          ACT #{selectedShop.latest_action_id}
+                        </Link>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-text-muted">Action Type:</span>
+                        <span className="font-mono text-text text-[11px] uppercase">{selectedShop.latest_action_type}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="border-t border-border pt-3">
                   {selectedShop.case_id ? (

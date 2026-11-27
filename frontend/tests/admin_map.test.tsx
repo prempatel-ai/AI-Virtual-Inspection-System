@@ -10,6 +10,9 @@ vi.mock("next/navigation", () => ({
     prefetch: vi.fn(),
   }),
   usePathname: () => "/admin/map",
+  useSearchParams: () => ({
+    get: vi.fn(() => null),
+  }),
 }));
 
 let mockHasPermission = vi.fn((_perm?: string) => true);

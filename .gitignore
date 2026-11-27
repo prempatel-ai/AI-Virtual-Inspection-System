@@ -2,6 +2,7 @@
 *.db
 *.sqlite
 /data/
+scripts/data/
 __pycache__/
 *.egg-info/
 .venv/

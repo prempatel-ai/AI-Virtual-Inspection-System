@@ -462,6 +462,11 @@ class MapShopItem(BaseModel):
     vulnerability_index: float
     case_id: Optional[str] = None
     case_status: Optional[str] = None
+    assignee_id: Optional[str] = None
+    assignee_name: Optional[str] = None
+    assignee_role: Optional[str] = None
+    latest_action_id: Optional[int] = None
+    latest_action_type: Optional[str] = None
     top_signals: List[Dict[str, Any]] = []
 
 
